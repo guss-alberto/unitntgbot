@@ -2,7 +2,32 @@
 
 Telegram Bot for the University of Trento
 
-## Ideas
+## Functional requirements
+
+- Notifications for lectures (x mins before start)
+- locuspocus integration
+- expelliarbus integration
+- povo maps (?)
+- Morning briefing:
+
+  - lectures
+  - suggested study rooms
+  - menu
+  - weather (+)
+  - ETA to campus (?)
+
+- broadcasting messages:
+
+  - University taxes to pay (with "already payed" option)
+  - Modified lectures time / location / canceled
+  - Exam sessions available (?)
+
+## Non functional requirements
+
+- uptime monitoring
+- observability (metrics / otel)
+
+## Sources
 
 ### Without auth
 
