@@ -1,39 +1,30 @@
-from datetime import datetime
-from pyquery import PyQuery as pq
+import logging
 import re
-import requests
 import sqlite3
+from dataclasses import dataclass
+
+import requests
+from pyquery import PyQuery as pq  # noqa: N813
+
+logger = logging.getLogger(__name__)
 
 EXAMS_LIST_URL = "https://www.esse3.unitn.it/Guide/PaginaListaAppelli.do"
 BASE_URL = "https://www.esse3.unitn.it/"
 
 
+@dataclass
 class UniversityExam:
-    def __init__(
-        self,
-        id: id,
-        faculty: str,
-        name: str,
-        date: str,
-        registration_start: str,
-        registration_end: str,
-        partition: str,
-        link: str,
-        professors: str,
-        is_oral: bool,
-        is_partial: bool,
-    ):
-        self.id = id
-        self.faculty = faculty
-        self.date = date
-        self.name = name
-        self.registration_start = registration_start
-        self.registration_end = registration_end
-        self.partition = partition
-        self.link = link
-        self.professors = professors
-        self.is_oral = is_oral
-        self.is_partial = is_partial
+    exam_id: str
+    faculty: str
+    name: str
+    date: str
+    registration_start: str
+    registration_end: str
+    partition: str
+    link: str
+    professors: str
+    is_oral: bool
+    is_partial: bool
 
 
 def get_university_faculties() -> dict[int, str]:
@@ -42,28 +33,26 @@ def get_university_faculties() -> dict[int, str]:
 
     Returns:
     dict[int, str]: A dictionary where the keys are the university departments ids and the values are the department names.
+
     """
-
-    global EXAMS_LIST_URL
-
     faculties = {}
 
-    response = requests.get(EXAMS_LIST_URL)
+    response = requests.get(EXAMS_LIST_URL, timeout=30)
     html = response.text
     doc = pq(html)
     # Get the "option" elements inside the #FAC_ID select element, these contain the faculties of the university
     faculties_options = doc("#FAC_ID").find("option")
 
     for faculty_option in faculties_options.items():
-        faculty_option = pq(faculty_option)
-        faculty_id = faculty_option.attr("value")
+        faculty_option_pq = pq(faculty_option)
+        faculty_id = faculty_option_pq.attr("value")
 
         try:
             faculty_id = int(faculty_id)
         except ValueError:
             continue
 
-        faculty_name = faculty_option.text()
+        faculty_name = faculty_option_pq.text()
         faculties[faculty_id] = faculty_name
 
     return faculties
@@ -78,17 +67,15 @@ def get_university_exams(university_faculties: dict[int, str]) -> list[Universit
 
     Returns:
     list[UniversityExam]: A list of UniversityExam objects.
+
     """
-
-    global EXAMS_LIST_URL, BASE_URL
-
     exams: list[UniversityExam] = []
 
-    for id, faculty_name in university_faculties.items():
+    for faculty_id, faculty_name in university_faculties.items():
         response = requests.post(
             EXAMS_LIST_URL,
             data={
-                "FAC_ID": id,
+                "FAC_ID": faculty_id,
                 "CDS_ID": "X",
                 "AD_ID": "X",
                 "DOCENTE_ID": "X",
@@ -96,32 +83,33 @@ def get_university_exams(university_faculties: dict[int, str]) -> list[Universit
                 "form_id_form1": "form1",
                 "actionBar1": "Cerca",
             },
+            timeout=30,
         )
         html = response.text
         doc = pq(html)
         exam_list = list(doc("#tableAppelli").find("tr").items())
 
-        print(f"Parsing exams for faculty {faculty_name}...")
+        logger.info("Parsing exams for faculty %s...", faculty_name)
 
-        for exam in exam_list[2:]:
-            table_items = [pq(e) for e in pq(exam).find("td")]
+        for raw_exam in exam_list[2:]:
+            table_items = [pq(e) for e in pq(raw_exam).find("td")]
 
             # This is done this way because in the exam table there could be missing values
             # in some rows, since some <td> elements can have a rowspan="2" attribute
             # this way these variables will remain the same if a row has rowspan="2"
-            _number_of_registrations = table_items[-1] if len(table_items) >= 1 else _number_of_registrations
-            _professors = table_items[-2] if len(table_items) >= 2 else _professors
-            _recording = table_items[-3] if len(table_items) >= 3 else _recording
-            _is_partial = table_items[-4] if len(table_items) >= 4 else _is_partial
-            _is_oral = table_items[-5] if len(table_items) >= 5 else _is_oral
-            _exam_datetime = table_items[-6] if len(table_items) >= 6 else _exam_datetime
-            _registration_period = table_items[-7] if len(table_items) >= 7 else _registration_period
-            _exam_session = table_items[-8] if len(table_items) >= 8 else _exam_session
-            _id_and_name = table_items[-9] if len(table_items) >= 9 else _id_and_name
+            _number_of_registrations = table_items[-1] if len(table_items) >= 1 else _number_of_registrations  # noqa: F821
+            _professors = table_items[-2] if len(table_items) >= 2 else _professors  # noqa: F821, PLR2004
+            _recording = table_items[-3] if len(table_items) >= 3 else _recording  # noqa: F821, PLR2004
+            _is_partial = table_items[-4] if len(table_items) >= 4 else _is_partial  # noqa: F821, PLR2004
+            _is_oral = table_items[-5] if len(table_items) >= 5 else _is_oral  # noqa: F821, PLR2004
+            _exam_datetime = table_items[-6] if len(table_items) >= 6 else _exam_datetime  # noqa: F821, PLR2004
+            _registration_period = table_items[-7] if len(table_items) >= 7 else _registration_period  # noqa: F821, PLR2004
+            _exam_session = table_items[-8] if len(table_items) >= 8 else _exam_session  # noqa: F821, PLR2004
+            _id_and_name = table_items[-9] if len(table_items) >= 9 else _id_and_name  # noqa: F821, PLR2004
 
             # Split id and name into 2 different variables using regex
             id_and_name_regex = re.match(r"^\[(.+)\] (.+$)", _id_and_name.text())
-            id = id_and_name_regex.group(1)
+            exam_id = id_and_name_regex.group(1)
             name = id_and_name_regex.group(2)
 
             # Parse dates using ISO8601
@@ -143,7 +131,7 @@ def get_university_exams(university_faculties: dict[int, str]) -> list[Universit
             professors = professors.title()
 
             exam = UniversityExam(
-                id,
+                exam_id,
                 faculty_name,
                 name,
                 exam_date_full,
@@ -157,7 +145,7 @@ def get_university_exams(university_faculties: dict[int, str]) -> list[Universit
             )
             exams.append(exam)
 
-        print(f"Parsed exams for faculty {faculty_name}!")
+        logger.info("Parsed exams for faculty %s!", faculty_name)
 
     return exams
 
@@ -165,20 +153,21 @@ def get_university_exams(university_faculties: dict[int, str]) -> list[Universit
 # This function is needed because the registration period is in the format "dd/mm/yyyy - dd/mm/yyyy"
 # Normally datetime would work, but it doesn't work if the year has 3 digits (it is a known Python bug: https://bugs.python.org/issue13305)
 # So we have to parse the dates manually, just in case some professor decides to put a 3-digit year in the registration period
-def parse_registration_period(registration_period: str) -> str:
+def parse_registration_period(registration_period: str) -> tuple[str, str]:
     """
     Parse the registration period.
 
     Args:
-    registration_datetime: str, the registration period.
+        registration_period: str, the registration period.
 
     Returns:
-    str: A tuple containing the registration start and end dates.
-    """
+        str: A tuple containing the registration start and end dates.
 
+    """
     # Extract registration start
     registration_period_regex = re.match(
-        r"^([0-9]+)/([0-9]+)/([0-9]+) - ([0-9]+)/([0-9]+)/([0-9]+)", registration_period
+        r"^([0-9]+)/([0-9]+)/([0-9]+) - ([0-9]+)/([0-9]+)/([0-9]+)",
+        registration_period,
     )
     registration_start = f"{registration_period_regex.group(3)}-{registration_period_regex.group(2)}-{registration_period_regex.group(1)}"
     registration_end = f"{registration_period_regex.group(6)}-{registration_period_regex.group(5)}-{registration_period_regex.group(4)}"
@@ -195,8 +184,8 @@ def parse_exam_datetime(exam_datetime: str) -> tuple[str, str, str]:
 
     Returns:
     tuple[str, str, str]: A tuple containing the exam date, the exam time, and the partition.
-    """
 
+    """
     # Split date from time and partition
     exam_date_regex = re.match(r"^([0-9]{2}/[0-9]{2}/[0-9]{4})(.*$)", exam_datetime)
     left_to_parse = exam_date_regex.group(2)
@@ -235,7 +224,20 @@ if __name__ == "__main__":
     # Put the exams in a SQLite database
     db = sqlite3.connect("exams.db")
     db.execute(
-        "CREATE TABLE IF NOT EXISTS exams (id INTEGER, faculty TEXT, name TEXT, date TEXT, registration_start TEXT, registration_end TEXT, partition TEXT, link TEXT, professors TEXT, is_oral BOOLEAN, is_partial BOOLEAN);"
+        """\
+        CREATE TABLE IF NOT EXISTS exams (
+            id INTEGER,
+            faculty TEXT,
+            name TEXT,
+            date TEXT,
+            registration_start TEXT,
+            registration_end TEXT,
+            partition TEXT,
+            link TEXT,
+            professors TEXT,
+            is_oral BOOLEAN,
+            is_partial BOOLEAN
+        );""",
     )
     db.executemany(
         "INSERT INTO exams VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
@@ -259,4 +261,4 @@ if __name__ == "__main__":
     db.commit()
     db.close()
 
-    print("Done!")
+    logger.info("Done!")

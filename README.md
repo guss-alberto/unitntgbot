@@ -2,6 +2,13 @@
 
 Telegram Bot for the University of Trento
 
+## Fast start
+
+- Per i workspace vedere [uv workspaces](https://docs.astral.sh/uv/concepts/projects/workspaces/#workspace-sources) (non ho idea se possano essere utili)
+- Per installare le dipendenze `uv sync`
+- Per installare pre-commit `pre-commit install` (previa installazione di pre-commit)
+- Per eseguire main fare `uv run unitntgbot`
+
 ## Functional requirements
 
 - Notifications for lectures (x mins before start)
@@ -18,7 +25,7 @@ Telegram Bot for the University of Trento
 
 - broadcasting messages:
 
-  - University taxes to pay (with "already payed" option)
+  - University taxes to pay (with "already paid" option)
   - Modified lectures time / location / canceled
   - Exam sessions available (?)
 
