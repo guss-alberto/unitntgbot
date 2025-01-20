@@ -27,45 +27,61 @@ def add_week_to_db(date: datetime) -> None:
     (lesto_df,) = get_week_menu(date, 2)  # Get menu for ridotto
 
     # Convert to list and ignore the header
-    # For some reason they don't put menus for the weekend even if Tommaso Garr is open so we skip the weekend
-    lunch_list = lunch_df.T.to_numpy().tolist()[1:6]
-    dinner_list = dinner_df.T.to_numpy().tolist()[1:6]
-    lesto_list = lesto_df.T.to_numpy().tolist()[1:6]
+    # For some reason they don't put menus for the weekend even if Tommaso Garr is open so we add dropna
+    lunch_list = lunch_df.T.to_numpy()[1:]
+    dinner_list = dinner_df.T.to_numpy()[1:]
+    lesto_list = lesto_df.T.to_numpy()[1:]
 
+    db_rows: list[tuple[str, bool, str]] = []
     # for every day monday-friday
     for lunch, lesto, dinner in zip(lunch_list, lesto_list, dinner_list, strict=False):
         day = date.strftime("%Y-%m-%d")
 
-        string = "First course:\n"
-        for item in lunch[0][2:].split("\\n"):
-            r: bool = item.strip() == lesto[0][2:]
-            string += f"🍝{'®️' if r else ' '} {item.title()}\n"
+        # I'm harcoding fixed menu items, there is no point in scraping theese as well
+        string = "First course:\n🍝  Pasta All' Olio\n🍝  Riso All'olio\n"
 
-        string += "\nSecond Course:\n"
-        for item in lunch[1][2:].split("\\n"):
-            r: bool = item.strip() == lesto[1][2:]
-            string += f"🧆{'®️' if r else ' '} {item.title()}\n"
+        try:
+            # Since we replace <br> with "\\n" all entries start with "\\n" too, so we have to skip it every time. this is a hack beacuse operaunitn can't have a proper API
+            for item in lunch[0][2:].split("\\n"):
+                r: bool = item.strip() == lesto[0][2:]  # add ®️ if it's the pick for the ridotto menu
+                string += f"🍝{'®️' if r else ' '} {item.title()}\n"
 
-        string += "\nSide Dishes:\n"
-        for item in lunch[2][2:].split("\\n"):
-            string += f"🥦  {item.title()}\n"
+            string += "\nSecond Course:\n"
+            for item in lunch[1][2:].split("\\n"):
+                r: bool = item.strip() == lesto[1][2:]
+                string += f"🧆{'®️' if r else ' '} {item.title()}\n"
 
-        db.execute("""INSERT OR REPLACE INTO Menu VALUES (?, ?, ?)""", (day, False, string))
+            string += "\nSide Dishes:\n"
+            # Ridotto allows you to pick your side dish so the check is removed
+            for item in lunch[2][2:].split("\\n"):
+                string += f"🥦  {item.title()}\n"
+        except TypeError:
+            # convert empty days to empty table rows
+            string = ""
+        db_rows.append((day, False, string))
 
-        string = "First course:\n"
-        for item in dinner[0][2:].split("\\n"):
-            string += f"🍝  {item.title()}\n"
+        string = "First course:\n🍝  Pasta All' Olio\n🍝  Riso All'olio\n"
 
-        string += "\nSecond Course:\n"
-        for item in dinner[1][2:].split("\\n"):
-            string += f"🧆  {item.title()}\n"
+        try:
+            # Ridotto is not available for dinner so there is no need to run the check for it
+            for item in dinner[0][2:].split("\\n"):
+                string += f"🍝  {item.title()}\n"
 
-        string += "\nSide Dishes:\n"
-        for item in dinner[2][2:].split("\\n"):
-            string += f"🥦  {item.title()}\n"
+            string += "\nSecond Course:\n"
+            for item in dinner[1][2:].split("\\n"):
+                string += f"🧆  {item.title()}\n"
 
-        db.execute("""INSERT OR REPLACE INTO Menu VALUES (?, ?, ?)""", (day, True, string))
+            string += "\nSide Dishes:\n"
+            for item in dinner[2][2:].split("\\n"):
+                string += f"🥦  {item.title()}\n"
+
+        except TypeError:
+            # convert empty days to empty table rows
+            string = ""
+
+        db_rows.append((day, True, string))
         date += timedelta(days=1)
+    db.executemany("""INSERT OR REPLACE INTO Menu VALUES (?, ?, ?)""", db_rows)
     db.commit()
 
 
