@@ -1,4 +1,3 @@
-import logging
 import sqlite3
 from datetime import datetime, timedelta
 
@@ -7,14 +6,9 @@ import requests
 
 API_URL = "https://opera4u.operaunitn.cloud/ajax_tools/get_week"
 # The server checks for these headers, so we need to include them or the request will not work
-HEADERS = {
-    "X-Requested-With": "XMLHttpRequest",
-    "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-}
+HEADERS = {"X-Requested-With": "XMLHttpRequest", "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"}
 
 db = sqlite3.connect("canteen.db")
-
-logger = logging.getLogger(__name__)
 
 
 def get_week_menu(date: datetime, canteen_id: int = 7) -> list[pd.DataFrame]:
@@ -25,73 +19,53 @@ def get_week_menu(date: datetime, canteen_id: int = 7) -> list[pd.DataFrame]:
     return pd.read_html(html)
 
 
-def get_menu(date: datetime) -> None:  # noqa: C901
+def get_menu(date: datetime):
     date -= timedelta(days=date.weekday())
 
-    lunch_df, dinner_df = get_week_menu(
-        datetime.today(),
-        7,
-    )  # Get menu for Tommaso Garr
-    (lesto_df,) = get_week_menu(datetime.today(), 2)
+    lunch_df, dinner_df = get_week_menu(date, 7)  # Get menu for Tommaso Garr
+    (lesto_df,) = get_week_menu(date, 2)  # Get menu for ridotto
 
-    # for every day of the week
-    for i in range(5):
-        lunch = lunch_df.iloc[:, i + 1].tolist()
-        lesto = lesto_df.iloc[:, i + 1].tolist()
+    # Convert to list and ignore the header
+    # For some reason they don't put menus for the weekend even if Tommaso Garr is open so we skip the weekend
+    lunch_list = lunch_df.T.values.tolist()[1:6]
+    dinner_list = dinner_df.T.values.tolist()[1:6]
+    lesto_list = lesto_df.T.values.tolist()[1:6]
 
-        day = date + timedelta(days=i)
+    # for every day monday-friday
+    for lunch, lesto, dinner in zip(lunch_list, lesto_list, dinner_list, strict=False):
+        day = date.strftime("%A %Y-%m-%d")
 
-        string = f"Menu for day {day.strftime('%A %Y-%m-%d')}: \nFirst course:\n"
+        string = "First course:\n"
+        for item in lunch[0][2:].split("\\n"):
+            r: bool = item.strip() == lesto[0][2:]
+            string += f"🍝{'®️' if r else ' '} {item.title()}\n"
 
-        first_courses = lunch[0].split("\\n")[1:]
-        first_lesto = lesto[0][2:]
+        string += "\nSecond Course:\n"
+        for item in lunch[1][2:].split("\\n"):
+            r: bool = item.strip() == lesto[1][2:]
+            string += f"🧆{'®️' if r else ' '} {item.title()}\n"
 
-        for item in first_courses:
-            if item.strip() == first_lesto:
-                string += f"🍝®️ {item.title()}\n"
-            else:
-                string += f"🍝  {item.title()}\n"
-
-        string += "Second Course:\n"
-
-        second_courses = lunch[1].split("\\n")[1:]
-        second_lesto = lesto[1][2:]
-
-        for item in second_courses:
-            if item.strip() == second_lesto:
-                string += f"🧆®️ {item.title()}\n"
-            else:
-                string += f"🧆  {item.title()}\n"
-
-        string += "Side Dishes:\n"
-
-        for item in lunch[2].split("\\n")[1:]:
+        string += "\nSide Dishes:\n"
+        for item in lunch[2][2:].split("\\n"):
             string += f"🥦  {item.title()}\n"
 
-        logger.info(string)
+        db.execute("""INSERT OR REPLACE INTO Menu VALUES (?, ?, ?)""", (day, False, string))
 
-    # Dinner
-    for i in range(5):
-        dinner = dinner_df.iloc[:, i + 1].tolist()
-
-        day = date + timedelta(days=i)
-
-        string = f"Dinner Menu for day {day.strftime('%A %Y-%m-%d')}: \nFirst course:\n"
-
-        for item in dinner[0].split("\\n")[1:]:
+        string = "First course:\n"
+        for item in dinner[0][2:].split("\\n"):
             string += f"🍝  {item.title()}\n"
 
-        string += "Second Course:\n"
-
-        for item in dinner[1].split("\\n")[1:]:
+        string += "\nSecond Course:\n"
+        for item in dinner[1][2:].split("\\n"):
             string += f"🧆  {item.title()}\n"
 
-        string += "Side Dishes:\n"
-
-        for item in dinner[2].split("\\n")[1:]:
+        string += "\nSide Dishes:\n"
+        for item in dinner[2][2:].split("\\n"):
             string += f"🥦  {item.title()}\n"
 
-        logger.info(string)
+        db.execute("""INSERT OR REPLACE INTO Menu VALUES (?, ?, ?)""", (day, True, string))
+        date += timedelta(days=1)
+    db.commit()
 
 
 if __name__ == "__main__":
@@ -99,12 +73,12 @@ if __name__ == "__main__":
         db.execute("""CREATE TABLE Menu (
             date       TEXT                 NOT NULL,
             is_dinner  BOOLEAN              NOT NULL DEFAULT FALSE,
+            menu       TEXT,
             PRIMARY KEY ( date, is_dinner )
             );""")
 
     except sqlite3.OperationalError as e:
         # If the error is not that the table already exists, raise the error again
         if "already exists" not in str(e):
-            raise
-    menu = get_menu(datetime.today())
-    logger.info(menu)
+            raise e
+    get_menu(datetime.today())
