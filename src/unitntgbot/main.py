@@ -1,22 +1,22 @@
-#!/usr/bin/env python3
-
-import argparse
 import os
-from dotenv import load_dotenv
 
+from dotenv import load_dotenv
 from telegram.ext import ApplicationBuilder, CallbackQueryHandler, CommandHandler
 
+from unitntgbot.handlers.menu import menu_callback_handler, menu_handler
+from unitntgbot.handlers.rooms import rooms_callback_handler, rooms_handler
+
 # Handler functions from other files that the Telegram bot will use
-from handlers.setup import setup_handler, setup_callback_handler
-from handlers.rooms import rooms_handler, rooms_callback_handler
-from handlers.menu import menu_handler, menu_callback_handler
+from unitntgbot.handlers.setup import setup_callback_handler, setup_handler
+
+load_dotenv()
+TELEGRAM_BOT_TOKEN: str | None = os.getenv("TELEGRAM_BOT_TOKEN")
 
 
 def main() -> None:
-    load_dotenv()
-    TELEGRAM_BOT_TOKEN: str | None = os.getenv("TELEGRAM_BOT_TOKEN")
-
-    assert TELEGRAM_BOT_TOKEN is not None, "TELEGRAM_BOT_TOKEN is not set in .env file"
+    if not TELEGRAM_BOT_TOKEN:
+        msg = "TELEGRAM_BOT_TOKEN is not set in .env file"
+        raise ValueError(msg)
 
     app = ApplicationBuilder().token(TELEGRAM_BOT_TOKEN).build()
 
@@ -28,7 +28,3 @@ def main() -> None:
     app.add_handler(CallbackQueryHandler(menu_callback_handler, pattern="^menu"))
 
     app.run_polling()
-
-
-if __name__ == "__main__":
-    main()

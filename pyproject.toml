@@ -1,0 +1,57 @@
+[project]
+name = "unitntgbot"
+version = "0.1.0"
+description = "The Telegram bot"
+readme = "README.md"
+authors = [
+    { name = "Elia Tomaselli", email = "elia.tomaselli@gmail.com" },
+    { name = "Lorenzo Bevilacqua", email = "43483037+ardubev16@users.noreply.github.com" },
+]
+requires-python = ">=3.13"
+dependencies = [
+    "pandas>=2.2.3",
+    "pyquery>=2.0.1",
+    "python-dotenv>=1.0.1",
+    "python-telegram-bot>=21.9",
+    "requests>=2.32.3",
+]
+
+[dependency-groups]
+dev = ["ruff==0.8.4", "vulture==2.14"]
+
+[project.scripts]
+unitntgbot = "unitntgbot:main"
+
+# [tool.uv.workspace]
+# members = ["frontend"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.pyright]
+pythonVersion = "3.13"
+
+[tool.ruff]
+target-version = "py313"
+line-length = 120
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+    "ANN204", # Missing type annotation for special method
+    "D1",     # Missing docstring in public: module, class, method, function, package, magic method, nested class, init
+    "D203",   # 1 blank line required before class docstring
+    "D212",   # Multi-line docstring summary should start at the first line
+    "DTZ",    # No Naive Datetime
+    "E501",   # Line is too long
+    "ERA001", # Found commented out code
+    "FIX",    # Line contains FIXME, TODO, XXX, HACK, consider resolving the issue
+    "S101",   # Checks for uses of the assert keyword.
+    "S311",   # Standard pseudo-random generators are not suitable for cryptographic purposes
+    "TD002",  # Checks that a TODO comment includes an author.
+    "TRY400", # Use logging.exception() instead of logging.error() for logging exceptions
+]
+
+[tool.ruff.lint.per-file-ignores]
+"./src/lmbatbot/migrations/versions/*" = ["D400", "D415"]

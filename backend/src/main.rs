@@ -25,7 +25,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     pretty_env_logger::init();
     log::info!("Starting command bot...");
-    
+
     // let handler = dptree::entry();
 
     let bot = Bot::from_env();

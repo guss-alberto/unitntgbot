@@ -1,20 +1,17 @@
-#!/usr/bin/env python3
-
-import argparse
-import os
-from dotenv import load_dotenv
-
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import ApplicationBuilder, CallbackQueryHandler, ContextTypes, CommandHandler
+from telegram import Update
+from telegram.ext import ContextTypes
 
 
 async def hello(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    update.message.reply_markdown_v2()
+    pass
+    # update.message.reply_markdown_v2()
     # await update.message.reply_text(f"Hello {update.effective_user.first_name}")
+
 
 # Qui si può impostare il dipartimento di default
 async def setup(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     pass
+
 
 # Define the start function with inline buttons
 async def rooms(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -29,8 +26,10 @@ async def rooms(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
     # await update.message.reply_text("Choose an option:", reply_markup=reply_markup)
 
+
 async def menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     pass
+
 
 # Callback function for handling button clicks
 # async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -60,22 +59,23 @@ async def menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 # /menu cena ............ Mostra il menu del ristorante Cena (solo a Tommaso Gar)
 # /menu calendario ...... Scarica il PDF del calendario (da decidere)
 
-def main() -> None:
-    load_dotenv()
-    TELEGRAM_BOT_TOKEN: str | None = os.getenv("TELEGRAM_BOT_TOKEN")
 
-    assert TELEGRAM_BOT_TOKEN is not None, "TELEGRAM_BOT_TOKEN is not set in .env file"
-
-    app = ApplicationBuilder().token(TELEGRAM_BOT_TOKEN).build()
-
-    app.add_handler(CommandHandler("setup", setup))
-    app.add_handler(CommandHandler("rooms", rooms))
-    app.add_handler(CallbackQueryHandler(rooms_callback_handler, pattern="^rooms"))
-    app.add_handler(CommandHandler("menu", menu))
-    app.add_handler(CallbackQueryHandler(menu_callback_handler, pattern="^menu"))
-
-    app.run_polling()
-
-
-if __name__ == "__main__":
-    main()
+# def main() -> None:
+#     load_dotenv()
+#     TELEGRAM_BOT_TOKEN: str | None = os.getenv("TELEGRAM_BOT_TOKEN")
+#
+#     assert TELEGRAM_BOT_TOKEN is not None, "TELEGRAM_BOT_TOKEN is not set in .env file"
+#
+#     app = ApplicationBuilder().token(TELEGRAM_BOT_TOKEN).build()
+#
+#     app.add_handler(CommandHandler("setup", setup))
+#     app.add_handler(CommandHandler("rooms", rooms))
+#     # app.add_handler(CallbackQueryHandler(rooms_callback_handler, pattern="^rooms"))
+#     app.add_handler(CommandHandler("menu", menu))
+#     # app.add_handler(CallbackQueryHandler(menu_callback_handler, pattern="^menu"))
+#
+#     app.run_polling()
+#
+#
+# if __name__ == "__main__":
+#     main()
