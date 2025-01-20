@@ -1,5 +1,6 @@
 import sqlite3
 from datetime import datetime, timedelta
+from io import StringIO
 
 import pandas as pd
 import requests
@@ -16,7 +17,7 @@ def get_week_menu(date: datetime, canteen_id: int = 7) -> list[pd.DataFrame]:
     response = requests.post(API_URL, headers=HEADERS, data=data, timeout=30)
     html = response.json().get("visualizzazione_settimanale").replace("<br>", "\\n")
 
-    return pd.read_html(html)
+    return pd.read_html(StringIO(html))
 
 
 def add_week_to_db(date: datetime) -> None:
@@ -27,13 +28,13 @@ def add_week_to_db(date: datetime) -> None:
 
     # Convert to list and ignore the header
     # For some reason they don't put menus for the weekend even if Tommaso Garr is open so we skip the weekend
-    lunch_list = lunch_df.T.values.tolist()[1:6]
-    dinner_list = dinner_df.T.values.tolist()[1:6]
-    lesto_list = lesto_df.T.values.tolist()[1:6]
+    lunch_list = lunch_df.T.to_numpy().tolist()[1:6]
+    dinner_list = dinner_df.T.to_numpy().tolist()[1:6]
+    lesto_list = lesto_df.T.to_numpy().tolist()[1:6]
 
     # for every day monday-friday
     for lunch, lesto, dinner in zip(lunch_list, lesto_list, dinner_list, strict=False):
-        day = date.strftime("%A %Y-%m-%d")
+        day = date.strftime("%Y-%m-%d")
 
         string = "First course:\n"
         for item in lunch[0][2:].split("\\n"):
