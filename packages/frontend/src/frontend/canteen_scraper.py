@@ -19,7 +19,7 @@ def get_week_menu(date: datetime, canteen_id: int = 7) -> list[pd.DataFrame]:
     return pd.read_html(html)
 
 
-def get_menu(date: datetime):
+def add_week_to_db(date: datetime) -> None:
     date -= timedelta(days=date.weekday())
 
     lunch_df, dinner_df = get_week_menu(date, 7)  # Get menu for Tommaso Garr
@@ -69,16 +69,11 @@ def get_menu(date: datetime):
 
 
 if __name__ == "__main__":
-    try:
-        db.execute("""CREATE TABLE Menu (
-            date       TEXT                 NOT NULL,
-            is_dinner  BOOLEAN              NOT NULL DEFAULT FALSE,
-            menu       TEXT,
-            PRIMARY KEY ( date, is_dinner )
-            );""")
+    db.execute("""CREATE TABLE IF NOT EXISTS Menu (
+        date       TEXT                 NOT NULL,
+        is_dinner  BOOLEAN              NOT NULL DEFAULT FALSE,
+        menu       TEXT,
+        PRIMARY KEY ( date, is_dinner )
+        );""")
 
-    except sqlite3.OperationalError as e:
-        # If the error is not that the table already exists, raise the error again
-        if "already exists" not in str(e):
-            raise e
-    get_menu(datetime.today())
+    add_week_to_db(datetime.today())
