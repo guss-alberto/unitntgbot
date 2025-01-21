@@ -244,6 +244,7 @@ def parse_exam_datetime(exam_datetime: str) -> tuple[str, str]:
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
+
     # Parse the university exams
     faculties = get_university_faculties()
     exams = get_university_exams(faculties)
@@ -252,7 +253,7 @@ if __name__ == "__main__":
     db = sqlite3.connect("db/exams.db")
     db.execute(
         """\
-        CREATE TABLE IF NOT EXISTS exams (
+        CREATE TABLE IF NOT EXISTS Exams (
             id TEXT,
             faculty TEXT,
             name TEXT,

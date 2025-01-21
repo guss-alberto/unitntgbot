@@ -7,7 +7,10 @@ authors = [
     { name = "Alberto Gusmeroli", email = "96133902+guss-alberto@users.noreply.github.com" }
 ]
 requires-python = ">=3.13"
-dependencies = []
+dependencies = [
+    "pyquery>=2.0.1",
+    "requests>=2.32.3",
+]
 
 [project.scripts]
 exams = "exams:main"
