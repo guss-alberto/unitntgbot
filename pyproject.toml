@@ -57,4 +57,4 @@ ignore = [
 "./src/lmbatbot/migrations/versions/*" = ["D400", "D415"]
 
 [tool.uv.workspace]
-members = ["backend/canteen", "backend/exams"]
+members = ["backend/canteen", "backend/exams", "backend/lectures"]
