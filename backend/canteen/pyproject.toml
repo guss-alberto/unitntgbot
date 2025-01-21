@@ -1,0 +1,17 @@
+[project]
+name = "canteen"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Alberto Gusmeroli", email = "96133902+guss-alberto@users.noreply.github.com" }
+]
+requires-python = ">=3.13"
+dependencies = []
+
+[project.scripts]
+canteen = "canteen:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
