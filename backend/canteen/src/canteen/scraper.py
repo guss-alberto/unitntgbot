@@ -83,16 +83,16 @@ def add_week_to_db(date: datetime) -> None:
     db.commit()
 
 
-def get_or_update(date: datetime, dinner: bool = False) -> str:
-    results = get_menu(date, dinner)
+def get_or_update(date: datetime, *, dinner: bool = False) -> str:
+    results = get_menu(date, dinner=dinner)
     if not results:
         add_week_to_db(date)
-        results = get_menu(date, dinner)
+        results = get_menu(date, dinner=dinner)
 
     return "a"
 
 
-def get_menu(date: datetime, dinner: bool = False) -> str | None:
+def get_menu(date: datetime, *,dinner: bool = False) -> str | None:
     cur = db.cursor()
     cur.execute("SELECT menu FROM Menu WHERE date == ? AND is_dinner == ? LIMIT 1", (date.strftime("%Y-%m-%d"), dinner))
     results = cur.fetchall()

@@ -1,9 +1,10 @@
-from dataclasses import dataclass
-from datetime import datetime
-import requests
 import logging
 import re
 import sqlite3
+from dataclasses import dataclass
+from datetime import datetime
+
+import requests
 
 logger = logging.getLogger(__name__)
 
@@ -31,10 +32,10 @@ class UniversityLecture:
             self.is_cancelled,
         )
 
-def iso_normalize_date(date: str) -> str:
-    d: list[str] = [d.strip() for d in date.split("-")]
-    return f"{d[2]:0>4}-{d[1]:0>2}-{d[0]:0>2}"
 
+def iso_normalize_date(date: str) -> str:
+    d: list[str] = date.split("-")
+    return f"{d[2]:0>4}-{d[1]:0>2}-{d[0]:0>2}"
 
 
 def get_courses_from_easyacademy(courses: set[str], date: datetime) -> list[UniversityLecture]:
@@ -43,9 +44,10 @@ def get_courses_from_easyacademy(courses: set[str], date: datetime) -> list[Univ
 
     Args:
         courses (set[str]): The set of courses the student is enrolled in, similar to "EC146220_MASSA", "EC145810_MARCH" or "EC145614_BOATO".
-
+        date (datetime): the date to get lectures from, will get lectures from the whole week the date is in
     Returns:
         list[UniversityLesson]: A list of UniversityLesson objects.
+
     """
     lectures = []
 
@@ -59,14 +61,12 @@ def get_courses_from_easyacademy(courses: set[str], date: datetime) -> list[Univ
             "date": date.strftime("%d-%m-%Y"),
             "attivita[]": list(courses),
         },
+        timeout=30,
     )
     data = response.json()
 
-    with open("tmp2.json", "w") as f:
-        f.write(response.text)
-
     for cella in data["celle"]:
-        id: str = cella["id"]
+        couse_id: str = cella["id"]
         course_id: str = cella["codice_insegnamento"]
         course_name: str = cella["nome_insegnamento"]
         lecturer: str = cella["docente"]
@@ -77,17 +77,14 @@ def get_courses_from_easyacademy(courses: set[str], date: datetime) -> list[Univ
         start: str = f"{lecture_date}T{cella["ora_inizio"]}"
         end: str = f"{lecture_date}T{cella["ora_fine"]}"
 
-        # Get the location of the lesson, there could be cases where the "codice_aula" value is empty
-        # (e.g. if a lesson is at the location "Wave Lab (ex- Wireless Technologies Lab)") 
         location: str = cella["codice_aula"]
-        if location:
-            # This is to remove the prefix code of the site (Povo has code E0503 for example, so A110 is written as "E0503/A110")
-            location = location.split("/")[-1]
-        else:
-            location = cella["aula"]
+        # If codice aula exists, strip the building code (Povo has code E0503 for example, so A110 is written as "E0503/A110")
+        # There could be cases where the "codice_aula" value is empty
+        # (e.g. if a lesson is at the location "Wave Lab (ex- Wireless Technologies Lab)")
+        location = location.split("/")[-1] if location else cella["aula"]
 
         lecture = UniversityLecture(
-            id,
+            couse_id,
             course_id,
             course_name,
             lecturer,
@@ -111,8 +108,8 @@ def import_from_unitrentoapp(url: str) -> set[str]:
 
     Returns:
         set[str]: The set of courses the student is enrolled in, similar to "EC146220_MASSA", "EC145810_MARCH" or "EC145614_BOATO".
-    """
 
+    """
     courses: set[str] = set()
 
     # Check if the URL is valid
@@ -138,17 +135,17 @@ if __name__ == "__main__":
 
     # Parse the courses
     courses = import_from_unitrentoapp(url)
-    logger.info(f"Imported courses: {courses}")
+    logger.info("Imported courses: %s", courses)
 
     lectures = get_courses_from_easyacademy(courses, date)
-    logger.info(f"Found {len(lectures)} lectures")
+    logger.info("Found %s", len(lectures))
 
     # Put the lectures in a SQLite database
     db = sqlite3.connect("db/lectures.db")
     db.execute(
         """\
         CREATE TABLE IF NOT EXISTS Lectures (
-            id TEXT PRIMARY KEY, 
+            id TEXT PRIMARY KEY,
             course_id TEXT,
             course_name TEXT,
             lecturer TEXT,
@@ -166,4 +163,3 @@ if __name__ == "__main__":
     db.close()
 
     logger.info("Done!")
-
