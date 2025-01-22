@@ -1,12 +1,9 @@
-import logging
-import re
-import sqlite3
 from dataclasses import dataclass
 from datetime import datetime
-
+import logging
+import re
 import requests
-
-logger = logging.getLogger(__name__)
+import sqlite3
 
 
 @dataclass
@@ -33,7 +30,7 @@ class UniversityLecture:
         )
 
 
-def iso_normalize_date(date: str) -> str:
+def _iso_normalize_date(date: str) -> str:
     d: list[str] = date.split("-")
     return f"{d[2]:0>4}-{d[1]:0>2}-{d[0]:0>2}"
 
@@ -73,7 +70,7 @@ def get_courses_from_easyacademy(courses: set[str], date: datetime) -> list[Univ
         is_cancelled: bool = cella["Annullato"] == "1"
 
         # Convert the date from "dd-mm-YYYY" to "YYYY-mm-dd", and merge it with the start and end times
-        lecture_date: str = iso_normalize_date(cella["data"])
+        lecture_date: str = _iso_normalize_date(cella["data"])
         start: str = f"{lecture_date}T{cella["ora_inizio"]}"
         end: str = f"{lecture_date}T{cella["ora_fine"]}"
 
@@ -127,7 +124,8 @@ def import_from_unitrentoapp(url: str) -> set[str]:
     return courses
 
 
-if __name__ == "__main__":
+def entrypoint():
+    logger = logging.getLogger(__name__)
     logging.basicConfig(level=logging.INFO)
 
     url = "https://webapi.unitn.it/unitrentoapp/profile/me/calendar/EA632CDA155A04EB25CEC0B212EED9CCBA873C781F6045799C9D7CB2BB0FC6F9"

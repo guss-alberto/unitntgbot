@@ -22,9 +22,15 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 FROM python:3.13.0-slim-bookworm
 WORKDIR /app
 
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+    dumb-init \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
 COPY --from=builder /app /app
 
 # Place executables in the environment at the front of the path
 ENV PATH="/app/.venv/bin:$PATH"
 
-CMD ["unitntgbot"]
+ENTRYPOINT ["/usr/bin/dumb-init", "--", "unitntgbot"]

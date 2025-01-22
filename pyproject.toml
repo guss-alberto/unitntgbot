@@ -22,9 +22,6 @@ dev = ["ruff==0.8.4", "vulture==2.14"]
 [project.scripts]
 unitntgbot = "unitntgbot:main"
 
-# [tool.uv.workspace]
-# members = ["frontend"]
-
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
@@ -55,6 +52,3 @@ ignore = [
 
 [tool.ruff.lint.per-file-ignores]
 "./src/lmbatbot/migrations/versions/*" = ["D400", "D415"]
-
-[tool.uv.workspace]
-members = ["backend/canteen", "backend/exams", "backend/lectures"]

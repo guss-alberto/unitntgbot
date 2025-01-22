@@ -1,30 +1,39 @@
-import os
+import argparse
+from enum import StrEnum
 
-from dotenv import load_dotenv
-from telegram.ext import ApplicationBuilder, CallbackQueryHandler, CommandHandler
 
-from unitntgbot.handlers.menu import menu_callback_handler, menu_handler
-from unitntgbot.handlers.rooms import rooms_callback_handler, rooms_handler
-
-# Handler functions from other files that the Telegram bot will use
-from unitntgbot.handlers.setup import setup_callback_handler, setup_handler
-
-load_dotenv()
-TELEGRAM_BOT_TOKEN: str | None = os.getenv("TELEGRAM_BOT_TOKEN")
+class Service(StrEnum):
+    BOT = "bot"
+    CANTEEN = "canteen"
+    EXAMS = "exams"
+    LECTURES = "lectures"
 
 
 def main() -> None:
-    if not TELEGRAM_BOT_TOKEN:
-        msg = "TELEGRAM_BOT_TOKEN is not set in .env file"
-        raise ValueError(msg)
+    # Create the parser
+    parser = argparse.ArgumentParser(description="A boilerplate script for argparse usage.")
 
-    app = ApplicationBuilder().token(TELEGRAM_BOT_TOKEN).build()
+    # Add arguments
+    parser.add_argument(
+        "service",
+        choices=list(Service),
+        help=f"Select a service from: {', '.join([service.value for service in Service])}",
+    )
+    # parser.add_argument("-i", "--input", type=str, help="Path to the input file.")
+    # parser.add_argument("-o", "--output", type=str, help="Path to the output file.")
+    # parser.add_argument("-v", "--verbose", action="store_true", help="Enable verbose output.")
 
-    app.add_handler(CommandHandler("setup", setup_handler))
-    app.add_handler(CallbackQueryHandler(setup_callback_handler, pattern="^setup"))
-    app.add_handler(CommandHandler("rooms", rooms_handler))
-    app.add_handler(CallbackQueryHandler(rooms_callback_handler, pattern="^rooms"))
-    app.add_handler(CommandHandler("menu", menu_handler))
-    app.add_handler(CallbackQueryHandler(menu_callback_handler, pattern="^menu"))
+    args = parser.parse_args()
+    service = Service(args.service)
 
-    app.run_polling()
+    match service:
+        case Service.BOT:
+            from unitntgbot.bot import entrypoint
+        case Service.CANTEEN:
+            from unitntgbot.backend.canteen import entrypoint
+        case Service.EXAMS:
+            from unitntgbot.backend.exams import entrypoint
+        case Service.LECTURES:
+            from unitntgbot.backend.lectures import entrypoint
+
+    entrypoint()

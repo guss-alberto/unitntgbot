@@ -144,7 +144,7 @@ def get_university_exams(university_faculties: dict[int, str]) -> list[Universit
                     continue
 
                 # Parse dates using ISO8601
-                registration_start, registration_end = parse_registration_period(
+                registration_start, registration_end = _parse_registration_period(
                     str(cached_values["registration_period"].text()),
                 )
 
@@ -154,7 +154,7 @@ def get_university_exams(university_faculties: dict[int, str]) -> list[Universit
                 exam_link = BASE_URL + exam_link
 
                 # Extract date time
-                exam_date, partition = parse_exam_datetime(str(cached_values["exam_datetime"].text()))
+                exam_date, partition = _parse_exam_datetime(str(cached_values["exam_datetime"].text()))
 
                 is_oral: bool = cached_values["is_oral"].text() == "Orale"
                 is_partial: bool = cached_values["is_partial"].text() == "Prova Parziale"
@@ -186,14 +186,14 @@ def get_university_exams(university_faculties: dict[int, str]) -> list[Universit
 
 # Converts a date in the format D/M/Y into YYYY-MM-DD
 # This function is needed because the registration period is in the format "dd/mm/yyyy - dd/mm/yyyy"
-def iso_normalize_date(date: str) -> str:
+def _iso_normalize_date(date: str) -> str:
     d: list[str] = [d.strip() for d in date.split("/")]
     return f"{d[2]:0>4}-{d[1]:0>2}-{d[0]:0>2}"
 
 
 # Normally datetime would work, but it doesn't work if the year has 3 digits (it is a known Python bug: https://bugs.python.org/issue13305)
 # So we have to parse the dates manually, just in case some professor decides to put a 3-digit year in the registration period
-def parse_registration_period(registration_period: str) -> tuple[str, str]:
+def _parse_registration_period(registration_period: str) -> tuple[str, str]:
     """
     Parse the registration period.
 
@@ -206,13 +206,13 @@ def parse_registration_period(registration_period: str) -> tuple[str, str]:
     """
     # Extract registration start
     registration_period_split = registration_period.split(" - ")
-    registration_start = iso_normalize_date(registration_period_split[0])
-    registration_end = iso_normalize_date(registration_period_split[1])
+    registration_start = _iso_normalize_date(registration_period_split[0])
+    registration_end = _iso_normalize_date(registration_period_split[1])
 
     return registration_start, registration_end
 
 
-def parse_exam_datetime(exam_datetime: str) -> tuple[str, str]:
+def _parse_exam_datetime(exam_datetime: str) -> tuple[str, str]:
     """
     Parse the exam date and time.
 
@@ -231,7 +231,7 @@ def parse_exam_datetime(exam_datetime: str) -> tuple[str, str]:
     left_to_parse = " -".join(left_to_parse).strip()
 
     # Extract date
-    exam_date = iso_normalize_date(exam_date)
+    exam_date = _iso_normalize_date(exam_date)
 
     # Extract time
     exam_time_regex = re.search(r"([0-9]{2}:[0-9]{2})", left_to_parse)
@@ -256,7 +256,7 @@ def parse_exam_datetime(exam_datetime: str) -> tuple[str, str]:
 # FAC_ID=10026&CDS_ID=X&AD_ID=X&DOCENTE_ID=X&DATA_ESA=&form_id_form1=form1&actionBar1=Cerca
 
 
-if __name__ == "__main__":
+def entrypoint():
     logging.basicConfig(level=logging.INFO)
 
     # Parse the university exams

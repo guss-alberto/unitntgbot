@@ -1,0 +1,94 @@
+from flask import g, Flask, request, jsonify
+import sqlite3
+from datetime import datetime, timedelta
+from .database import MAX_OFFSET_DAYS, get_menu
+
+DATABASE = "db/canteen.db"
+
+app = Flask(__name__)
+
+
+def _offset_and_format_date(date: datetime, days: int) -> str | None:
+    offset_date = date + timedelta(days=days)
+    delay = datetime.now() - offset_date
+    if abs(delay.days) > MAX_OFFSET_DAYS:
+        return None
+    return offset_date.strftime("%Y-%d-%m")
+
+
+def _get_db():
+    db = getattr(g, "_database", None)
+    if db is None:
+        db = g._database = sqlite3.connect(DATABASE)
+    return db
+
+
+@app.teardown_appcontext
+def _close_connection(exception):
+    db = getattr(g, "_database", None)
+    if db is not None:
+        db.close()
+
+
+@app.route("/lunch/<string:day>")
+def get_lunch(day: str):
+    try:
+        date = datetime.fromisoformat(day)
+        menu = get_menu(_get_db(), date)
+        return jsonify(
+            {
+                "message": menu,
+                "next": _offset_and_format_date(date, 1),
+                "prev": _offset_and_format_date(date, -1),
+                "nextweek": _offset_and_format_date(date, 7),
+            }
+        )
+    except Exception as e:
+        return jsonify({"message": f"Server error {e}"}, 500)
+
+
+@app.route("/dinner/<string:day>")
+def get_dinner(day: str):
+    try:
+        date = datetime.fromisoformat(day)
+        menu = get_menu(_get_db(), date, dinner=True)
+        return jsonify(
+            {
+                "message": menu,
+                "next": _offset_and_format_date(date, 1),
+                "prev": _offset_and_format_date(date, -1),
+                "nextweek": _offset_and_format_date(date, 7),
+            }
+        )
+    except Exception as e:
+        return jsonify({"message": f"Server error {e}"}, 500)
+
+
+def entrypoint():
+    app.run(port=5000, debug=True)
+
+"""
+src/pytgtnbot
+- bot
+    - handlers
+    - entrypoint.py
+- backend
+    - canteen
+    - exams
+    - lectures
+- main.py    
+    
+tgtnbot bot
+tgtnbot backend canteen
+
+services:
+    bot:
+        image: lastessa
+        cmd: tgtnbot bot
+        env:
+            BACKEND_CANTEEN_URL: http://backend-canteen:8080
+
+    backend-canteen:
+        image: lastessa
+        cmd: tgtnbot backend canteen
+"""
