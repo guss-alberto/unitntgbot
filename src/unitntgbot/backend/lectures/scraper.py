@@ -1,9 +1,10 @@
-from dataclasses import dataclass
-from datetime import datetime
 import logging
 import re
-import requests
 import sqlite3
+from dataclasses import dataclass
+from datetime import datetime
+
+import requests
 
 
 @dataclass
@@ -71,8 +72,8 @@ def get_courses_from_easyacademy(courses: set[str], date: datetime) -> list[Univ
 
         # Convert the date from "dd-mm-YYYY" to "YYYY-mm-dd", and merge it with the start and end times
         lecture_date: str = _iso_normalize_date(cella["data"])
-        start: str = f"{lecture_date}T{cella["ora_inizio"]}"
-        end: str = f"{lecture_date}T{cella["ora_fine"]}"
+        start: str = f"{lecture_date}T{cella['ora_inizio']}"
+        end: str = f"{lecture_date}T{cella['ora_fine']}"
 
         location: str = cella["codice_aula"]
         # If codice aula exists, strip the building code (Povo has code E0503 for example, so A110 is written as "E0503/A110")
@@ -124,7 +125,7 @@ def import_from_unitrentoapp(url: str) -> set[str]:
     return courses
 
 
-def entrypoint():
+def entrypoint() -> None:
     logger = logging.getLogger(__name__)
     logging.basicConfig(level=logging.INFO)
 

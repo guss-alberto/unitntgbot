@@ -1,7 +1,6 @@
 import os
 
 from dotenv import load_dotenv
-from telegram import Bot, BotCommand
 from telegram.ext import ApplicationBuilder, CallbackQueryHandler, CommandHandler
 
 from unitntgbot.bot.handlers.menu import menu_callback_handler, menu_handler

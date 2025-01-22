@@ -256,7 +256,7 @@ def _parse_exam_datetime(exam_datetime: str) -> tuple[str, str]:
 # FAC_ID=10026&CDS_ID=X&AD_ID=X&DOCENTE_ID=X&DATA_ESA=&form_id_form1=form1&actionBar1=Cerca
 
 
-def entrypoint():
+def entrypoint() -> None:
     logging.basicConfig(level=logging.INFO)
 
     # Parse the university exams

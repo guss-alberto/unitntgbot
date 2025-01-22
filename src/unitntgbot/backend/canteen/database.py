@@ -1,5 +1,5 @@
-from datetime import datetime, timedelta
 import sqlite3
+from datetime import datetime, timedelta
 
 from .scraper import get_week_meals
 
@@ -14,7 +14,7 @@ def create_table(db: sqlite3.Connection) -> None:
         is_dinner  BOOLEAN              NOT NULL DEFAULT FALSE,
         menu       TEXT,
         PRIMARY KEY ( date, is_dinner )
-        );"""
+        );""",
     )
     db.commit()
 
@@ -28,16 +28,16 @@ def update_db(db: sqlite3.Connection, date: datetime) -> None:
     db.commit()
 
 
-def get_menu(db: sqlite3.Connection, date: datetime, *, dinner=False) -> str:
+def get_menu(db: sqlite3.Connection, date: datetime, *, dinner: bool = False) -> str:
     cur = db.cursor()
     cur.execute("SELECT menu FROM Menu WHERE date == ? AND is_dinner == ? LIMIT 1", (date.strftime("%Y-%m-%d"), dinner))
     menu = cur.fetchone()
     cur.close()
 
-    output = f"{"Dinner" if dinner else "Lunch"} menu for {date.strftime("%A %Y-%d-%m")}\n"
+    output = f"{'Dinner' if dinner else 'Lunch'} menu for {date.strftime('%A %Y-%d-%m')}\n"
     if menu and menu[0] != "":
         # Hardcode static menu items, not good practice but they don't change
-        output += f"\nFirst Course:\n 🍝  Riso All' Olio\n 🍝  Pasta All' Olio\n"
+        output += "\nFirst Course:\n 🍝  Riso All' Olio\n 🍝  Pasta All' Olio\n"
         output += menu[0]
         if not dinner:
             output += "\n'®️' indicates that the menu item is indicated for the 'Ridotto' menu"

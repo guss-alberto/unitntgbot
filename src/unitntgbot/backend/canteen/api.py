@@ -1,6 +1,8 @@
-from flask import g, Flask, request, jsonify
 import sqlite3
 from datetime import datetime, timedelta
+
+from flask import Flask, Response, g, jsonify
+
 from .database import MAX_OFFSET_DAYS, get_menu
 
 DATABASE = "db/canteen.db"
@@ -16,7 +18,7 @@ def _offset_and_format_date(date: datetime, days: int) -> str | None:
     return offset_date.strftime("%Y-%d-%m")
 
 
-def _get_db():
+def _get_db() -> sqlite3.Connection:
     db = getattr(g, "_database", None)
     if db is None:
         db = g._database = sqlite3.connect(DATABASE)
@@ -31,7 +33,7 @@ def _close_connection(exception):
 
 
 @app.route("/lunch/<string:day>")
-def get_lunch(day: str):
+def get_lunch(day: str) -> Response:
     try:
         date = datetime.fromisoformat(day)
         menu = get_menu(_get_db(), date)
@@ -41,14 +43,14 @@ def get_lunch(day: str):
                 "next": _offset_and_format_date(date, 1),
                 "prev": _offset_and_format_date(date, -1),
                 "nextweek": _offset_and_format_date(date, 7),
-            }
+            },
         )
     except Exception as e:
         return jsonify({"message": f"Server error {e}"}, 500)
 
 
 @app.route("/dinner/<string:day>")
-def get_dinner(day: str):
+def get_dinner(day: str) -> Response:
     try:
         date = datetime.fromisoformat(day)
         menu = get_menu(_get_db(), date, dinner=True)
@@ -58,14 +60,15 @@ def get_dinner(day: str):
                 "next": _offset_and_format_date(date, 1),
                 "prev": _offset_and_format_date(date, -1),
                 "nextweek": _offset_and_format_date(date, 7),
-            }
+            },
         )
     except Exception as e:
         return jsonify({"message": f"Server error {e}"}, 500)
 
 
-def entrypoint():
+def entrypoint() -> None:
     app.run(port=5000, debug=True)
+
 
 """
 src/pytgtnbot
@@ -76,8 +79,8 @@ src/pytgtnbot
     - canteen
     - exams
     - lectures
-- main.py    
-    
+- main.py
+
 tgtnbot bot
 tgtnbot backend canteen
 

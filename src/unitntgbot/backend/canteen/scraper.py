@@ -20,15 +20,17 @@ HEADERS = {"X-Requested-With": "XMLHttpRequest", "Content-Type": "application/x-
 # - 8 Mesiano
 # - 12 Mensa 24 Maggio
 
+
 def _get_week_canteen_raw(date: datetime, canteen_id: int) -> list[pd.DataFrame]:
     """
-    Get the list of all meals for a given week
+    Get the list of all meals for a given week.
 
     Args:
         date (datetime): the date to get meanu items for, will get menu for the whole week the date is in
         canteen_id (int): id of the canteen, for example Tommaso Garr is 7 and "ridotto" is 2
     Returns:
         list[pd.DataFrame]: A list containing panda DF with the HTML table raw data.
+
     """
     data = {"timestamp_selezionato": date.timestamp(), "tipo_menu_id": str(canteen_id)}
     response = requests.post(API_URL, headers=HEADERS, data=data, timeout=30)
@@ -37,14 +39,15 @@ def _get_week_canteen_raw(date: datetime, canteen_id: int) -> list[pd.DataFrame]
     return pd.read_html(StringIO(html))
 
 
-def get_week_meals(date: datetime) ->  list[tuple[str, bool, str]]:
+def get_week_meals(date: datetime) -> list[tuple[str, bool, str]]:
     """
-    Get the list of all meals for a given week
+    Get the list of all meals for a given week.
 
     Args:
         date (datetime): the date to get meanu items for, will get menu for the whole week the date is in
     Returns:
         list[tuple[str, bool, str]]: A list of days with menu for each, entries for both lunch and dinner.
+
     """
     date -= timedelta(days=date.weekday())
 
@@ -64,7 +67,7 @@ def get_week_meals(date: datetime) ->  list[tuple[str, bool, str]]:
         string = ""
 
         try:
-            # Since we replace <br> with "\\n" all entries start with "\\n" too, so we have to skip it every time. this is a hack beacuse operaunitn can't have a proper API
+            # Since we replace <br> with "\\n" all entries start with "\\n" too, so we have to skip it every time. this is a hack because operaunitn can't have a proper API
             for item in lunch[0][2:].split("\\n"):
                 r: bool = item.strip() == lesto[0][2:]  # add ®️ if it's the pick for the ridotto menu
                 string += f" 🍝{'®️' if r else ' '} {item.title()}\n"
