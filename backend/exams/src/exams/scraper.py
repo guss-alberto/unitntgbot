@@ -64,7 +64,8 @@ def get_university_faculties() -> dict[int, str]:
 
         try:
             faculty_id = int(str(faculty_id))
-            faculty_name = faculty_option_pq.text()
+            faculty_name = str(faculty_option_pq.text())
+            faculty_name = faculty_name.replace("(DIP)", "").strip()
             faculties[faculty_id] = faculty_name
         except ValueError:
             logger.info("Skipping '%s', invalid characters found", faculty_option_pq)
@@ -106,64 +107,78 @@ def get_university_exams(university_faculties: dict[int, str]) -> list[Universit
         html = response.text
         doc = pq(html)
         exam_list = list(doc("#tableAppelli").find("tr").items())
+
+        # Values to cache in between cycles
+        # This is done because the table sometimes has a cell wrowspanw
+        cached_values: dict[str, pq] = {}
+        var_names = [
+            "number_of_registrations",
+            "professors",
+            "recording",
+            "is_partial",
+            "is_oral",
+            "exam_datetime",
+            "registration_period",
+            "exam_session",
+            "id_and_name",
+        ]
+
         for raw_exam in exam_list[2:]:
-            table_items = [pq(e) for e in pq(raw_exam).find("td")]
+            try:
+                table_items = [pq(e) for e in pq(raw_exam).find("td")]
 
-            # This is done this way because in the exam table there could be missing values
-            # in some rows, since some <td> elements can have a rowspan="2" attribute
-            # this way these variables will remain the same if a row has rowspan="2"
-            _number_of_registrations = table_items[-1] if len(table_items) >= 1 else _number_of_registrations
-            _professors = table_items[-2] if len(table_items) >= 2 else _professors
-            _recording = table_items[-3] if len(table_items) >= 3 else _recording
-            _is_partial = table_items[-4] if len(table_items) >= 4 else _is_partial
-            _is_oral = table_items[-5] if len(table_items) >= 5 else _is_oral
-            _exam_datetime = table_items[-6] if len(table_items) >= 6 else _exam_datetime
-            _registration_period = table_items[-7] if len(table_items) >= 7 else _registration_period
-            _exam_session = table_items[-8] if len(table_items) >= 8 else _exam_session
-            _id_and_name = table_items[-9] if len(table_items) >= 9 else _id_and_name
+                # This is done this way because in the exam table there could be missing values
+                # in some rows, since some <td> elements can have a rowspan="2" attribute
+                # this way these variables will remain the same if a row has rowspan="2"
+                for i, var_name in enumerate(var_names):
+                    if len(table_items) > i:
+                        cached_values[var_name] = table_items[-(i + 1)]
 
-            # Split id and name into 2 different variables using regex
-            id_and_name_regex = re.match(r"^\[(.+)\] (.+$)", str(_id_and_name.text()))
-            if id_and_name_regex:
-                exam_id = id_and_name_regex.group(1)
-                name = id_and_name_regex.group(2)
-            else:
-                e = f"Failed to match exam id in '{_id_and_name}'"
-                raise ValueError(e)
+                # Split id and name into 2 different variables using regex
+                id_and_name_regex = re.match(r"^\[(.+)\] (.+$)", str(cached_values["id_and_name"].text()))
+                if id_and_name_regex:
+                    exam_id = id_and_name_regex.group(1)
+                    name = id_and_name_regex.group(2)
+                else:
+                    logger.error("Failed to match regex on %s", cached_values["id_and_name"])
+                    continue
 
-            # Parse dates using ISO8601
-            registration_start, registration_end = parse_registration_period(str(_registration_period.text()))
+                # Parse dates using ISO8601
+                registration_start, registration_end = parse_registration_period(
+                    str(cached_values["registration_period"].text()),
+                )
 
-            # Shorten URL by removing unnecessary params
-            exam_link = _exam_datetime.find("a").attr("href")
-            exam_link = str(exam_link).split("&FAC_ID_SEL=")[0]
-            exam_link = BASE_URL + exam_link
+                # Shorten URL by removing unnecessary params
+                exam_link = cached_values["exam_datetime"].find("a").attr("href")
+                exam_link = str(exam_link).split("&FAC_ID_SEL=")[0]
+                exam_link = BASE_URL + exam_link
 
-            # Extract date time
-            exam_date, partition = parse_exam_datetime(str(_exam_datetime.text()))
+                # Extract date time
+                exam_date, partition = parse_exam_datetime(str(cached_values["exam_datetime"].text()))
 
-            is_oral: bool = _is_oral.text() == "Orale"
-            is_partial: bool = _is_partial.text() == "Prova Parziale"
+                is_oral: bool = cached_values["is_oral"].text() == "Orale"
+                is_partial: bool = cached_values["is_partial"].text() == "Prova Parziale"
 
-            # Convert profs list into string
-            professors = ", ".join(filter(lambda s: s != "", str(_professors.text()).split("\n")))
-            professors = professors.title()
+                # Convert profs list into string
+                professors = ", ".join(filter(lambda s: s != "", str(cached_values["professors"].text()).split("\n")))
+                professors = professors.title()
 
-            exam = UniversityExam(
-                exam_id,
-                faculty_name,
-                name,
-                exam_date,
-                registration_start,
-                registration_end,
-                partition,
-                exam_link,
-                professors,
-                is_oral,
-                is_partial,
-            )
-            exams.append(exam)
-
+                exam = UniversityExam(
+                    exam_id,
+                    faculty_name,
+                    name,
+                    exam_date,
+                    registration_start,
+                    registration_end,
+                    partition,
+                    exam_link,
+                    professors,
+                    is_oral,
+                    is_partial,
+                )
+                exams.append(exam)
+            except Exception as e:
+                logger.error(e)
         logger.info("Done!")
 
     return exams
