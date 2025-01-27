@@ -1,0 +1,3382 @@
+[
+  {
+    "cableway": null,
+    "corsaPiuVicinaADataRiferimento": false,
+    "delay": 0.0,
+    "directionId": 1,
+    "indiceCorsaInLista": 97,
+    "lastEventRecivedAt": "2025-01-24T16:42:41Z",
+    "lastSequenceDetection": 19,
+    "matricolaBus": 308,
+    "oraArrivoEffettivaAFermataSelezionata": null,
+    "oraArrivoProgrammataAFermataSelezionata": null,
+    "routeId": 400,
+    "stopLast": 2189,
+    "stopNext": 2189,
+    "stopTimes": [
+      {
+        "arrivalTime": "17:17:00",
+        "departureTime": "17:17:00",
+        "stopId": 161,
+        "stopSequence": 1,
+        "tripId": "0004188922024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:18:00",
+        "departureTime": "17:18:00",
+        "stopId": 244,
+        "stopSequence": 2,
+        "tripId": "0004188922024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:18:00",
+        "departureTime": "17:18:00",
+        "stopId": 180,
+        "stopSequence": 3,
+        "tripId": "0004188922024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:20:00",
+        "departureTime": "17:20:00",
+        "stopId": 182,
+        "stopSequence": 4,
+        "tripId": "0004188922024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:21:00",
+        "departureTime": "17:21:00",
+        "stopId": 191,
+        "stopSequence": 5,
+        "tripId": "0004188922024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:22:00",
+        "departureTime": "17:22:00",
+        "stopId": 187,
+        "stopSequence": 6,
+        "tripId": "0004188922024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:23:00",
+        "departureTime": "17:23:00",
+        "stopId": 184,
+        "stopSequence": 7,
+        "tripId": "0004188922024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:23:00",
+        "departureTime": "17:23:00",
+        "stopId": 216,
+        "stopSequence": 8,
+        "tripId": "0004188922024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:24:00",
+        "departureTime": "17:24:00",
+        "stopId": 189,
+        "stopSequence": 9,
+        "tripId": "0004188922024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:25:00",
+        "departureTime": "17:25:00",
+        "stopId": 150,
+        "stopSequence": 10,
+        "tripId": "0004188922024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:26:00",
+        "departureTime": "17:26:00",
+        "stopId": 148,
+        "stopSequence": 11,
+        "tripId": "0004188922024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:26:00",
+        "departureTime": "17:26:00",
+        "stopId": 146,
+        "stopSequence": 12,
+        "tripId": "0004188922024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:27:00",
+        "departureTime": "17:27:00",
+        "stopId": 175,
+        "stopSequence": 13,
+        "tripId": "0004188922024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:28:00",
+        "departureTime": "17:28:00",
+        "stopId": 453,
+        "stopSequence": 14,
+        "tripId": "0004188922024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:29:00",
+        "departureTime": "17:29:00",
+        "stopId": 451,
+        "stopSequence": 15,
+        "tripId": "0004188922024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:31:00",
+        "departureTime": "17:31:00",
+        "stopId": 176,
+        "stopSequence": 16,
+        "tripId": "0004188922024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:32:00",
+        "departureTime": "17:32:00",
+        "stopId": 276,
+        "stopSequence": 17,
+        "tripId": "0004188922024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:34:00",
+        "departureTime": "17:34:00",
+        "stopId": 403,
+        "stopSequence": 18,
+        "tripId": "0004188922024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:35:00",
+        "departureTime": "17:35:00",
+        "stopId": 2189,
+        "stopSequence": 19,
+        "tripId": "0004188922024090920250612",
+        "type": "U"
+      }
+    ],
+    "totaleCorseInLista": 135,
+    "tripFlag": "TRIP_FLAG__MID",
+    "tripHeadsign": "Piazza Dante \"Dogana\"",
+    "tripId": "0004188922024090920250612",
+    "type": "U",
+    "wheelchairAccessible": 1
+  },
+  {
+    "cableway": null,
+    "corsaPiuVicinaADataRiferimento": false,
+    "delay": 0.0,
+    "directionId": 0,
+    "indiceCorsaInLista": 98,
+    "lastEventRecivedAt": "2025T16:48:-01-2455Z",
+    "lastSequenceDetection": 16,
+    "matricolaBus": 304,
+    "oraArrivoEffettivaAFermataSelezionata": null,
+    "oraArrivoProgrammataAFermataSelezionata": null,
+    "routeId": 400,
+    "stopLast": 2549,
+    "stopNext": 2549,
+    "stopTimes": [
+      {
+        "arrivalTime": "17:20:00",
+        "departureTime": "17:20:00",
+        "stopId": 247,
+        "stopSequence": 1,
+        "tripId": "0004221452024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:22:00",
+        "departureTime": "17:22:00",
+        "stopId": 407,
+        "stopSequence": 2,
+        "tripId": "0004221452024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:24:00",
+        "departureTime": "17:24:00",
+        "stopId": 444,
+        "stopSequence": 3,
+        "tripId": "0004221452024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:25:00",
+        "departureTime": "17:25:00",
+        "stopId": 165,
+        "stopSequence": 4,
+        "tripId": "0004221452024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:27:00",
+        "departureTime": "17:27:00",
+        "stopId": 166,
+        "stopSequence": 5,
+        "tripId": "0004221452024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:27:00",
+        "departureTime": "17:27:00",
+        "stopId": 2927,
+        "stopSequence": 6,
+        "tripId": "0004221452024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:28:00",
+        "departureTime": "17:28:00",
+        "stopId": 450,
+        "stopSequence": 7,
+        "tripId": "0004221452024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:30:00",
+        "departureTime": "17:30:00",
+        "stopId": 452,
+        "stopSequence": 8,
+        "tripId": "0004221452024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:31:00",
+        "departureTime": "17:31:00",
+        "stopId": 174,
+        "stopSequence": 9,
+        "tripId": "0004221452024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:32:00",
+        "departureTime": "17:32:00",
+        "stopId": 145,
+        "stopSequence": 10,
+        "tripId": "0004221452024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:33:00",
+        "departureTime": "17:33:00",
+        "stopId": 147,
+        "stopSequence": 11,
+        "tripId": "0004221452024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:34:00",
+        "departureTime": "17:34:00",
+        "stopId": 149,
+        "stopSequence": 12,
+        "tripId": "0004221452024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:35:00",
+        "departureTime": "17:35:00",
+        "stopId": 2490,
+        "stopSequence": 13,
+        "tripId": "0004221452024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:36:00",
+        "departureTime": "17:36:00",
+        "stopId": 186,
+        "stopSequence": 14,
+        "tripId": "0004221452024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:36:00",
+        "departureTime": "17:36:00",
+        "stopId": 185,
+        "stopSequence": 15,
+        "tripId": "0004221452024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:37:00",
+        "departureTime": "17:37:00",
+        "stopId": 2549,
+        "stopSequence": 16,
+        "tripId": "0004221452024090920250612",
+        "type": "U"
+      }
+    ],
+    "totaleCorseInLista": 135,
+    "tripFlag": "TRIP_FLAG__MID",
+    "tripHeadsign": "Povo \"Polo Sociale\" Cap.",
+    "tripId": "0004221452024090920250612",
+    "type": "U",
+    "wheelchairAccessible": 1
+  },
+  {
+    "cableway": null,
+    "corsaPiuVicinaADataRiferimento": false,
+    "delay": 0.0,
+    "directionId": 1,
+    "indiceCorsaInLista": 99,
+    "lastEventRecivedAt": "2025-01-24T16:53:04Z",
+    "lastSequenceDetection": 15,
+    "matricolaBus": 311,
+    "oraArrivoEffettivaAFermataSelezionata": null,
+    "oraArrivoProgrammataAFermataSelezionata": null,
+    "routeId": 400,
+    "stopLast": 2189,
+    "stopNext": 2189,
+    "stopTimes": [
+      {
+        "arrivalTime": "17:28:00",
+        "departureTime": "17:28:00",
+        "stopId": 2549,
+        "stopSequence": 1,
+        "tripId": "0004211212024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:29:00",
+        "departureTime": "17:29:00",
+        "stopId": 187,
+        "stopSequence": 2,
+        "tripId": "0004211212024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:30:00",
+        "departureTime": "17:30:00",
+        "stopId": 2820,
+        "stopSequence": 3,
+        "tripId": "0004211212024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:31:00",
+        "departureTime": "17:31:00",
+        "stopId": 2682,
+        "stopSequence": 4,
+        "tripId": "0004211212024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:33:00",
+        "departureTime": "17:33:00",
+        "stopId": 2833,
+        "stopSequence": 5,
+        "tripId": "0004211212024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:35:00",
+        "departureTime": "17:35:00",
+        "stopId": 150,
+        "stopSequence": 6,
+        "tripId": "0004211212024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:36:00",
+        "departureTime": "17:36:00",
+        "stopId": 148,
+        "stopSequence": 7,
+        "tripId": "0004211212024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:36:00",
+        "departureTime": "17:36:00",
+        "stopId": 146,
+        "stopSequence": 8,
+        "tripId": "0004211212024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:37:00",
+        "departureTime": "17:37:00",
+        "stopId": 175,
+        "stopSequence": 9,
+        "tripId": "0004211212024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:38:00",
+        "departureTime": "17:38:00",
+        "stopId": 453,
+        "stopSequence": 10,
+        "tripId": "0004211212024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:39:00",
+        "departureTime": "17:39:00",
+        "stopId": 451,
+        "stopSequence": 11,
+        "tripId": "0004211212024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:41:00",
+        "departureTime": "17:41:00",
+        "stopId": 176,
+        "stopSequence": 12,
+        "tripId": "0004211212024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:42:00",
+        "departureTime": "17:42:00",
+        "stopId": 276,
+        "stopSequence": 13,
+        "tripId": "0004211212024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:44:00",
+        "departureTime": "17:44:00",
+        "stopId": 403,
+        "stopSequence": 14,
+        "tripId": "0004211212024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:45:00",
+        "departureTime": "17:45:00",
+        "stopId": 2189,
+        "stopSequence": 15,
+        "tripId": "0004211212024090920250612",
+        "type": "U"
+      }
+    ],
+    "totaleCorseInLista": 135,
+    "tripFlag": "TRIP_FLAG__MID",
+    "tripHeadsign": "Piazza Dante \"Dogana\"",
+    "tripId": "0004211212024090920250612",
+    "type": "U",
+    "wheelchairAccessible": 1
+  },
+  {
+    "cableway": null,
+    "corsaPiuVicinaADataRiferimento": false,
+    "delay": 0.0,
+    "directionId": 0,
+    "indiceCorsaInLista": 100,
+    "lastEventRecivedAt": "2025-01-24T16:57:46Z",
+    "lastSequenceDetection": 23,
+    "matricolaBus": 810,
+    "oraArrivoEffettivaAFermataSelezionata": null,
+    "oraArrivoProgrammataAFermataSelezionata": null,
+    "routeId": 400,
+    "stopLast": 161,
+    "stopNext": 161,
+    "stopTimes": [
+      {
+        "arrivalTime": "17:29:00",
+        "departureTime": "17:29:00",
+        "stopId": 247,
+        "stopSequence": 1,
+        "tripId": "0004188402024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:31:00",
+        "departureTime": "17:31:00",
+        "stopId": 407,
+        "stopSequence": 2,
+        "tripId": "0004188402024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:33:00",
+        "departureTime": "17:33:00",
+        "stopId": 444,
+        "stopSequence": 3,
+        "tripId": "0004188402024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:34:00",
+        "departureTime": "17:34:00",
+        "stopId": 165,
+        "stopSequence": 4,
+        "tripId": "0004188402024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:36:00",
+        "departureTime": "17:36:00",
+        "stopId": 166,
+        "stopSequence": 5,
+        "tripId": "0004188402024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:36:00",
+        "departureTime": "17:36:00",
+        "stopId": 2927,
+        "stopSequence": 6,
+        "tripId": "0004188402024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:37:00",
+        "departureTime": "17:37:00",
+        "stopId": 450,
+        "stopSequence": 7,
+        "tripId": "0004188402024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:39:00",
+        "departureTime": "17:39:00",
+        "stopId": 452,
+        "stopSequence": 8,
+        "tripId": "0004188402024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:40:00",
+        "departureTime": "17:40:00",
+        "stopId": 174,
+        "stopSequence": 9,
+        "tripId": "0004188402024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:41:00",
+        "departureTime": "17:41:00",
+        "stopId": 145,
+        "stopSequence": 10,
+        "tripId": "0004188402024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:42:00",
+        "departureTime": "17:42:00",
+        "stopId": 147,
+        "stopSequence": 11,
+        "tripId": "0004188402024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:43:00",
+        "departureTime": "17:43:00",
+        "stopId": 149,
+        "stopSequence": 12,
+        "tripId": "0004188402024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:44:00",
+        "departureTime": "17:44:00",
+        "stopId": 188,
+        "stopSequence": 13,
+        "tripId": "0004188402024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:45:00",
+        "departureTime": "17:45:00",
+        "stopId": 215,
+        "stopSequence": 14,
+        "tripId": "0004188402024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:45:00",
+        "departureTime": "17:45:00",
+        "stopId": 183,
+        "stopSequence": 15,
+        "tripId": "0004188402024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:46:00",
+        "departureTime": "17:46:00",
+        "stopId": 186,
+        "stopSequence": 16,
+        "tripId": "0004188402024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:46:00",
+        "departureTime": "17:46:00",
+        "stopId": 185,
+        "stopSequence": 17,
+        "tripId": "0004188402024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:47:00",
+        "departureTime": "17:47:00",
+        "stopId": 190,
+        "stopSequence": 18,
+        "tripId": "0004188402024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:48:00",
+        "departureTime": "17:48:00",
+        "stopId": 181,
+        "stopSequence": 19,
+        "tripId": "0004188402024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:48:00",
+        "departureTime": "17:48:00",
+        "stopId": 179,
+        "stopSequence": 20,
+        "tripId": "0004188402024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:49:00",
+        "departureTime": "17:49:00",
+        "stopId": 243,
+        "stopSequence": 21,
+        "tripId": "0004188402024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:51:00",
+        "departureTime": "17:51:00",
+        "stopId": 9,
+        "stopSequence": 22,
+        "tripId": "0004188402024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:53:00",
+        "departureTime": "17:53:00",
+        "stopId": 161,
+        "stopSequence": 23,
+        "tripId": "0004188402024090920250612",
+        "type": "U"
+      }
+    ],
+    "totaleCorseInLista": 135,
+    "tripFlag": "TRIP_FLAG__MID",
+    "tripHeadsign": "Oltrecastello",
+    "tripId": "0004188402024090920250612",
+    "type": "U",
+    "wheelchairAccessible": 1
+  },
+  {
+    "cableway": null,
+    "corsaPiuVicinaADataRiferimento": false,
+    "delay": 0.0,
+    "directionId": 1,
+    "indiceCorsaInLista": 101,
+    "lastEventRecivedAt": "2025-01-24T17:01:28Z",
+    "lastSequenceDetection": 19,
+    "matricolaBus": 899,
+    "oraArrivoEffettivaAFermataSelezionata": null,
+    "oraArrivoProgrammataAFermataSelezionata": null,
+    "routeId": 400,
+    "stopLast": 2189,
+    "stopNext": 2189,
+    "stopTimes": [
+      {
+        "arrivalTime": "17:37:00",
+        "departureTime": "17:37:00",
+        "stopId": 161,
+        "stopSequence": 1,
+        "tripId": "0004189032024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:38:00",
+        "departureTime": "17:38:00",
+        "stopId": 244,
+        "stopSequence": 2,
+        "tripId": "0004189032024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:38:00",
+        "departureTime": "17:38:00",
+        "stopId": 180,
+        "stopSequence": 3,
+        "tripId": "0004189032024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:40:00",
+        "departureTime": "17:40:00",
+        "stopId": 182,
+        "stopSequence": 4,
+        "tripId": "0004189032024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:41:00",
+        "departureTime": "17:41:00",
+        "stopId": 191,
+        "stopSequence": 5,
+        "tripId": "0004189032024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:42:00",
+        "departureTime": "17:42:00",
+        "stopId": 187,
+        "stopSequence": 6,
+        "tripId": "0004189032024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:43:00",
+        "departureTime": "17:43:00",
+        "stopId": 184,
+        "stopSequence": 7,
+        "tripId": "0004189032024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:43:00",
+        "departureTime": "17:43:00",
+        "stopId": 216,
+        "stopSequence": 8,
+        "tripId": "0004189032024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:44:00",
+        "departureTime": "17:44:00",
+        "stopId": 189,
+        "stopSequence": 9,
+        "tripId": "0004189032024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:45:00",
+        "departureTime": "17:45:00",
+        "stopId": 150,
+        "stopSequence": 10,
+        "tripId": "0004189032024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:46:00",
+        "departureTime": "17:46:00",
+        "stopId": 148,
+        "stopSequence": 11,
+        "tripId": "0004189032024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:46:00",
+        "departureTime": "17:46:00",
+        "stopId": 146,
+        "stopSequence": 12,
+        "tripId": "0004189032024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:47:00",
+        "departureTime": "17:47:00",
+        "stopId": 175,
+        "stopSequence": 13,
+        "tripId": "0004189032024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:48:00",
+        "departureTime": "17:48:00",
+        "stopId": 453,
+        "stopSequence": 14,
+        "tripId": "0004189032024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:49:00",
+        "departureTime": "17:49:00",
+        "stopId": 451,
+        "stopSequence": 15,
+        "tripId": "0004189032024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:51:00",
+        "departureTime": "17:51:00",
+        "stopId": 176,
+        "stopSequence": 16,
+        "tripId": "0004189032024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:52:00",
+        "departureTime": "17:52:00",
+        "stopId": 276,
+        "stopSequence": 17,
+        "tripId": "0004189032024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:54:00",
+        "departureTime": "17:54:00",
+        "stopId": 403,
+        "stopSequence": 18,
+        "tripId": "0004189032024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:55:00",
+        "departureTime": "17:55:00",
+        "stopId": 2189,
+        "stopSequence": 19,
+        "tripId": "0004189032024090920250612",
+        "type": "U"
+      }
+    ],
+    "totaleCorseInLista": 135,
+    "tripFlag": "TRIP_FLAG__MID",
+    "tripHeadsign": "Piazza Dante \"Dogana\"",
+    "tripId": "0004189032024090920250612",
+    "type": "U",
+    "wheelchairAccessible": 1
+  },
+  {
+    "cableway": null,
+    "corsaPiuVicinaADataRiferimento": false,
+    "delay": 0.0,
+    "directionId": 0,
+    "indiceCorsaInLista": 102,
+    "lastEventRecivedAt": "2025-01-24T17:00:30Z",
+    "lastSequenceDetection": 16,
+    "matricolaBus": 305,
+    "oraArrivoEffettivaAFermataSelezionata": null,
+    "oraArrivoProgrammataAFermataSelezionata": null,
+    "routeId": 400,
+    "stopLast": 2549,
+    "stopNext": 2549,
+    "stopTimes": [
+      {
+        "arrivalTime": "17:39:00",
+        "departureTime": "17:39:00",
+        "stopId": 247,
+        "stopSequence": 1,
+        "tripId": "0004211282024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:41:00",
+        "departureTime": "17:41:00",
+        "stopId": 407,
+        "stopSequence": 2,
+        "tripId": "0004211282024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:43:00",
+        "departureTime": "17:43:00",
+        "stopId": 444,
+        "stopSequence": 3,
+        "tripId": "0004211282024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:44:00",
+        "departureTime": "17:44:00",
+        "stopId": 165,
+        "stopSequence": 4,
+        "tripId": "0004211282024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:46:00",
+        "departureTime": "17:46:00",
+        "stopId": 166,
+        "stopSequence": 5,
+        "tripId": "0004211282024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:46:00",
+        "departureTime": "17:46:00",
+        "stopId": 2927,
+        "stopSequence": 6,
+        "tripId": "0004211282024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:47:00",
+        "departureTime": "17:47:00",
+        "stopId": 450,
+        "stopSequence": 7,
+        "tripId": "0004211282024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:49:00",
+        "departureTime": "17:49:00",
+        "stopId": 452,
+        "stopSequence": 8,
+        "tripId": "0004211282024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:50:00",
+        "departureTime": "17:50:00",
+        "stopId": 174,
+        "stopSequence": 9,
+        "tripId": "0004211282024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:51:00",
+        "departureTime": "17:51:00",
+        "stopId": 145,
+        "stopSequence": 10,
+        "tripId": "0004211282024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:52:00",
+        "departureTime": "17:52:00",
+        "stopId": 147,
+        "stopSequence": 11,
+        "tripId": "0004211282024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:53:00",
+        "departureTime": "17:53:00",
+        "stopId": 149,
+        "stopSequence": 12,
+        "tripId": "0004211282024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:54:00",
+        "departureTime": "17:54:00",
+        "stopId": 2490,
+        "stopSequence": 13,
+        "tripId": "0004211282024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:55:00",
+        "departureTime": "17:55:00",
+        "stopId": 186,
+        "stopSequence": 14,
+        "tripId": "0004211282024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:55:00",
+        "departureTime": "17:55:00",
+        "stopId": 185,
+        "stopSequence": 15,
+        "tripId": "0004211282024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:56:00",
+        "departureTime": "17:56:00",
+        "stopId": 2549,
+        "stopSequence": 16,
+        "tripId": "0004211282024090920250612",
+        "type": "U"
+      }
+    ],
+    "totaleCorseInLista": 135,
+    "tripFlag": "TRIP_FLAG__MID",
+    "tripHeadsign": "Povo \"Polo Sociale\" Cap.",
+    "tripId": "0004211282024090920250612",
+    "type": "U",
+    "wheelchairAccessible": 1
+  },
+  {
+    "cableway": null,
+    "corsaPiuVicinaADataRiferimento": false,
+    "delay": 4.0,
+    "directionId": 0,
+    "indiceCorsaInLista": 103,
+    "lastEventRecivedAt": "2025-01-24T17:05:34Z",
+    "lastSequenceDetection": 9,
+    "matricolaBus": 308,
+    "oraArrivoEffettivaAFermataSelezionata": null,
+    "oraArrivoProgrammataAFermataSelezionata": null,
+    "routeId": 400,
+    "stopLast": 174,
+    "stopNext": 145,
+    "stopTimes": [
+      {
+        "arrivalTime": "17:49:00",
+        "departureTime": "17:49:00",
+        "stopId": 247,
+        "stopSequence": 1,
+        "tripId": "0004188532024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:51:00",
+        "departureTime": "17:51:00",
+        "stopId": 407,
+        "stopSequence": 2,
+        "tripId": "0004188532024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:53:00",
+        "departureTime": "17:53:00",
+        "stopId": 444,
+        "stopSequence": 3,
+        "tripId": "0004188532024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:54:00",
+        "departureTime": "17:54:00",
+        "stopId": 165,
+        "stopSequence": 4,
+        "tripId": "0004188532024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:56:00",
+        "departureTime": "17:56:00",
+        "stopId": 166,
+        "stopSequence": 5,
+        "tripId": "0004188532024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:56:00",
+        "departureTime": "17:56:00",
+        "stopId": 2927,
+        "stopSequence": 6,
+        "tripId": "0004188532024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:57:00",
+        "departureTime": "17:57:00",
+        "stopId": 450,
+        "stopSequence": 7,
+        "tripId": "0004188532024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:59:00",
+        "departureTime": "17:59:00",
+        "stopId": 452,
+        "stopSequence": 8,
+        "tripId": "0004188532024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:00:00",
+        "departureTime": "18:00:00",
+        "stopId": 174,
+        "stopSequence": 9,
+        "tripId": "0004188532024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:01:00",
+        "departureTime": "18:01:00",
+        "stopId": 145,
+        "stopSequence": 10,
+        "tripId": "0004188532024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:02:00",
+        "departureTime": "18:02:00",
+        "stopId": 147,
+        "stopSequence": 11,
+        "tripId": "0004188532024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:03:00",
+        "departureTime": "18:03:00",
+        "stopId": 149,
+        "stopSequence": 12,
+        "tripId": "0004188532024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:04:00",
+        "departureTime": "18:04:00",
+        "stopId": 188,
+        "stopSequence": 13,
+        "tripId": "0004188532024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:05:00",
+        "departureTime": "18:05:00",
+        "stopId": 215,
+        "stopSequence": 14,
+        "tripId": "0004188532024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:05:00",
+        "departureTime": "18:05:00",
+        "stopId": 183,
+        "stopSequence": 15,
+        "tripId": "0004188532024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:06:00",
+        "departureTime": "18:06:00",
+        "stopId": 186,
+        "stopSequence": 16,
+        "tripId": "0004188532024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:06:00",
+        "departureTime": "18:06:00",
+        "stopId": 185,
+        "stopSequence": 17,
+        "tripId": "0004188532024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:07:00",
+        "departureTime": "18:07:00",
+        "stopId": 190,
+        "stopSequence": 18,
+        "tripId": "0004188532024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:08:00",
+        "departureTime": "18:08:00",
+        "stopId": 181,
+        "stopSequence": 19,
+        "tripId": "0004188532024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:08:00",
+        "departureTime": "18:08:00",
+        "stopId": 179,
+        "stopSequence": 20,
+        "tripId": "0004188532024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:09:00",
+        "departureTime": "18:09:00",
+        "stopId": 243,
+        "stopSequence": 21,
+        "tripId": "0004188532024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:11:00",
+        "departureTime": "18:11:00",
+        "stopId": 9,
+        "stopSequence": 22,
+        "tripId": "0004188532024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:13:00",
+        "departureTime": "18:13:00",
+        "stopId": 161,
+        "stopSequence": 23,
+        "tripId": "0004188532024090920250612",
+        "type": "U"
+      }
+    ],
+    "totaleCorseInLista": 135,
+    "tripFlag": "TRIP_FLAG__MID",
+    "tripHeadsign": "Oltrecastello",
+    "tripId": "0004188532024090920250612",
+    "type": "U",
+    "wheelchairAccessible": 1
+  },
+  {
+    "cableway": null,
+    "corsaPiuVicinaADataRiferimento": false,
+    "delay": 3.0,
+    "directionId": 1,
+    "indiceCorsaInLista": 104,
+    "lastEventRecivedAt": "2025-01-24T17:01:03Z",
+    "lastSequenceDetection": 5,
+    "matricolaBus": 304,
+    "oraArrivoEffettivaAFermataSelezionata": null,
+    "oraArrivoProgrammataAFermataSelezionata": null,
+    "routeId": 400,
+    "stopLast": 2833,
+    "stopNext": 150,
+    "stopTimes": [
+      {
+        "arrivalTime": "17:50:00",
+        "departureTime": "17:50:00",
+        "stopId": 2549,
+        "stopSequence": 1,
+        "tripId": "0004221422024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:51:00",
+        "departureTime": "17:51:00",
+        "stopId": 187,
+        "stopSequence": 2,
+        "tripId": "0004221422024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:52:00",
+        "departureTime": "17:52:00",
+        "stopId": 2820,
+        "stopSequence": 3,
+        "tripId": "0004221422024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:53:00",
+        "departureTime": "17:53:00",
+        "stopId": 2682,
+        "stopSequence": 4,
+        "tripId": "0004221422024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:55:00",
+        "departureTime": "17:55:00",
+        "stopId": 2833,
+        "stopSequence": 5,
+        "tripId": "0004221422024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:57:00",
+        "departureTime": "17:57:00",
+        "stopId": 150,
+        "stopSequence": 6,
+        "tripId": "0004221422024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:58:00",
+        "departureTime": "17:58:00",
+        "stopId": 148,
+        "stopSequence": 7,
+        "tripId": "0004221422024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:58:00",
+        "departureTime": "17:58:00",
+        "stopId": 146,
+        "stopSequence": 8,
+        "tripId": "0004221422024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:59:00",
+        "departureTime": "17:59:00",
+        "stopId": 175,
+        "stopSequence": 9,
+        "tripId": "0004221422024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:00:00",
+        "departureTime": "18:00:00",
+        "stopId": 453,
+        "stopSequence": 10,
+        "tripId": "0004221422024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:01:00",
+        "departureTime": "18:01:00",
+        "stopId": 451,
+        "stopSequence": 11,
+        "tripId": "0004221422024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:03:00",
+        "departureTime": "18:03:00",
+        "stopId": 176,
+        "stopSequence": 12,
+        "tripId": "0004221422024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:04:00",
+        "departureTime": "18:04:00",
+        "stopId": 276,
+        "stopSequence": 13,
+        "tripId": "0004221422024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:06:00",
+        "departureTime": "18:06:00",
+        "stopId": 403,
+        "stopSequence": 14,
+        "tripId": "0004221422024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:07:00",
+        "departureTime": "18:07:00",
+        "stopId": 2189,
+        "stopSequence": 15,
+        "tripId": "0004221422024090920250612",
+        "type": "U"
+      }
+    ],
+    "totaleCorseInLista": 135,
+    "tripFlag": "TRIP_FLAG__MID",
+    "tripHeadsign": "Piazza Dante \"Dogana\"",
+    "tripId": "0004221422024090920250612",
+    "type": "U",
+    "wheelchairAccessible": 1
+  },
+  {
+    "cableway": null,
+    "corsaPiuVicinaADataRiferimento": false,
+    "delay": 0.0,
+    "directionId": 1,
+    "indiceCorsaInLista": 105,
+    "lastEventRecivedAt": "2025-01-24T17:05:04Z",
+    "lastSequenceDetection": 8,
+    "matricolaBus": 810,
+    "oraArrivoEffettivaAFermataSelezionata": null,
+    "oraArrivoProgrammataAFermataSelezionata": null,
+    "routeId": 400,
+    "stopLast": 216,
+    "stopNext": 189,
+    "stopTimes": [
+      {
+        "arrivalTime": "17:57:00",
+        "departureTime": "17:57:00",
+        "stopId": 161,
+        "stopSequence": 1,
+        "tripId": "0004188822024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:58:00",
+        "departureTime": "17:58:00",
+        "stopId": 244,
+        "stopSequence": 2,
+        "tripId": "0004188822024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "17:58:00",
+        "departureTime": "17:58:00",
+        "stopId": 180,
+        "stopSequence": 3,
+        "tripId": "0004188822024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:00:00",
+        "departureTime": "18:00:00",
+        "stopId": 182,
+        "stopSequence": 4,
+        "tripId": "0004188822024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:01:00",
+        "departureTime": "18:01:00",
+        "stopId": 191,
+        "stopSequence": 5,
+        "tripId": "0004188822024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:02:00",
+        "departureTime": "18:02:00",
+        "stopId": 187,
+        "stopSequence": 6,
+        "tripId": "0004188822024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:03:00",
+        "departureTime": "18:03:00",
+        "stopId": 184,
+        "stopSequence": 7,
+        "tripId": "0004188822024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:03:00",
+        "departureTime": "18:03:00",
+        "stopId": 216,
+        "stopSequence": 8,
+        "tripId": "0004188822024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:04:00",
+        "departureTime": "18:04:00",
+        "stopId": 189,
+        "stopSequence": 9,
+        "tripId": "0004188822024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:05:00",
+        "departureTime": "18:05:00",
+        "stopId": 150,
+        "stopSequence": 10,
+        "tripId": "0004188822024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:06:00",
+        "departureTime": "18:06:00",
+        "stopId": 148,
+        "stopSequence": 11,
+        "tripId": "0004188822024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:06:00",
+        "departureTime": "18:06:00",
+        "stopId": 146,
+        "stopSequence": 12,
+        "tripId": "0004188822024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:07:00",
+        "departureTime": "18:07:00",
+        "stopId": 175,
+        "stopSequence": 13,
+        "tripId": "0004188822024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:08:00",
+        "departureTime": "18:08:00",
+        "stopId": 453,
+        "stopSequence": 14,
+        "tripId": "0004188822024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:09:00",
+        "departureTime": "18:09:00",
+        "stopId": 451,
+        "stopSequence": 15,
+        "tripId": "0004188822024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:11:00",
+        "departureTime": "18:11:00",
+        "stopId": 176,
+        "stopSequence": 16,
+        "tripId": "0004188822024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:12:00",
+        "departureTime": "18:12:00",
+        "stopId": 276,
+        "stopSequence": 17,
+        "tripId": "0004188822024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:14:00",
+        "departureTime": "18:14:00",
+        "stopId": 403,
+        "stopSequence": 18,
+        "tripId": "0004188822024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:15:00",
+        "departureTime": "18:15:00",
+        "stopId": 2189,
+        "stopSequence": 19,
+        "tripId": "0004188822024090920250612",
+        "type": "U"
+      }
+    ],
+    "totaleCorseInLista": 135,
+    "tripFlag": "TRIP_FLAG__MID",
+    "tripHeadsign": "Piazza Dante \"Dogana\"",
+    "tripId": "0004188822024090920250612",
+    "type": "U",
+    "wheelchairAccessible": 1
+  },
+  {
+    "cableway": null,
+    "corsaPiuVicinaADataRiferimento": false,
+    "delay": 1.0,
+    "directionId": 0,
+    "indiceCorsaInLista": 106,
+    "lastEventRecivedAt": "2025-01-24T17:05:13Z",
+    "lastSequenceDetection": 3,
+    "matricolaBus": 311,
+    "oraArrivoEffettivaAFermataSelezionata": null,
+    "oraArrivoProgrammataAFermataSelezionata": null,
+    "routeId": 400,
+    "stopLast": 444,
+    "stopNext": 165,
+    "stopTimes": [
+      {
+        "arrivalTime": "17:59:00",
+        "departureTime": "17:59:00",
+        "stopId": 247,
+        "stopSequence": 1,
+        "tripId": "0004211252024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:01:00",
+        "departureTime": "18:01:00",
+        "stopId": 407,
+        "stopSequence": 2,
+        "tripId": "0004211252024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:03:00",
+        "departureTime": "18:03:00",
+        "stopId": 444,
+        "stopSequence": 3,
+        "tripId": "0004211252024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:04:00",
+        "departureTime": "18:04:00",
+        "stopId": 165,
+        "stopSequence": 4,
+        "tripId": "0004211252024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:06:00",
+        "departureTime": "18:06:00",
+        "stopId": 166,
+        "stopSequence": 5,
+        "tripId": "0004211252024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:06:00",
+        "departureTime": "18:06:00",
+        "stopId": 2927,
+        "stopSequence": 6,
+        "tripId": "0004211252024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:07:00",
+        "departureTime": "18:07:00",
+        "stopId": 450,
+        "stopSequence": 7,
+        "tripId": "0004211252024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:09:00",
+        "departureTime": "18:09:00",
+        "stopId": 452,
+        "stopSequence": 8,
+        "tripId": "0004211252024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:10:00",
+        "departureTime": "18:10:00",
+        "stopId": 174,
+        "stopSequence": 9,
+        "tripId": "0004211252024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:11:00",
+        "departureTime": "18:11:00",
+        "stopId": 145,
+        "stopSequence": 10,
+        "tripId": "0004211252024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:12:00",
+        "departureTime": "18:12:00",
+        "stopId": 147,
+        "stopSequence": 11,
+        "tripId": "0004211252024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:13:00",
+        "departureTime": "18:13:00",
+        "stopId": 149,
+        "stopSequence": 12,
+        "tripId": "0004211252024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:14:00",
+        "departureTime": "18:14:00",
+        "stopId": 2490,
+        "stopSequence": 13,
+        "tripId": "0004211252024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:15:00",
+        "departureTime": "18:15:00",
+        "stopId": 186,
+        "stopSequence": 14,
+        "tripId": "0004211252024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:15:00",
+        "departureTime": "18:15:00",
+        "stopId": 185,
+        "stopSequence": 15,
+        "tripId": "0004211252024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:16:00",
+        "departureTime": "18:16:00",
+        "stopId": 2549,
+        "stopSequence": 16,
+        "tripId": "0004211252024090920250612",
+        "type": "U"
+      }
+    ],
+    "totaleCorseInLista": 135,
+    "tripFlag": "TRIP_FLAG__MID",
+    "tripHeadsign": "Povo \"Polo Sociale\" Cap.",
+    "tripId": "0004211252024090920250612",
+    "type": "U",
+    "wheelchairAccessible": 1
+  },
+  {
+    "cableway": null,
+    "corsaPiuVicinaADataRiferimento": true,
+    "delay": 0.0,
+    "directionId": 1,
+    "indiceCorsaInLista": 107,
+    "lastEventRecivedAt": "2025-01-24T17:05:38Z",
+    "lastSequenceDetection": 1,
+    "matricolaBus": 305,
+    "oraArrivoEffettivaAFermataSelezionata": null,
+    "oraArrivoProgrammataAFermataSelezionata": null,
+    "routeId": 400,
+    "stopLast": 2549,
+    "stopNext": 187,
+    "stopTimes": [
+      {
+        "arrivalTime": "18:08:00",
+        "departureTime": "18:08:00",
+        "stopId": 2549,
+        "stopSequence": 1,
+        "tripId": "0004211312024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:09:00",
+        "departureTime": "18:09:00",
+        "stopId": 187,
+        "stopSequence": 2,
+        "tripId": "0004211312024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:10:00",
+        "departureTime": "18:10:00",
+        "stopId": 2820,
+        "stopSequence": 3,
+        "tripId": "0004211312024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:11:00",
+        "departureTime": "18:11:00",
+        "stopId": 2682,
+        "stopSequence": 4,
+        "tripId": "0004211312024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:13:00",
+        "departureTime": "18:13:00",
+        "stopId": 2833,
+        "stopSequence": 5,
+        "tripId": "0004211312024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:15:00",
+        "departureTime": "18:15:00",
+        "stopId": 150,
+        "stopSequence": 6,
+        "tripId": "0004211312024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:16:00",
+        "departureTime": "18:16:00",
+        "stopId": 148,
+        "stopSequence": 7,
+        "tripId": "0004211312024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:16:00",
+        "departureTime": "18:16:00",
+        "stopId": 146,
+        "stopSequence": 8,
+        "tripId": "0004211312024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:17:00",
+        "departureTime": "18:17:00",
+        "stopId": 175,
+        "stopSequence": 9,
+        "tripId": "0004211312024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:18:00",
+        "departureTime": "18:18:00",
+        "stopId": 453,
+        "stopSequence": 10,
+        "tripId": "0004211312024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:19:00",
+        "departureTime": "18:19:00",
+        "stopId": 451,
+        "stopSequence": 11,
+        "tripId": "0004211312024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:21:00",
+        "departureTime": "18:21:00",
+        "stopId": 176,
+        "stopSequence": 12,
+        "tripId": "0004211312024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:22:00",
+        "departureTime": "18:22:00",
+        "stopId": 276,
+        "stopSequence": 13,
+        "tripId": "0004211312024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:24:00",
+        "departureTime": "18:24:00",
+        "stopId": 403,
+        "stopSequence": 14,
+        "tripId": "0004211312024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:25:00",
+        "departureTime": "18:25:00",
+        "stopId": 2189,
+        "stopSequence": 15,
+        "tripId": "0004211312024090920250612",
+        "type": "U"
+      }
+    ],
+    "totaleCorseInLista": 135,
+    "tripFlag": "TRIP_FLAG__MID",
+    "tripHeadsign": "Piazza Dante \"Dogana\"",
+    "tripId": "0004211312024090920250612",
+    "type": "U",
+    "wheelchairAccessible": 1
+  },
+  {
+    "cableway": null,
+    "corsaPiuVicinaADataRiferimento": false,
+    "delay": 0.0,
+    "directionId": 0,
+    "indiceCorsaInLista": 108,
+    "lastEventRecivedAt": "2025-01-24T17:02:12Z",
+    "lastSequenceDetection": 1,
+    "matricolaBus": 899,
+    "oraArrivoEffettivaAFermataSelezionata": null,
+    "oraArrivoProgrammataAFermataSelezionata": null,
+    "routeId": 400,
+    "stopLast": 247,
+    "stopNext": 407,
+    "stopTimes": [
+      {
+        "arrivalTime": "18:09:00",
+        "departureTime": "18:09:00",
+        "stopId": 247,
+        "stopSequence": 1,
+        "tripId": "0004188652024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:11:00",
+        "departureTime": "18:11:00",
+        "stopId": 407,
+        "stopSequence": 2,
+        "tripId": "0004188652024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:13:00",
+        "departureTime": "18:13:00",
+        "stopId": 444,
+        "stopSequence": 3,
+        "tripId": "0004188652024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:14:00",
+        "departureTime": "18:14:00",
+        "stopId": 165,
+        "stopSequence": 4,
+        "tripId": "0004188652024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:16:00",
+        "departureTime": "18:16:00",
+        "stopId": 166,
+        "stopSequence": 5,
+        "tripId": "0004188652024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:16:00",
+        "departureTime": "18:16:00",
+        "stopId": 2927,
+        "stopSequence": 6,
+        "tripId": "0004188652024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:17:00",
+        "departureTime": "18:17:00",
+        "stopId": 450,
+        "stopSequence": 7,
+        "tripId": "0004188652024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:19:00",
+        "departureTime": "18:19:00",
+        "stopId": 452,
+        "stopSequence": 8,
+        "tripId": "0004188652024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:20:00",
+        "departureTime": "18:20:00",
+        "stopId": 174,
+        "stopSequence": 9,
+        "tripId": "0004188652024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:21:00",
+        "departureTime": "18:21:00",
+        "stopId": 145,
+        "stopSequence": 10,
+        "tripId": "0004188652024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:22:00",
+        "departureTime": "18:22:00",
+        "stopId": 147,
+        "stopSequence": 11,
+        "tripId": "0004188652024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:23:00",
+        "departureTime": "18:23:00",
+        "stopId": 149,
+        "stopSequence": 12,
+        "tripId": "0004188652024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:24:00",
+        "departureTime": "18:24:00",
+        "stopId": 188,
+        "stopSequence": 13,
+        "tripId": "0004188652024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:25:00",
+        "departureTime": "18:25:00",
+        "stopId": 215,
+        "stopSequence": 14,
+        "tripId": "0004188652024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:25:00",
+        "departureTime": "18:25:00",
+        "stopId": 183,
+        "stopSequence": 15,
+        "tripId": "0004188652024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:26:00",
+        "departureTime": "18:26:00",
+        "stopId": 186,
+        "stopSequence": 16,
+        "tripId": "0004188652024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:26:00",
+        "departureTime": "18:26:00",
+        "stopId": 185,
+        "stopSequence": 17,
+        "tripId": "0004188652024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:27:00",
+        "departureTime": "18:27:00",
+        "stopId": 190,
+        "stopSequence": 18,
+        "tripId": "0004188652024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:28:00",
+        "departureTime": "18:28:00",
+        "stopId": 181,
+        "stopSequence": 19,
+        "tripId": "0004188652024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:28:00",
+        "departureTime": "18:28:00",
+        "stopId": 179,
+        "stopSequence": 20,
+        "tripId": "0004188652024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:29:00",
+        "departureTime": "18:29:00",
+        "stopId": 243,
+        "stopSequence": 21,
+        "tripId": "0004188652024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:31:00",
+        "departureTime": "18:31:00",
+        "stopId": 9,
+        "stopSequence": 22,
+        "tripId": "0004188652024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:33:00",
+        "departureTime": "18:33:00",
+        "stopId": 161,
+        "stopSequence": 23,
+        "tripId": "0004188652024090920250612",
+        "type": "U"
+      }
+    ],
+    "totaleCorseInLista": 135,
+    "tripFlag": "TRIP_FLAG__MID",
+    "tripHeadsign": "Oltrecastello",
+    "tripId": "0004188652024090920250612",
+    "type": "U",
+    "wheelchairAccessible": 1
+  },
+  {
+    "cableway": null,
+    "corsaPiuVicinaADataRiferimento": false,
+    "delay": null,
+    "directionId": 1,
+    "indiceCorsaInLista": 109,
+    "lastEventRecivedAt": null,
+    "lastSequenceDetection": 0,
+    "matricolaBus": null,
+    "oraArrivoEffettivaAFermataSelezionata": null,
+    "oraArrivoProgrammataAFermataSelezionata": null,
+    "routeId": 400,
+    "stopLast": 0,
+    "stopNext": 0,
+    "stopTimes": [
+      {
+        "arrivalTime": "18:17:00",
+        "departureTime": "18:17:00",
+        "stopId": 161,
+        "stopSequence": 1,
+        "tripId": "0004188932024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:18:00",
+        "departureTime": "18:18:00",
+        "stopId": 244,
+        "stopSequence": 2,
+        "tripId": "0004188932024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:18:00",
+        "departureTime": "18:18:00",
+        "stopId": 180,
+        "stopSequence": 3,
+        "tripId": "0004188932024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:20:00",
+        "departureTime": "18:20:00",
+        "stopId": 182,
+        "stopSequence": 4,
+        "tripId": "0004188932024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:21:00",
+        "departureTime": "18:21:00",
+        "stopId": 191,
+        "stopSequence": 5,
+        "tripId": "0004188932024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:22:00",
+        "departureTime": "18:22:00",
+        "stopId": 187,
+        "stopSequence": 6,
+        "tripId": "0004188932024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:23:00",
+        "departureTime": "18:23:00",
+        "stopId": 184,
+        "stopSequence": 7,
+        "tripId": "0004188932024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:23:00",
+        "departureTime": "18:23:00",
+        "stopId": 216,
+        "stopSequence": 8,
+        "tripId": "0004188932024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:24:00",
+        "departureTime": "18:24:00",
+        "stopId": 189,
+        "stopSequence": 9,
+        "tripId": "0004188932024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:25:00",
+        "departureTime": "18:25:00",
+        "stopId": 150,
+        "stopSequence": 10,
+        "tripId": "0004188932024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:26:00",
+        "departureTime": "18:26:00",
+        "stopId": 148,
+        "stopSequence": 11,
+        "tripId": "0004188932024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:26:00",
+        "departureTime": "18:26:00",
+        "stopId": 146,
+        "stopSequence": 12,
+        "tripId": "0004188932024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:27:00",
+        "departureTime": "18:27:00",
+        "stopId": 175,
+        "stopSequence": 13,
+        "tripId": "0004188932024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:28:00",
+        "departureTime": "18:28:00",
+        "stopId": 453,
+        "stopSequence": 14,
+        "tripId": "0004188932024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:29:00",
+        "departureTime": "18:29:00",
+        "stopId": 451,
+        "stopSequence": 15,
+        "tripId": "0004188932024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:31:00",
+        "departureTime": "18:31:00",
+        "stopId": 176,
+        "stopSequence": 16,
+        "tripId": "0004188932024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:32:00",
+        "departureTime": "18:32:00",
+        "stopId": 276,
+        "stopSequence": 17,
+        "tripId": "0004188932024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:34:00",
+        "departureTime": "18:34:00",
+        "stopId": 403,
+        "stopSequence": 18,
+        "tripId": "0004188932024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:35:00",
+        "departureTime": "18:35:00",
+        "stopId": 2189,
+        "stopSequence": 19,
+        "tripId": "0004188932024090920250612",
+        "type": "U"
+      }
+    ],
+    "totaleCorseInLista": 135,
+    "tripFlag": "TRIP_FLAG__MID",
+    "tripHeadsign": "Piazza Dante \"Dogana\"",
+    "tripId": "0004188932024090920250612",
+    "type": "U",
+    "wheelchairAccessible": 1
+  },
+  {
+    "cableway": null,
+    "corsaPiuVicinaADataRiferimento": false,
+    "delay": null,
+    "directionId": 0,
+    "indiceCorsaInLista": 110,
+    "lastEventRecivedAt": null,
+    "lastSequenceDetection": 0,
+    "matricolaBus": null,
+    "oraArrivoEffettivaAFermataSelezionata": null,
+    "oraArrivoProgrammataAFermataSelezionata": null,
+    "routeId": 400,
+    "stopLast": 0,
+    "stopNext": 0,
+    "stopTimes": [
+      {
+        "arrivalTime": "18:20:00",
+        "departureTime": "18:20:00",
+        "stopId": 247,
+        "stopSequence": 1,
+        "tripId": "0004221462024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:22:00",
+        "departureTime": "18:22:00",
+        "stopId": 407,
+        "stopSequence": 2,
+        "tripId": "0004221462024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:24:00",
+        "departureTime": "18:24:00",
+        "stopId": 444,
+        "stopSequence": 3,
+        "tripId": "0004221462024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:25:00",
+        "departureTime": "18:25:00",
+        "stopId": 165,
+        "stopSequence": 4,
+        "tripId": "0004221462024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:27:00",
+        "departureTime": "18:27:00",
+        "stopId": 166,
+        "stopSequence": 5,
+        "tripId": "0004221462024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:27:00",
+        "departureTime": "18:27:00",
+        "stopId": 2927,
+        "stopSequence": 6,
+        "tripId": "0004221462024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:28:00",
+        "departureTime": "18:28:00",
+        "stopId": 450,
+        "stopSequence": 7,
+        "tripId": "0004221462024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:30:00",
+        "departureTime": "18:30:00",
+        "stopId": 452,
+        "stopSequence": 8,
+        "tripId": "0004221462024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:31:00",
+        "departureTime": "18:31:00",
+        "stopId": 174,
+        "stopSequence": 9,
+        "tripId": "0004221462024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:32:00",
+        "departureTime": "18:32:00",
+        "stopId": 145,
+        "stopSequence": 10,
+        "tripId": "0004221462024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:33:00",
+        "departureTime": "18:33:00",
+        "stopId": 147,
+        "stopSequence": 11,
+        "tripId": "0004221462024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:34:00",
+        "departureTime": "18:34:00",
+        "stopId": 149,
+        "stopSequence": 12,
+        "tripId": "0004221462024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:35:00",
+        "departureTime": "18:35:00",
+        "stopId": 2490,
+        "stopSequence": 13,
+        "tripId": "0004221462024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:36:00",
+        "departureTime": "18:36:00",
+        "stopId": 186,
+        "stopSequence": 14,
+        "tripId": "0004221462024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:36:00",
+        "departureTime": "18:36:00",
+        "stopId": 185,
+        "stopSequence": 15,
+        "tripId": "0004221462024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:37:00",
+        "departureTime": "18:37:00",
+        "stopId": 2549,
+        "stopSequence": 16,
+        "tripId": "0004221462024090920250612",
+        "type": "U"
+      }
+    ],
+    "totaleCorseInLista": 135,
+    "tripFlag": "TRIP_FLAG__MID",
+    "tripHeadsign": "Povo \"Polo Sociale\" Cap.",
+    "tripId": "0004221462024090920250612",
+    "type": "U",
+    "wheelchairAccessible": 1
+  },
+  {
+    "cableway": null,
+    "corsaPiuVicinaADataRiferimento": false,
+    "delay": null,
+    "directionId": 1,
+    "indiceCorsaInLista": 111,
+    "lastEventRecivedAt": null,
+    "lastSequenceDetection": 0,
+    "matricolaBus": null,
+    "oraArrivoEffettivaAFermataSelezionata": null,
+    "oraArrivoProgrammataAFermataSelezionata": null,
+    "routeId": 400,
+    "stopLast": 0,
+    "stopNext": 0,
+    "stopTimes": [
+      {
+        "arrivalTime": "18:28:00",
+        "departureTime": "18:28:00",
+        "stopId": 2549,
+        "stopSequence": 1,
+        "tripId": "0004211222024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:29:00",
+        "departureTime": "18:29:00",
+        "stopId": 187,
+        "stopSequence": 2,
+        "tripId": "0004211222024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:30:00",
+        "departureTime": "18:30:00",
+        "stopId": 2820,
+        "stopSequence": 3,
+        "tripId": "0004211222024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:31:00",
+        "departureTime": "18:31:00",
+        "stopId": 2682,
+        "stopSequence": 4,
+        "tripId": "0004211222024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:33:00",
+        "departureTime": "18:33:00",
+        "stopId": 2833,
+        "stopSequence": 5,
+        "tripId": "0004211222024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:35:00",
+        "departureTime": "18:35:00",
+        "stopId": 150,
+        "stopSequence": 6,
+        "tripId": "0004211222024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:36:00",
+        "departureTime": "18:36:00",
+        "stopId": 148,
+        "stopSequence": 7,
+        "tripId": "0004211222024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:36:00",
+        "departureTime": "18:36:00",
+        "stopId": 146,
+        "stopSequence": 8,
+        "tripId": "0004211222024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:37:00",
+        "departureTime": "18:37:00",
+        "stopId": 175,
+        "stopSequence": 9,
+        "tripId": "0004211222024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:38:00",
+        "departureTime": "18:38:00",
+        "stopId": 453,
+        "stopSequence": 10,
+        "tripId": "0004211222024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:39:00",
+        "departureTime": "18:39:00",
+        "stopId": 451,
+        "stopSequence": 11,
+        "tripId": "0004211222024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:41:00",
+        "departureTime": "18:41:00",
+        "stopId": 176,
+        "stopSequence": 12,
+        "tripId": "0004211222024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:42:00",
+        "departureTime": "18:42:00",
+        "stopId": 276,
+        "stopSequence": 13,
+        "tripId": "0004211222024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:44:00",
+        "departureTime": "18:44:00",
+        "stopId": 403,
+        "stopSequence": 14,
+        "tripId": "0004211222024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:45:00",
+        "departureTime": "18:45:00",
+        "stopId": 2189,
+        "stopSequence": 15,
+        "tripId": "0004211222024090920250612",
+        "type": "U"
+      }
+    ],
+    "totaleCorseInLista": 135,
+    "tripFlag": "TRIP_FLAG__MID",
+    "tripHeadsign": "Piazza Dante \"Dogana\"",
+    "tripId": "0004211222024090920250612",
+    "type": "U",
+    "wheelchairAccessible": 1
+  },
+  {
+    "cableway": null,
+    "corsaPiuVicinaADataRiferimento": false,
+    "delay": null,
+    "directionId": 0,
+    "indiceCorsaInLista": 112,
+    "lastEventRecivedAt": null,
+    "lastSequenceDetection": 0,
+    "matricolaBus": null,
+    "oraArrivoEffettivaAFermataSelezionata": null,
+    "oraArrivoProgrammataAFermataSelezionata": null,
+    "routeId": 400,
+    "stopLast": 0,
+    "stopNext": 0,
+    "stopTimes": [
+      {
+        "arrivalTime": "18:29:00",
+        "departureTime": "18:29:00",
+        "stopId": 247,
+        "stopSequence": 1,
+        "tripId": "0004188412024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:31:00",
+        "departureTime": "18:31:00",
+        "stopId": 407,
+        "stopSequence": 2,
+        "tripId": "0004188412024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:33:00",
+        "departureTime": "18:33:00",
+        "stopId": 444,
+        "stopSequence": 3,
+        "tripId": "0004188412024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:34:00",
+        "departureTime": "18:34:00",
+        "stopId": 165,
+        "stopSequence": 4,
+        "tripId": "0004188412024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:36:00",
+        "departureTime": "18:36:00",
+        "stopId": 166,
+        "stopSequence": 5,
+        "tripId": "0004188412024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:36:00",
+        "departureTime": "18:36:00",
+        "stopId": 2927,
+        "stopSequence": 6,
+        "tripId": "0004188412024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:37:00",
+        "departureTime": "18:37:00",
+        "stopId": 450,
+        "stopSequence": 7,
+        "tripId": "0004188412024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:39:00",
+        "departureTime": "18:39:00",
+        "stopId": 452,
+        "stopSequence": 8,
+        "tripId": "0004188412024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:40:00",
+        "departureTime": "18:40:00",
+        "stopId": 174,
+        "stopSequence": 9,
+        "tripId": "0004188412024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:41:00",
+        "departureTime": "18:41:00",
+        "stopId": 145,
+        "stopSequence": 10,
+        "tripId": "0004188412024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:42:00",
+        "departureTime": "18:42:00",
+        "stopId": 147,
+        "stopSequence": 11,
+        "tripId": "0004188412024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:43:00",
+        "departureTime": "18:43:00",
+        "stopId": 149,
+        "stopSequence": 12,
+        "tripId": "0004188412024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:44:00",
+        "departureTime": "18:44:00",
+        "stopId": 188,
+        "stopSequence": 13,
+        "tripId": "0004188412024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:45:00",
+        "departureTime": "18:45:00",
+        "stopId": 215,
+        "stopSequence": 14,
+        "tripId": "0004188412024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:45:00",
+        "departureTime": "18:45:00",
+        "stopId": 183,
+        "stopSequence": 15,
+        "tripId": "0004188412024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:46:00",
+        "departureTime": "18:46:00",
+        "stopId": 186,
+        "stopSequence": 16,
+        "tripId": "0004188412024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:46:00",
+        "departureTime": "18:46:00",
+        "stopId": 185,
+        "stopSequence": 17,
+        "tripId": "0004188412024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:47:00",
+        "departureTime": "18:47:00",
+        "stopId": 190,
+        "stopSequence": 18,
+        "tripId": "0004188412024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:48:00",
+        "departureTime": "18:48:00",
+        "stopId": 181,
+        "stopSequence": 19,
+        "tripId": "0004188412024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:48:00",
+        "departureTime": "18:48:00",
+        "stopId": 179,
+        "stopSequence": 20,
+        "tripId": "0004188412024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:49:00",
+        "departureTime": "18:49:00",
+        "stopId": 243,
+        "stopSequence": 21,
+        "tripId": "0004188412024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:51:00",
+        "departureTime": "18:51:00",
+        "stopId": 9,
+        "stopSequence": 22,
+        "tripId": "0004188412024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:53:00",
+        "departureTime": "18:53:00",
+        "stopId": 161,
+        "stopSequence": 23,
+        "tripId": "0004188412024090920250612",
+        "type": "U"
+      }
+    ],
+    "totaleCorseInLista": 135,
+    "tripFlag": "TRIP_FLAG__MID",
+    "tripHeadsign": "Oltrecastello",
+    "tripId": "0004188412024090920250612",
+    "type": "U",
+    "wheelchairAccessible": 1
+  },
+  {
+    "cableway": null,
+    "corsaPiuVicinaADataRiferimento": false,
+    "delay": null,
+    "directionId": 1,
+    "indiceCorsaInLista": 113,
+    "lastEventRecivedAt": null,
+    "lastSequenceDetection": 0,
+    "matricolaBus": null,
+    "oraArrivoEffettivaAFermataSelezionata": null,
+    "oraArrivoProgrammataAFermataSelezionata": null,
+    "routeId": 400,
+    "stopLast": 0,
+    "stopNext": 0,
+    "stopTimes": [
+      {
+        "arrivalTime": "18:37:00",
+        "departureTime": "18:37:00",
+        "stopId": 161,
+        "stopSequence": 1,
+        "tripId": "0004189042024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:38:00",
+        "departureTime": "18:38:00",
+        "stopId": 244,
+        "stopSequence": 2,
+        "tripId": "0004189042024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:38:00",
+        "departureTime": "18:38:00",
+        "stopId": 180,
+        "stopSequence": 3,
+        "tripId": "0004189042024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:40:00",
+        "departureTime": "18:40:00",
+        "stopId": 182,
+        "stopSequence": 4,
+        "tripId": "0004189042024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:41:00",
+        "departureTime": "18:41:00",
+        "stopId": 191,
+        "stopSequence": 5,
+        "tripId": "0004189042024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:42:00",
+        "departureTime": "18:42:00",
+        "stopId": 187,
+        "stopSequence": 6,
+        "tripId": "0004189042024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:43:00",
+        "departureTime": "18:43:00",
+        "stopId": 184,
+        "stopSequence": 7,
+        "tripId": "0004189042024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:43:00",
+        "departureTime": "18:43:00",
+        "stopId": 216,
+        "stopSequence": 8,
+        "tripId": "0004189042024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:44:00",
+        "departureTime": "18:44:00",
+        "stopId": 189,
+        "stopSequence": 9,
+        "tripId": "0004189042024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:45:00",
+        "departureTime": "18:45:00",
+        "stopId": 150,
+        "stopSequence": 10,
+        "tripId": "0004189042024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:46:00",
+        "departureTime": "18:46:00",
+        "stopId": 148,
+        "stopSequence": 11,
+        "tripId": "0004189042024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:46:00",
+        "departureTime": "18:46:00",
+        "stopId": 146,
+        "stopSequence": 12,
+        "tripId": "0004189042024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:47:00",
+        "departureTime": "18:47:00",
+        "stopId": 175,
+        "stopSequence": 13,
+        "tripId": "0004189042024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:48:00",
+        "departureTime": "18:48:00",
+        "stopId": 453,
+        "stopSequence": 14,
+        "tripId": "0004189042024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:49:00",
+        "departureTime": "18:49:00",
+        "stopId": 451,
+        "stopSequence": 15,
+        "tripId": "0004189042024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:51:00",
+        "departureTime": "18:51:00",
+        "stopId": 176,
+        "stopSequence": 16,
+        "tripId": "0004189042024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:52:00",
+        "departureTime": "18:52:00",
+        "stopId": 276,
+        "stopSequence": 17,
+        "tripId": "0004189042024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:54:00",
+        "departureTime": "18:54:00",
+        "stopId": 403,
+        "stopSequence": 18,
+        "tripId": "0004189042024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:55:00",
+        "departureTime": "18:55:00",
+        "stopId": 2189,
+        "stopSequence": 19,
+        "tripId": "0004189042024090920250612",
+        "type": "U"
+      }
+    ],
+    "totaleCorseInLista": 135,
+    "tripFlag": "TRIP_FLAG__MID",
+    "tripHeadsign": "Piazza Dante \"Dogana\"",
+    "tripId": "0004189042024090920250612",
+    "type": "U",
+    "wheelchairAccessible": 1
+  },
+  {
+    "cableway": null,
+    "corsaPiuVicinaADataRiferimento": false,
+    "delay": null,
+    "directionId": 0,
+    "indiceCorsaInLista": 114,
+    "lastEventRecivedAt": null,
+    "lastSequenceDetection": 0,
+    "matricolaBus": null,
+    "oraArrivoEffettivaAFermataSelezionata": null,
+    "oraArrivoProgrammataAFermataSelezionata": null,
+    "routeId": 400,
+    "stopLast": 0,
+    "stopNext": 0,
+    "stopTimes": [
+      {
+        "arrivalTime": "18:39:00",
+        "departureTime": "18:39:00",
+        "stopId": 247,
+        "stopSequence": 1,
+        "tripId": "0004211292024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:41:00",
+        "departureTime": "18:41:00",
+        "stopId": 407,
+        "stopSequence": 2,
+        "tripId": "0004211292024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:43:00",
+        "departureTime": "18:43:00",
+        "stopId": 444,
+        "stopSequence": 3,
+        "tripId": "0004211292024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:44:00",
+        "departureTime": "18:44:00",
+        "stopId": 165,
+        "stopSequence": 4,
+        "tripId": "0004211292024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:46:00",
+        "departureTime": "18:46:00",
+        "stopId": 166,
+        "stopSequence": 5,
+        "tripId": "0004211292024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:46:00",
+        "departureTime": "18:46:00",
+        "stopId": 2927,
+        "stopSequence": 6,
+        "tripId": "0004211292024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:47:00",
+        "departureTime": "18:47:00",
+        "stopId": 450,
+        "stopSequence": 7,
+        "tripId": "0004211292024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:49:00",
+        "departureTime": "18:49:00",
+        "stopId": 452,
+        "stopSequence": 8,
+        "tripId": "0004211292024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:50:00",
+        "departureTime": "18:50:00",
+        "stopId": 174,
+        "stopSequence": 9,
+        "tripId": "0004211292024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:51:00",
+        "departureTime": "18:51:00",
+        "stopId": 145,
+        "stopSequence": 10,
+        "tripId": "0004211292024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:52:00",
+        "departureTime": "18:52:00",
+        "stopId": 147,
+        "stopSequence": 11,
+        "tripId": "0004211292024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:53:00",
+        "departureTime": "18:53:00",
+        "stopId": 149,
+        "stopSequence": 12,
+        "tripId": "0004211292024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:54:00",
+        "departureTime": "18:54:00",
+        "stopId": 2490,
+        "stopSequence": 13,
+        "tripId": "0004211292024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:55:00",
+        "departureTime": "18:55:00",
+        "stopId": 186,
+        "stopSequence": 14,
+        "tripId": "0004211292024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:55:00",
+        "departureTime": "18:55:00",
+        "stopId": 185,
+        "stopSequence": 15,
+        "tripId": "0004211292024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:56:00",
+        "departureTime": "18:56:00",
+        "stopId": 2549,
+        "stopSequence": 16,
+        "tripId": "0004211292024090920250612",
+        "type": "U"
+      }
+    ],
+    "totaleCorseInLista": 135,
+    "tripFlag": "TRIP_FLAG__MID",
+    "tripHeadsign": "Povo \"Polo Sociale\" Cap.",
+    "tripId": "0004211292024090920250612",
+    "type": "U",
+    "wheelchairAccessible": 1
+  },
+  {
+    "cableway": null,
+    "corsaPiuVicinaADataRiferimento": false,
+    "delay": null,
+    "directionId": 0,
+    "indiceCorsaInLista": 115,
+    "lastEventRecivedAt": null,
+    "lastSequenceDetection": 0,
+    "matricolaBus": null,
+    "oraArrivoEffettivaAFermataSelezionata": null,
+    "oraArrivoProgrammataAFermataSelezionata": null,
+    "routeId": 400,
+    "stopLast": 0,
+    "stopNext": 0,
+    "stopTimes": [
+      {
+        "arrivalTime": "18:49:00",
+        "departureTime": "18:49:00",
+        "stopId": 247,
+        "stopSequence": 1,
+        "tripId": "0004188542024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:51:00",
+        "departureTime": "18:51:00",
+        "stopId": 407,
+        "stopSequence": 2,
+        "tripId": "0004188542024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:53:00",
+        "departureTime": "18:53:00",
+        "stopId": 444,
+        "stopSequence": 3,
+        "tripId": "0004188542024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:54:00",
+        "departureTime": "18:54:00",
+        "stopId": 165,
+        "stopSequence": 4,
+        "tripId": "0004188542024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:56:00",
+        "departureTime": "18:56:00",
+        "stopId": 166,
+        "stopSequence": 5,
+        "tripId": "0004188542024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:56:00",
+        "departureTime": "18:56:00",
+        "stopId": 2927,
+        "stopSequence": 6,
+        "tripId": "0004188542024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:57:00",
+        "departureTime": "18:57:00",
+        "stopId": 450,
+        "stopSequence": 7,
+        "tripId": "0004188542024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:59:00",
+        "departureTime": "18:59:00",
+        "stopId": 452,
+        "stopSequence": 8,
+        "tripId": "0004188542024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "19:00:00",
+        "departureTime": "19:00:00",
+        "stopId": 174,
+        "stopSequence": 9,
+        "tripId": "0004188542024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "19:01:00",
+        "departureTime": "19:01:00",
+        "stopId": 145,
+        "stopSequence": 10,
+        "tripId": "0004188542024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "19:02:00",
+        "departureTime": "19:02:00",
+        "stopId": 147,
+        "stopSequence": 11,
+        "tripId": "0004188542024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "19:03:00",
+        "departureTime": "19:03:00",
+        "stopId": 149,
+        "stopSequence": 12,
+        "tripId": "0004188542024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "19:04:00",
+        "departureTime": "19:04:00",
+        "stopId": 188,
+        "stopSequence": 13,
+        "tripId": "0004188542024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "19:05:00",
+        "departureTime": "19:05:00",
+        "stopId": 215,
+        "stopSequence": 14,
+        "tripId": "0004188542024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "19:05:00",
+        "departureTime": "19:05:00",
+        "stopId": 183,
+        "stopSequence": 15,
+        "tripId": "0004188542024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "19:06:00",
+        "departureTime": "19:06:00",
+        "stopId": 186,
+        "stopSequence": 16,
+        "tripId": "0004188542024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "19:06:00",
+        "departureTime": "19:06:00",
+        "stopId": 185,
+        "stopSequence": 17,
+        "tripId": "0004188542024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "19:07:00",
+        "departureTime": "19:07:00",
+        "stopId": 190,
+        "stopSequence": 18,
+        "tripId": "0004188542024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "19:08:00",
+        "departureTime": "19:08:00",
+        "stopId": 181,
+        "stopSequence": 19,
+        "tripId": "0004188542024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "19:08:00",
+        "departureTime": "19:08:00",
+        "stopId": 179,
+        "stopSequence": 20,
+        "tripId": "0004188542024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "19:09:00",
+        "departureTime": "19:09:00",
+        "stopId": 243,
+        "stopSequence": 21,
+        "tripId": "0004188542024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "19:11:00",
+        "departureTime": "19:11:00",
+        "stopId": 9,
+        "stopSequence": 22,
+        "tripId": "0004188542024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "19:13:00",
+        "departureTime": "19:13:00",
+        "stopId": 161,
+        "stopSequence": 23,
+        "tripId": "0004188542024090920250612",
+        "type": "U"
+      }
+    ],
+    "totaleCorseInLista": 135,
+    "tripFlag": "TRIP_FLAG__MID",
+    "tripHeadsign": "Oltrecastello",
+    "tripId": "0004188542024090920250612",
+    "type": "U",
+    "wheelchairAccessible": 1
+  },
+  {
+    "cableway": null,
+    "corsaPiuVicinaADataRiferimento": false,
+    "delay": null,
+    "directionId": 1,
+    "indiceCorsaInLista": 116,
+    "lastEventRecivedAt": null,
+    "lastSequenceDetection": 0,
+    "matricolaBus": null,
+    "oraArrivoEffettivaAFermataSelezionata": null,
+    "oraArrivoProgrammataAFermataSelezionata": null,
+    "routeId": 400,
+    "stopLast": 0,
+    "stopNext": 0,
+    "stopTimes": [
+      {
+        "arrivalTime": "18:50:00",
+        "departureTime": "18:50:00",
+        "stopId": 2549,
+        "stopSequence": 1,
+        "tripId": "0004221432024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:51:00",
+        "departureTime": "18:51:00",
+        "stopId": 187,
+        "stopSequence": 2,
+        "tripId": "0004221432024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:52:00",
+        "departureTime": "18:52:00",
+        "stopId": 2820,
+        "stopSequence": 3,
+        "tripId": "0004221432024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:53:00",
+        "departureTime": "18:53:00",
+        "stopId": 2682,
+        "stopSequence": 4,
+        "tripId": "0004221432024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:55:00",
+        "departureTime": "18:55:00",
+        "stopId": 2833,
+        "stopSequence": 5,
+        "tripId": "0004221432024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:57:00",
+        "departureTime": "18:57:00",
+        "stopId": 150,
+        "stopSequence": 6,
+        "tripId": "0004221432024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:58:00",
+        "departureTime": "18:58:00",
+        "stopId": 148,
+        "stopSequence": 7,
+        "tripId": "0004221432024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:58:00",
+        "departureTime": "18:58:00",
+        "stopId": 146,
+        "stopSequence": 8,
+        "tripId": "0004221432024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "18:59:00",
+        "departureTime": "18:59:00",
+        "stopId": 175,
+        "stopSequence": 9,
+        "tripId": "0004221432024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "19:00:00",
+        "departureTime": "19:00:00",
+        "stopId": 453,
+        "stopSequence": 10,
+        "tripId": "0004221432024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "19:01:00",
+        "departureTime": "19:01:00",
+        "stopId": 451,
+        "stopSequence": 11,
+        "tripId": "0004221432024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "19:03:00",
+        "departureTime": "19:03:00",
+        "stopId": 176,
+        "stopSequence": 12,
+        "tripId": "0004221432024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "19:04:00",
+        "departureTime": "19:04:00",
+        "stopId": 276,
+        "stopSequence": 13,
+        "tripId": "0004221432024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "19:06:00",
+        "departureTime": "19:06:00",
+        "stopId": 403,
+        "stopSequence": 14,
+        "tripId": "0004221432024090920250612",
+        "type": "U"
+      },
+      {
+        "arrivalTime": "19:07:00",
+        "departureTime": "19:07:00",
+        "stopId": 2189,
+        "stopSequence": 15,
+        "tripId": "0004221432024090920250612",
+        "type": "U"
+      }
+    ],
+    "totaleCorseInLista": 135,
+    "tripFlag": "TRIP_FLAG__MID",
+    "tripHeadsign": "Piazza Dante \"Dogana\"",
+    "tripId": "0004221432024090920250612",
+    "type": "U",
+    "wheelchairAccessible": 1
+  }
+]

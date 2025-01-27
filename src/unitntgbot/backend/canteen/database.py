@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from .scraper import get_week_meals
 
 MAX_OFFSET_DAYS = 7 * 8  # 8 weeks
-
+DATABASE = "db/canteen.db"
 
 def create_table(db: sqlite3.Connection) -> None:
     db.execute(
@@ -34,7 +34,7 @@ def get_menu(db: sqlite3.Connection, date: datetime, *, dinner: bool = False) ->
     menu = cur.fetchone()
     cur.close()
 
-    output = f"{'Dinner' if dinner else 'Lunch'} menu for {date.strftime('%A %Y-%d-%m')}\n"
+    output = f"{'Dinner' if dinner else 'Lunch'} menu for {date.strftime('%A %Y-%m-%d')}\n"
     if menu and menu[0] != "":
         # Hardcode static menu items, not good practice but they don't change
         output += "\nFirst Course:\n 🍝  Riso All' Olio\n 🍝  Pasta All' Olio\n"
@@ -47,7 +47,7 @@ def get_menu(db: sqlite3.Connection, date: datetime, *, dinner: bool = False) ->
 
 
 if __name__ == "__main__":
-    db = sqlite3.connect("db/canteen.db")
+    db = sqlite3.connect(DATABASE)
     create_table(db)
     update_db(db, datetime.today())
     print(get_menu(db, datetime.today()))

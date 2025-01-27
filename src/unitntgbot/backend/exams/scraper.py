@@ -1,7 +1,7 @@
+from collections import namedtuple
 import logging
 import re
 import sqlite3
-from dataclasses import dataclass
 
 import requests
 from pyquery import PyQuery as pq  # noqa: N813
@@ -12,34 +12,7 @@ EXAMS_LIST_URL = "https://www.esse3.unitn.it/Guide/PaginaListaAppelli.do"
 BASE_URL = "https://www.esse3.unitn.it/"
 
 
-@dataclass
-class UniversityExam:
-    exam_id: str
-    faculty: str
-    name: str
-    date: str
-    registration_start: str
-    registration_end: str
-    partition: str
-    link: str
-    professors: str
-    is_oral: bool
-    is_partial: bool
-
-    def to_tuple(self) -> tuple[str, str, str, str, str, str, str, str, str, bool, bool]:
-        return (
-            self.exam_id,
-            self.faculty,
-            self.name,
-            self.date,
-            self.registration_start,
-            self.registration_end,
-            self.partition,
-            self.link,
-            self.professors,
-            self.is_oral,
-            self.is_partial,
-        )
+UniversityExam = namedtuple("UniversityExam", ["exam_id", "faculty", "name", "date", "registration_start", "registration_end", "partition", "link", "professors", "is_oral", "is_partial"])
 
 
 def get_university_faculties() -> dict[int, str]:
@@ -283,7 +256,7 @@ def entrypoint() -> None:
     )
     db.executemany(
         "INSERT INTO exams VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
-        [exam.to_tuple() for exam in exams],
+        exams,
     )
     db.commit()
     db.close()

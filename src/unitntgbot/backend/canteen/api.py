@@ -3,9 +3,8 @@ from datetime import datetime, timedelta
 
 from flask import Flask, Response, g, jsonify
 
-from .database import MAX_OFFSET_DAYS, get_menu
+from .database import DATABASE, MAX_OFFSET_DAYS, get_menu, create_table, update_db
 
-DATABASE = "db/canteen.db"
 
 app = Flask(__name__)
 
@@ -15,13 +14,15 @@ def _offset_and_format_date(date: datetime, days: int) -> str | None:
     delay = datetime.now() - offset_date
     if abs(delay.days) > MAX_OFFSET_DAYS:
         return None
-    return offset_date.strftime("%Y-%d-%m")
+    return offset_date.strftime("%Y-%m-%d")
 
 
 def _get_db() -> sqlite3.Connection:
     db = getattr(g, "_database", None)
     if db is None:
         db = g._database = sqlite3.connect(DATABASE)
+        create_table(db)
+        update_db(db, datetime.today())  # TODO: Change this later
     return db
 
 
@@ -68,30 +69,3 @@ def get_dinner(day: str) -> Response:
 
 def entrypoint() -> None:
     app.run(port=5000, debug=True)
-
-
-"""
-src/pytgtnbot
-- bot
-    - handlers
-    - entrypoint.py
-- backend
-    - canteen
-    - exams
-    - lectures
-- main.py
-
-tgtnbot bot
-tgtnbot backend canteen
-
-services:
-    bot:
-        image: lastessa
-        cmd: tgtnbot bot
-        env:
-            BACKEND_CANTEEN_URL: http://backend-canteen:8080
-
-    backend-canteen:
-        image: lastessa
-        cmd: tgtnbot backend canteen
-"""

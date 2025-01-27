@@ -5,20 +5,20 @@ from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import ContextTypes
 
 
-async def menu_handler(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
+async def map_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     keyboard = [
-        [InlineKeyboardButton("", callback_data="menu1")],
-        [InlineKeyboardButton("Option 2", callback_data="menu2")],
+        [InlineKeyboardButton("a", callback_data="1")],
+        [InlineKeyboardButton("Option 2", callback_data="2")],
         [InlineKeyboardButton("Visit Website", url="https://example.com")],
     ]
 
     reply_markup = InlineKeyboardMarkup(keyboard)
 
     if update.message:
-        await update.message.reply_text("Choose an option:", reply_markup=reply_markup)
+        await update.message.reply_text("What do you want to setup?", reply_markup=reply_markup)
 
 
-async def menu_callback_handler(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
+async def map_callback_handler(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
     query = update.callback_query
 
     if not query:
@@ -27,7 +27,7 @@ async def menu_callback_handler(update: Update, _: ContextTypes.DEFAULT_TYPE) ->
     await query.answer()
 
     keyboard = [
-        [InlineKeyboardButton("Option 1", callback_data="menu1")],
+        [InlineKeyboardButton("Option 1", callback_data="a" * 6)],
         [InlineKeyboardButton("Option 2", callback_data="menu2")],
         [InlineKeyboardButton("Visit Website", url="https://example.com")],
     ]

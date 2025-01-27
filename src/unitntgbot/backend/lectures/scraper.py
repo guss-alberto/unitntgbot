@@ -1,34 +1,15 @@
+from collections import namedtuple
+from datetime import datetime
 import logging
 import re
 import sqlite3
-from dataclasses import dataclass
-from datetime import datetime
 
 import requests
 
 
-@dataclass
-class UniversityLecture:
-    id: str
-    course_id: str
-    course_name: str
-    lecturer: str
-    start: str
-    end: str
-    location: str
-    is_cancelled: bool
-
-    def to_tuple(self) -> tuple[str, str, str, str, str, str, str, bool]:
-        return (
-            self.id,
-            self.course_id,
-            self.course_name,
-            self.lecturer,
-            self.start,
-            self.end,
-            self.location,
-            self.is_cancelled,
-        )
+UniversityLecture = namedtuple(
+    "UniversityLecture", ["id", "course_id", "course_name", "lecturer", "start", "end", "location", "is_cancelled"]
+)
 
 
 def _iso_normalize_date(date: str) -> str:
@@ -97,7 +78,7 @@ def get_courses_from_easyacademy(courses: set[str], date: datetime) -> list[Univ
     return lectures
 
 
-def import_from_unitrentoapp(url: str) -> set[str]:
+def import_from_unitrentoapp(url: str) -> set[str] | None:
     """
     Import courses from a Unitrentoapp calendar.
 
@@ -108,15 +89,15 @@ def import_from_unitrentoapp(url: str) -> set[str]:
         set[str]: The set of courses the student is enrolled in, similar to "EC146220_MASSA", "EC145810_MARCH" or "EC145614_BOATO".
 
     """
-    courses: set[str] = set()
 
     # Check if the URL is valid
     if not re.match(r"^https:\/\/webapi\.unitn\.it\/unitrentoapp\/profile\/me\/calendar\/[A-F0-9]{64}$", url):
-        return courses
+        return None
 
     response = requests.get(url, timeout=30)
     ical = response.text
 
+    courses: set[str] = set()
     for course in ical.split("\nUID:"):
         match = re.match(r"^Lezione(.+)\.", course)
         if match:
@@ -125,7 +106,7 @@ def import_from_unitrentoapp(url: str) -> set[str]:
     return courses
 
 
-def entrypoint() -> None:
+if __name__ == "__main__":
     logger = logging.getLogger(__name__)
     logging.basicConfig(level=logging.INFO)
 
@@ -135,6 +116,10 @@ def entrypoint() -> None:
     # Parse the courses
     courses = import_from_unitrentoapp(url)
     logger.info("Imported courses: %s", courses)
+
+    if courses is None:
+        logger.error("Invalid URL")
+        exit(1)
 
     lectures = get_courses_from_easyacademy(courses, date)
     logger.info("Found %s", len(lectures))
@@ -156,7 +141,7 @@ def entrypoint() -> None:
     )
     db.executemany(
         "INSERT INTO Lectures VALUES (?, ?, ?, ?, ?, ?, ?, ?);",
-        [lecture.to_tuple() for lecture in lectures],
+        lectures,
     )
     db.commit()
     db.close()
