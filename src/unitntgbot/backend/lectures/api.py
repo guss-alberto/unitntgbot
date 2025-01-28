@@ -1,10 +1,15 @@
+import re
 import sqlite3
 from datetime import datetime, timedelta
 
 from flask import Flask, Response, g, jsonify, request
 
-from .database import DATABASE, get_lectures_for_user, create_tables, update_db, import_for_user
-
+from .database import (
+    DATABASE,
+    get_lectures_for_user,
+    get_next_lectures_for_user,
+    import_for_user,
+)
 
 app = Flask(__name__)
 
@@ -13,13 +18,6 @@ def _get_db() -> sqlite3.Connection:
     db = getattr(g, "_database", None)
     if db is None:
         db = g._database = sqlite3.connect(DATABASE)
-        create_tables(db)
-        update_db(db, datetime.fromisoformat("2024-10-16"))  # TODO: Change this later  
-        
-        url = "https://webapi.unitn.it/unitrentoapp/profile/me/calendar/EA632CDA155A04EB25CEC0B212EED9CCBA873C781F6045799C9D7CB2BB0FC6F9"
-        user_id = "guss"
-
-        import_for_user(db, user_id, url)
     return db
 
 
@@ -30,27 +28,67 @@ def _close_connection(exception):
         db.close()
 
 
-@app.route("/lectures/<string:tg_id>")
-def get_lunch(tg_id: str) -> Response:
+# POST /lectures/tgid?unitrentoapp_link=""
+# Aggiungere le lezioni associate al token al DB, e associa l'utente alle lezioni per notificarlo, e cancella tutte le iscrizioni precedenti
+@app.post("/lectures/<string:tg_id>")
+def add_lectures(tg_id: str) -> tuple[Response, int]:
+    unitrentoapp_link = request.args.get("unitrentoapp_link")
+
+    if not unitrentoapp_link:
+        return jsonify({"message": "Please provide a link in query params as 'unitrentoapp_link'"}), 400
+
+    unitrentoapp_link = unitrentoapp_link.strip()
+
+    if not re.match(
+        r"^https:\/\/webapi\.unitn\.it\/unitrentoapp\/profile\/me\/calendar\/[A-F0-9]{64}$", unitrentoapp_link,
+    ):
+        return jsonify({"message": "Invalid Link"}), 400
+
+    db = _get_db()
+
+    number = import_for_user(db, tg_id, unitrentoapp_link)
+
+    return jsonify({"message": "Added lectures successfully", "number": number}), 200
+
+
+# Ti dice la prossima lezione in programma per l'utente
+@app.get("/lectures/<string:tg_id>/next")
+def get_next_lecture(tg_id: str) -> tuple[Response, int]:
+    date = datetime.now()
+
+    db = _get_db()
+
+    next_lectures = get_next_lectures_for_user(db, tg_id, date)
+
+    if not next_lectures:
+        return jsonify({"message": "No lecture found"}), 404
+
+    # Checking for the any lecture is the same, just check if the first one is today
+    is_today = datetime.fromisoformat(next_lectures[0].start).date() == date.date()
+
+    return jsonify({"lectures": next_lectures, "is_today": is_today }), 200
+
+
+# Prendi dal DB le lezioni associate all'utente per la data specificata, oppure per oggi se la data non è specificata
+@app.get("/lectures/<string:tg_id>")
+def get_lectures(tg_id: str) -> tuple[Response, int]:
     date = request.args.get("date")
-    
+
     if not date:
         date = datetime.now()
     else:
         try:
             date = datetime.fromisoformat(date)
         except ValueError:
-            return jsonify({"message": "Invalid Date Format"}, 400)
-    
+            return jsonify({"message": "Invalid Date Format"}), 400
+
     db = _get_db()
     lectures = get_lectures_for_user(db, tg_id, date)
 
     if lectures is None:
-        return jsonify({"message": "No courses found"}, 404)
+        return jsonify({"message": "User not found"}), 404
 
-    return jsonify({
-      "lectures": lectures
-    })
+    return jsonify({"lectures": lectures}), 200
 
 
 def entrypoint() -> None:

@@ -10,19 +10,16 @@ from telegram.ext import ContextTypes
 
 
 async def canteen_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    args = context.args
-
-    print(args)
+    args = context.args # TODO: Fix it to work with args
 
     # if args[1] == "dinner":
     #     return
     # else:
 
-
     now = datetime.now().strftime("%Y-%m-%d")
 
     # IMPORTANT! USE 127.0.0.1 INSTEAD OF LOCALHOST OR THE REQUESTS ON WINDOWS WILL BE 3 SECONDS LONGER!!!
-    api_url = f"http://::1:5000/lunch/{now}"
+    api_url = f"http://127.0.0.1:5000/lunch/{now}"
     response = requests.get(api_url)
     data = response.json()
 
@@ -33,8 +30,6 @@ async def canteen_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         ],
         [InlineKeyboardButton("Today", callback_data="menu:" + now)],
     ]
-
-
     reply_markup = InlineKeyboardMarkup(keyboard)
 
     if update.message:
@@ -49,10 +44,7 @@ async def canteen_callback_handler(update: Update, context: ContextTypes.DEFAULT
 
     await query.answer()
 
-    if query.data:
-        date = query.data.split(":")[1]
-    else:
-        date = datetime.now().strftime("%Y-%m-%d")
+    date = query.data.split(":")[1] if query.data else datetime.now().strftime("%Y-%m-%d")
 
     api_url = f"http://127.0.0.1:5000/lunch/{date}"
     response = requests.get(api_url)
@@ -65,7 +57,6 @@ async def canteen_callback_handler(update: Update, context: ContextTypes.DEFAULT
         ],
         [InlineKeyboardButton("Today", callback_data="menu:" + date)],
     ]
-
     reply_markup = InlineKeyboardMarkup(keyboard)
 
     await query.edit_message_text(data["message"], reply_markup=reply_markup)

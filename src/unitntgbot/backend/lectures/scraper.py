@@ -1,23 +1,18 @@
-from collections import namedtuple
-from datetime import datetime
 import logging
 import re
 import sqlite3
+from datetime import datetime
 
 import requests
 
-
-UniversityLecture = namedtuple(
-    "UniversityLecture", ["id", "course_id", "course_name", "lecturer", "start", "end", "location", "is_cancelled"]
-)
-
+from .UniversityLecture import UniversityLecture
 
 def _iso_normalize_date(date: str) -> str:
     d: list[str] = date.split("-")
     return f"{d[2]:0>4}-{d[1]:0>2}-{d[0]:0>2}"
 
 
-def get_courses_from_easyacademy(courses: set[str], date: datetime) -> list[UniversityLecture]:
+def get_courses_from_easyacademy(courses: list[str], date: datetime) -> list[UniversityLecture]:
     """
     Get the list of university lessons using the EasyAcademy API.
 
@@ -56,11 +51,15 @@ def get_courses_from_easyacademy(courses: set[str], date: datetime) -> list[Univ
         start: str = f"{lecture_date}T{cella['ora_inizio']}"
         end: str = f"{lecture_date}T{cella['ora_fine']}"
 
-        location: str = cella["codice_aula"]
+        room: str = cella["codice_aula"]
+        building_id: str = ""
         # If codice aula exists, strip the building code (Povo has code E0503 for example, so A110 is written as "E0503/A110")
         # There could be cases where the "codice_aula" value is empty
-        # (e.g. if a lesson is at the location "Wave Lab (ex- Wireless Technologies Lab)")
-        location = location.split("/")[-1] if location else cella["aula"]
+        # (e.g. if a lesson is at the room "Wave Lab (ex- Wireless Technologies Lab)")
+        if room:
+            building_id, room = room.split("/")
+        else:
+            room = cella["aula"]
 
         lecture = UniversityLecture(
             couse_id,
@@ -69,7 +68,8 @@ def get_courses_from_easyacademy(courses: set[str], date: datetime) -> list[Univ
             lecturer,
             start,
             end,
-            location,
+            building_id,
+            room,
             is_cancelled,
         )
 
@@ -78,7 +78,7 @@ def get_courses_from_easyacademy(courses: set[str], date: datetime) -> list[Univ
     return lectures
 
 
-def import_from_unitrentoapp(url: str) -> set[str] | None:
+def import_from_ical(url: str) -> set[str]:
     """
     Import courses from a Unitrentoapp calendar.
 
@@ -89,11 +89,6 @@ def import_from_unitrentoapp(url: str) -> set[str] | None:
         set[str]: The set of courses the student is enrolled in, similar to "EC146220_MASSA", "EC145810_MARCH" or "EC145614_BOATO".
 
     """
-
-    # Check if the URL is valid
-    if not re.match(r"^https:\/\/webapi\.unitn\.it\/unitrentoapp\/profile\/me\/calendar\/[A-F0-9]{64}$", url):
-        return None
-
     response = requests.get(url, timeout=30)
     ical = response.text
 
@@ -114,14 +109,14 @@ if __name__ == "__main__":
     date = datetime.fromisoformat("2024-11-16")
 
     # Parse the courses
-    courses = import_from_unitrentoapp(url)
+    courses = import_from_ical(url)
     logger.info("Imported courses: %s", courses)
 
     if courses is None:
         logger.error("Invalid URL")
         exit(1)
 
-    lectures = get_courses_from_easyacademy(courses, date)
+    lectures = get_courses_from_easyacademy(list(courses), date)
     logger.info("Found %s", len(lectures))
 
     # Put the lectures in a SQLite database

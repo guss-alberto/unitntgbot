@@ -1,17 +1,16 @@
 import asyncio
 import os
 
-from dotenv import load_dotenv
-from telegram.ext import ApplicationBuilder, CallbackQueryHandler, CommandHandler
 import telegram
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
-from telegram.ext import ContextTypes
+from dotenv import load_dotenv
+from telegram import Update
+from telegram.ext import ApplicationBuilder, CallbackQueryHandler, CommandHandler, ContextTypes
 
 from .handlers.canteen import canteen_callback_handler, canteen_handler
 from .handlers.exams import exams_callback_handler, exams_handler
 from .handlers.help import help_handler
-from .handlers.lectures import lectures_handler, add_lectures_handler, lectures_callback_handler
-from .handlers.map import map_handler, map_callback_handler
+from .handlers.lectures import add_lectures_handler, get_lectures_handler
+from .handlers.map import map_callback_handler, map_handler
 from .handlers.rooms import rooms_callback_handler, rooms_handler
 from .handlers.setup import setup_callback_handler, setup_handler
 from .handlers.transports import transports_callback_handler, transports_handler
@@ -19,12 +18,12 @@ from .handlers.transports import transports_callback_handler, transports_handler
 
 async def set_commands(bot: telegram.Bot) -> None:
     """
-    Set the commands to show in the menu of the bot in the bottom left corner
+    Set the commands to show in the menu of the bot in the bottom left corner.
 
     Args:
         bot (telegram.Bot): The bot to set the commands to
-    """
 
+    """
     await bot.set_my_commands(
         [
             telegram.BotCommand(command="setup", description="Setup the bot"),
@@ -35,7 +34,7 @@ async def set_commands(bot: telegram.Bot) -> None:
             telegram.BotCommand(command="lectures", description="Show the lectures"),
             telegram.BotCommand(command="exams", description="Show the exams"),
             telegram.BotCommand(command="help", description="Show the help message"),
-        ]
+        ],
     )
 
 
@@ -57,7 +56,7 @@ def entrypoint() -> None:
     # Add the handlers for the different commands
     app.add_handler(CommandHandler("exams", exams_handler))
     app.add_handler(CommandHandler("help", help_handler))
-    app.add_handler(CommandHandler("lectures", lectures_handler))
+    app.add_handler(CommandHandler("lectures", get_lectures_handler))
     app.add_handler(CommandHandler("addlectures", add_lectures_handler))
     app.add_handler(CommandHandler("map", map_handler))
     app.add_handler(CommandHandler("menu", canteen_handler))

@@ -1,35 +1,85 @@
 # /menu .......... Mostra il menu del ristorante
 # /menu dinner ... Mostra il menu del ristorante Cena (solo a Tommaso Gar)
 
+import requests
+
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import ContextTypes
 
+from unitntgbot.backend.lectures.UniversityLecture import UniversityLecture
 
-async def lectures_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    # Verifica se esite il token associato all'utente
+async def add_lectures_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    if not update.message:
+        return
 
-    # Se esiste
-    # Mostra le lezioni
+    args = context.args
+    if not args:
+        await update.message.reply_markdown("""\
+Please provide a valid UniTrentoApp calendar link using `/addlectures <unitrentoapp_link>`.
 
-    # Se non esiste
-    # Mostra un messaggio di aggiungere il token 
-    #local:748484/lectures/{tguid}/{date}
-    # -> 404
-    # ue usa /addlectures
-    
-    # else 
-    # users join lectures on lectureid where date = ?, today
-    
+It can be found in the top right corner of the '*Favourites*' tab in the '*Classes Timetable*' section in your app.
 
-    if update.message:
-        await update.message.reply_text()
+_Note that this removes all courses you are currently following on this Telegram Bot._\
+""")
+        return
+
+    tg_id = update.message.chat_id
+    unitrentoapp_link = args[0]
+
+    api_url = f"http://127.0.0.1:5001/lectures/{tg_id}"
+    response = requests.post(api_url, params={"unitrentoapp_link": unitrentoapp_link})
+    data = response.json()
+
+    match response.status_code:
+        case 200:
+            await update.message.reply_text(f"{data["number"]} courses addeed successfully!")
+            return
+        case 400:
+            await update.message.reply_text(f"{data["message"]}\nPlease insert a valid UniTrentoApp calendar link.")
+            return
 
 
-def add_lectures_handler():
-    # local:748484/add/{tguid}?url={url}
-    # --> srapa le robe -> si aggiunge su table Users tguid: lectureID 
-    
-    pass
+async def get_lectures_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    if not update.message:
+        return
+
+    args = context.args
+    date = args[0] if args else None
+
+    tg_id = update.message.chat_id
+    api_url = f"http://127.0.0.1:5001/lectures/{tg_id}"
+    response = requests.get(api_url, params={ "date": date })
+    data = response.json()
+
+    keyboard = [
+        [
+            InlineKeyboardButton("⬅️", callback_data="lect:"),
+            InlineKeyboardButton("➡️", callback_data="lect:"),
+        ],
+        [
+            InlineKeyboardButton("⏪", callback_data="lect:"),
+            InlineKeyboardButton("Today", callback_data="lect:"),
+            InlineKeyboardButton("⏩", callback_data="lect:"),
+        ],
+    ]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+
+    match response.status_code:
+        case 200:
+            lectures = data["lectures"]
+            await update.message.reply_text(str(lectures), reply_markup=reply_markup)
+            return
+        case 400:
+            await update.message.reply_text(data["message"])
+            return
+        case 404:
+            await update.message.reply_markdown("""No coursed added to your account yet.
+
+Use the command `/addlectures <unitrentoapp_link>` first.
+
+The link can be found in the top right corner of the '*Favourites*' tab in the '*Classes Timetable*' section in UniTrentoApp.""")
+            return
+
 
 async def lectures_callback_handler(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
     query = update.callback_query
