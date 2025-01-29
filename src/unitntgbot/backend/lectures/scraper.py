@@ -12,7 +12,7 @@ def _iso_normalize_date(date: str) -> str:
     return f"{d[2]:0>4}-{d[1]:0>2}-{d[0]:0>2}"
 
 
-def get_courses_from_easyacademy(courses: list[str], date: datetime) -> list[UniversityLecture]:
+def get_courses_from_easyacademy(courses: set[str], date: datetime) -> list[UniversityLecture]:
     """
     Get the list of university lessons using the EasyAcademy API.
 
@@ -51,15 +51,7 @@ def get_courses_from_easyacademy(courses: list[str], date: datetime) -> list[Uni
         start: str = f"{lecture_date}T{cella['ora_inizio']}"
         end: str = f"{lecture_date}T{cella['ora_fine']}"
 
-        room: str = cella["codice_aula"]
-        building_id: str = ""
-        # If codice aula exists, strip the building code (Povo has code E0503 for example, so A110 is written as "E0503/A110")
-        # There could be cases where the "codice_aula" value is empty
-        # (e.g. if a lesson is at the room "Wave Lab (ex- Wireless Technologies Lab)")
-        if room:
-            building_id, room = room.split("/")
-        else:
-            room = cella["aula"]
+        room: str = cella["codice_aula"] or cella["aula"]
 
         lecture = UniversityLecture(
             couse_id,
@@ -68,7 +60,6 @@ def get_courses_from_easyacademy(courses: list[str], date: datetime) -> list[Uni
             lecturer,
             start,
             end,
-            building_id,
             room,
             is_cancelled,
         )
@@ -116,7 +107,7 @@ if __name__ == "__main__":
         logger.error("Invalid URL")
         exit(1)
 
-    lectures = get_courses_from_easyacademy(list(courses), date)
+    lectures = get_courses_from_easyacademy(courses, date)
     logger.info("Found %s", len(lectures))
 
     # Put the lectures in a SQLite database

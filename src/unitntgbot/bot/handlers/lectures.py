@@ -1,12 +1,15 @@
 # /menu .......... Mostra il menu del ristorante
 # /menu dinner ... Mostra il menu del ristorante Cena (solo a Tommaso Gar)
 
+from datetime import datetime, timedelta
 import requests
 
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import ContextTypes
+from telegram.constants import ParseMode
 
 from unitntgbot.backend.lectures.UniversityLecture import UniversityLecture
+
 
 async def add_lectures_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if not update.message:
@@ -14,13 +17,13 @@ async def add_lectures_handler(update: Update, context: ContextTypes.DEFAULT_TYP
 
     args = context.args
     if not args:
-        await update.message.reply_markdown("""\
-Please provide a valid UniTrentoApp calendar link using `/addlectures <unitrentoapp_link>`.
-
-It can be found in the top right corner of the '*Favourites*' tab in the '*Classes Timetable*' section in your app.
-
-_Note that this removes all courses you are currently following on this Telegram Bot._\
-""")
+        await update.message.reply_markdown(
+            "Please provide a valid UniTrentoApp calendar link using `/addlectures <unitrentoapp_link>`.\n"
+            "\n"
+            "It can be found in the top right corner of the '*Favourites*' tab in the '*Classes Timetable*' section in your app.\n"
+            "\n"
+            "_Note that this removes all courses you are currently following on this Telegram Bot._"
+        )
         return
 
     tg_id = update.message.chat_id
@@ -44,61 +47,110 @@ async def get_lectures_handler(update: Update, context: ContextTypes.DEFAULT_TYP
         return
 
     args = context.args
-    date = args[0] if args else None
+    date_arg = args[0] if args else None
 
     tg_id = update.message.chat_id
     api_url = f"http://127.0.0.1:5001/lectures/{tg_id}"
-    response = requests.get(api_url, params={ "date": date })
+    response = requests.get(api_url, params={"date": date_arg})
     data = response.json()
 
-    keyboard = [
-        [
-            InlineKeyboardButton("⬅️", callback_data="lect:"),
-            InlineKeyboardButton("➡️", callback_data="lect:"),
-        ],
-        [
-            InlineKeyboardButton("⏪", callback_data="lect:"),
-            InlineKeyboardButton("Today", callback_data="lect:"),
-            InlineKeyboardButton("⏩", callback_data="lect:"),
-        ],
-    ]
-    reply_markup = InlineKeyboardMarkup(keyboard)
-
     match response.status_code:
-        case 200:
-            lectures = data["lectures"]
-            await update.message.reply_text(str(lectures), reply_markup=reply_markup)
-            return
         case 400:
             await update.message.reply_text(data["message"])
             return
         case 404:
-            await update.message.reply_markdown("""No coursed added to your account yet.
-
-Use the command `/addlectures <unitrentoapp_link>` first.
-
-The link can be found in the top right corner of the '*Favourites*' tab in the '*Classes Timetable*' section in UniTrentoApp.""")
+            await update.message.reply_markdown(
+                "No coursed added to your account yet.\n"
+                "\n"
+                "Use the command `/addlectures <unitrentoapp_link>` first.\n"
+                "\n"
+                "The link can be found in the top right corner of the '*Favourites*' tab in the '*Classes Timetable*' section in UniTrentoApp."
+            )
             return
+        case 200:
+            date = datetime.fromisoformat(date_arg).date() if date_arg else datetime.now().date()
+            keyboard = [
+                [
+                    InlineKeyboardButton("⬅️", callback_data="lect:" + (date - timedelta(days=1)).isoformat()),
+                    InlineKeyboardButton("➡️", callback_data="lect:" + (date + timedelta(days=1)).isoformat()),
+                ],
+                [
+                    InlineKeyboardButton("⏪", callback_data="lect:" + (date - timedelta(days=7)).isoformat()),
+                    InlineKeyboardButton("Today", callback_data="lect:"),
+                    InlineKeyboardButton("⏩", callback_data="lect:" + (date + timedelta(days=7)).isoformat()),
+                ],
+            ]
+            reply_markup = InlineKeyboardMarkup(keyboard)
+            lectures = data["lectures"]
+            
+            message = f"*Lectures for {date.strftime("%A, %B %d")}*\n\n"
+            if lectures:
+                lectures = [UniversityLecture(*l) for l in lectures]
+
+                message += "\n\n".join([l.format() for l in lectures])
+            else:
+                message += "No lectures for today."
+
+            await update.message.reply_markdown(message, reply_markup=reply_markup)
+            return
+        case _:
+            await update.message.reply_text("An unknown error occured")
 
 
-async def lectures_callback_handler(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
+async def get_lectures_callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     query = update.callback_query
 
-    if not query:
+    if not query or not query.data or not query.message:
         return
 
-    await query.answer()
+    if len(query.data) > len("lect:"):
+        date = datetime.fromisoformat(query.data.split(":")[1]).date()
+    else:
+        date = datetime.now().date()
 
-    keyboard = [
-        [InlineKeyboardButton("Option 1", callback_data="a" * 6)],
-        [InlineKeyboardButton("Option 2", callback_data="menu2")],
-        [InlineKeyboardButton("Visit Website", url="https://example.com")],
-    ]
+    tg_id = query.message.chat.id
+    api_url = f"http://127.0.0.1:5001/lectures/{tg_id}"
+    response = requests.get(api_url, params={"date": date.isoformat()})
+    data = response.json()
 
-    reply_markup = InlineKeyboardMarkup(keyboard)
+    match response.status_code:
+        case 400:
+            await query.edit_message_text(data["message"])
+            return
+        case 404:
+            await query.edit_message_text(
+                "No coursed added to your account yet.\n"
+                "\n"
+                "Use the command `/addlectures <unitrentoapp_link>` first.\n"
+                "\n"
+                "The link can be found in the top right corner of the '*Favourites*' tab in the '*Classes Timetable*' section in UniTrentoApp.",
+                parse_mode=ParseMode.MARKDOWN
+            )
+            return
+        case 200:
+            keyboard = [
+                [
+                    InlineKeyboardButton("⬅️", callback_data="lect:" + (date - timedelta(days=1)).isoformat()),
+                    InlineKeyboardButton("➡️", callback_data="lect:" + (date + timedelta(days=1)).isoformat()),
+                ],
+                [
+                    InlineKeyboardButton("⏪", callback_data="lect:" + (date - timedelta(days=7)).isoformat()),
+                    InlineKeyboardButton("Today", callback_data="lect:"),
+                    InlineKeyboardButton("⏩", callback_data="lect:" + (date + timedelta(days=7)).isoformat()),
+                ],
+            ]
+            reply_markup = InlineKeyboardMarkup(keyboard)
+            lectures = data["lectures"]
+            
+            message = f"*Lectures for {date.strftime("%A, %B %d")}*\n\n"
+            if lectures:
+                lectures = [UniversityLecture(*l) for l in lectures]
 
-    # Respond to the button click based on callback data
-    if query.data == "1":
-        await query.edit_message_text(text="You selected Option 1.")
-    elif query.data == "2":
-        await query.edit_message_text(text="Option 2 selected", reply_markup=reply_markup)
+                message += "\n\n".join([l.format() for l in lectures])
+            else:
+                message += "No lectures for today."
+
+            await query.edit_message_text(message, reply_markup=reply_markup, parse_mode=ParseMode.MARKDOWN)
+            return
+        case _:
+            await query.edit_message_text("An unknown error occured")

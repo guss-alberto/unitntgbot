@@ -5,6 +5,7 @@ from .scraper import UniversityLecture, get_courses_from_easyacademy, import_fro
 
 DATABASE = "db/lectures.db"
 
+tracked_courses:set[str] = set()
 
 def _create_tables(db: sqlite3.Connection) -> None:
     db.execute(
@@ -16,7 +17,6 @@ def _create_tables(db: sqlite3.Connection) -> None:
             lecturer TEXT,
             start TEXT,
             end TEXT,
-            building_id TEXT,
             room TEXT,
             is_cancelled BOOLEAN
         );""",
@@ -44,7 +44,8 @@ def get_lectures_for_user(db: sqlite3.Connection, user_id: str, date: datetime) 
         """\
         SELECT Lectures.* FROM Lectures
             JOIN Users ON Users.course_id = Lectures.course_id
-            WHERE DATE(lectures.start) = DATE(?) AND Users.id = ?;
+            WHERE DATE(lectures.start) = DATE(?) AND Users.id = ?
+            ORDER BY lectures.start;
         """,
         (date.strftime("%Y-%m-%d"), user_id),
     )
@@ -81,6 +82,7 @@ def get_next_lectures_for_user(db: sqlite3.Connection, user_id: str, date: datet
 
 
 def import_for_user(db: sqlite3.Connection, user_id: str, unitnapp_url: str) -> int:
+    global tracked_courses
     courses = import_from_ical(unitnapp_url)
 
     db.execute("DELETE FROM Users WHERE id=?;", (user_id,))
@@ -90,27 +92,36 @@ def import_for_user(db: sqlite3.Connection, user_id: str, unitnapp_url: str) -> 
         [(user_id, course) for course in courses],
     )
 
-    db.commit()
+    if not courses.issubset(tracked_courses):
+        lectures = get_courses_from_easyacademy(courses-tracked_courses, datetime.now())
 
+        db.executemany(
+            "INSERT OR REPLACE INTO Lectures VALUES (?, ?, ?, ?, ?, ?, ?, ?);",
+            lectures,
+        )
+        tracked_courses.union(courses)
+        
+    db.commit()
     return len(courses)
 
 
 # This function has to be run every week or with even more frequency to keep the database up to date
 # TODO: If any lecture gets modified notify users subbed to it
 def update_db(db: sqlite3.Connection, date: datetime) -> None:
+    global tracked_courses
     _create_tables(db) # Creates the tables if it does not yet exist
 
     cur = db.cursor()
 
     cur.execute("SELECT DISTINCT course_id FROM Users;")
-    courses = cur.fetchall()
+    tracked_courses = set(cur.fetchall())
     cur.close()
 
-    lectures = get_courses_from_easyacademy(courses, date)
+    lectures = get_courses_from_easyacademy(tracked_courses, date)
     # logger.info("Found %s", len(lectures))
 
     db.executemany(
-        "INSERT OR REPLACE INTO Lectures VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);",
+        "INSERT OR REPLACE INTO Lectures VALUES (?, ?, ?, ?, ?, ?, ?, ?);",
         lectures,
     )
     db.commit()

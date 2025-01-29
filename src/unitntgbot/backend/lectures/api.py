@@ -1,6 +1,6 @@
+from datetime import datetime
 import re
 import sqlite3
-from datetime import datetime, timedelta
 
 from flask import Flask, Response, g, jsonify, request
 
@@ -9,6 +9,7 @@ from .database import (
     get_lectures_for_user,
     get_next_lectures_for_user,
     import_for_user,
+    update_db,
 )
 
 app = Flask(__name__)
@@ -18,6 +19,7 @@ def _get_db() -> sqlite3.Connection:
     db = getattr(g, "_database", None)
     if db is None:
         db = g._database = sqlite3.connect(DATABASE)
+        update_db(db, datetime.fromisoformat("2024-10-16"))
     return db
 
 
