@@ -1,14 +1,38 @@
 # /menu .......... Mostra il menu del ristorante
 # /menu dinner ... Mostra il menu del ristorante Cena (solo a Tommaso Gar)
 
-from datetime import datetime, timedelta
-import requests
+from datetime import date, datetime, timedelta
 
+import requests
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
-from telegram.ext import ContextTypes
 from telegram.constants import ParseMode
+from telegram.ext import ContextTypes
 
 from unitntgbot.backend.lectures.UniversityLecture import UniversityLecture
+
+
+def format_output(date: date, lectures: list) -> tuple[str, InlineKeyboardMarkup]:
+    keyboard = [
+        [
+            InlineKeyboardButton("⬅️", callback_data="lect:" + (date - timedelta(days=1)).isoformat()),
+            InlineKeyboardButton("➡️", callback_data="lect:" + (date + timedelta(days=1)).isoformat()),
+        ],
+        [
+            InlineKeyboardButton("⏪", callback_data="lect:" + (date - timedelta(days=7)).isoformat()),
+            InlineKeyboardButton("Today", callback_data="lect:now"),
+            InlineKeyboardButton("⏩", callback_data="lect:" + (date + timedelta(days=7)).isoformat()),
+        ],
+    ]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+
+    message = f"*Lectures for {date.strftime("%A, %B %d, %Y")}*\n\n"
+    if lectures:
+        lectures = [UniversityLecture(*lec).format() for lec in lectures]
+        message += "\n\n".join(lectures)
+    else:
+        message += "No lectures for this day."
+
+    return message, reply_markup
 
 
 async def add_lectures_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -22,7 +46,7 @@ async def add_lectures_handler(update: Update, context: ContextTypes.DEFAULT_TYP
             "\n"
             "It can be found in the top right corner of the '*Favourites*' tab in the '*Classes Timetable*' section in your app.\n"
             "\n"
-            "_Note that this removes all courses you are currently following on this Telegram Bot._"
+            "_Note that this removes all courses you are currently following on this Telegram Bot._",
         )
         return
 
@@ -64,33 +88,13 @@ async def get_lectures_handler(update: Update, context: ContextTypes.DEFAULT_TYP
                 "\n"
                 "Use the command `/addlectures <unitrentoapp_link>` first.\n"
                 "\n"
-                "The link can be found in the top right corner of the '*Favourites*' tab in the '*Classes Timetable*' section in UniTrentoApp."
+                "The link can be found in the top right corner of the '*Favourites*' tab in the '*Classes Timetable*' section in UniTrentoApp.",
             )
             return
         case 200:
             date = datetime.fromisoformat(date_arg).date() if date_arg else datetime.now().date()
-            keyboard = [
-                [
-                    InlineKeyboardButton("⬅️", callback_data="lect:" + (date - timedelta(days=1)).isoformat()),
-                    InlineKeyboardButton("➡️", callback_data="lect:" + (date + timedelta(days=1)).isoformat()),
-                ],
-                [
-                    InlineKeyboardButton("⏪", callback_data="lect:" + (date - timedelta(days=7)).isoformat()),
-                    InlineKeyboardButton("Today", callback_data="lect:"),
-                    InlineKeyboardButton("⏩", callback_data="lect:" + (date + timedelta(days=7)).isoformat()),
-                ],
-            ]
-            reply_markup = InlineKeyboardMarkup(keyboard)
-            lectures = data["lectures"]
-            
-            message = f"*Lectures for {date.strftime("%A, %B %d")}*\n\n"
-            if lectures:
-                lectures = [UniversityLecture(*l) for l in lectures]
 
-                message += "\n\n".join([l.format() for l in lectures])
-            else:
-                message += "No lectures for today."
-
+            message, reply_markup = format_output(date, data["lectures"])
             await update.message.reply_markdown(message, reply_markup=reply_markup)
             return
         case _:
@@ -103,10 +107,10 @@ async def get_lectures_callback_handler(update: Update, context: ContextTypes.DE
     if not query or not query.data or not query.message:
         return
 
-    if len(query.data) > len("lect:"):
-        date = datetime.fromisoformat(query.data.split(":")[1]).date()
-    else:
+    if query.data == "lect:now":
         date = datetime.now().date()
+    else:
+        date = datetime.fromisoformat(query.data.split(":")[1]).date()
 
     tg_id = query.message.chat.id
     api_url = f"http://127.0.0.1:5001/lectures/{tg_id}"
@@ -117,40 +121,9 @@ async def get_lectures_callback_handler(update: Update, context: ContextTypes.DE
         case 400:
             await query.edit_message_text(data["message"])
             return
-        case 404:
-            await query.edit_message_text(
-                "No coursed added to your account yet.\n"
-                "\n"
-                "Use the command `/addlectures <unitrentoapp_link>` first.\n"
-                "\n"
-                "The link can be found in the top right corner of the '*Favourites*' tab in the '*Classes Timetable*' section in UniTrentoApp.",
-                parse_mode=ParseMode.MARKDOWN
-            )
-            return
         case 200:
-            keyboard = [
-                [
-                    InlineKeyboardButton("⬅️", callback_data="lect:" + (date - timedelta(days=1)).isoformat()),
-                    InlineKeyboardButton("➡️", callback_data="lect:" + (date + timedelta(days=1)).isoformat()),
-                ],
-                [
-                    InlineKeyboardButton("⏪", callback_data="lect:" + (date - timedelta(days=7)).isoformat()),
-                    InlineKeyboardButton("Today", callback_data="lect:"),
-                    InlineKeyboardButton("⏩", callback_data="lect:" + (date + timedelta(days=7)).isoformat()),
-                ],
-            ]
-            reply_markup = InlineKeyboardMarkup(keyboard)
-            lectures = data["lectures"]
-            
-            message = f"*Lectures for {date.strftime("%A, %B %d")}*\n\n"
-            if lectures:
-                lectures = [UniversityLecture(*l) for l in lectures]
-
-                message += "\n\n".join([l.format() for l in lectures])
-            else:
-                message += "No lectures for today."
-
-            await query.edit_message_text(message, reply_markup=reply_markup, parse_mode=ParseMode.MARKDOWN)
+            message, reply_markup = format_output(date, data["lectures"])
+            await query.edit_message_text(message, parse_mode=ParseMode.MARKDOWN, reply_markup=reply_markup)
             return
         case _:
             await query.edit_message_text("An unknown error occured")

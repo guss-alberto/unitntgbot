@@ -1,8 +1,8 @@
-import re
 import random
+import re
 from datetime import datetime
-from typing import NamedTuple
 from hashlib import md5
+from typing import NamedTuple
 
 from .rooms_mapping import BUILDING_ID_TO_NAME, ROOM_ID_TO_NAME
 
@@ -50,7 +50,7 @@ class UniversityLecture(NamedTuple):
 
     def _get_clock_emoji(self) -> str:
         time = datetime.fromisoformat(self.start)
-        hm = int((time.hour % 12) * 2 + time.minute / 30 + 0.5)
+        hm = int(((time.hour - 1) % 12) * 2 + time.minute / 30 + 0.5)
         return _CLOCK_EMOJI[hm]
 
     def format(self) -> str:
