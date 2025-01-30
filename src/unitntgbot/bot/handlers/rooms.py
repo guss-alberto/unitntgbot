@@ -3,59 +3,59 @@
 # /rooms mesiano ........ Mostra le aule libere e occupate a Mesiano
 
 import requests
-
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import ContextTypes
 
 from unitntgbot.backend.rooms.Room import Room
 
 NAME_TO_BUILDING_ID = {
+    # E0504
     "polo-tecnologico-rovereto": "E0504",
     "techrov": "E0504",
     "roveretotech": "E0504",
     "t": "E0504",
-    #
+    # E0801
     "palazzo-prodi": "E0801",
     "prodi": "E0801",
     "lettere": "E0801",
     "l": "E0801",
-    #
+    # E0601
     "sociologia": "E0601",
     "socio": "E0601",
     "s": "E0601",
-    #
+    # E0502
     "bernardo clesio": "E0502",
     "bernardo": "E0502",
-    #
+    # E0503
     "povo": "E0503",
     "pov": "E0503",
     "rotta": "E0503",
     "p": "E0503",
-    #
+    # E0901
     "san-michele": "E0901",
     "smichele": "E0901",
-    #
+    # E0705
     "psicologia": "E0705",
     "psico": "E0705",
     "rovereto": "E0705",
     "r": "E0705",
-    #
+    # E1001
     "palazzo-consolati": "E1001",
     "consolati": "E1001",
     "economia": "E0101",
     "e": "E0101",
-    #
+    # E0301
     "mesiano": "E0301",
     "mesi": "E0301",
     "dicam": "E0301",
     "m": "E0301",
-    #
+    # E0201
     "giurisprudenza": "E0201",
     "giuri": "E0201",
     "g": "E0201",
-    #
+    # CLA
     "cla": "CLA",
-    #
+    # SOI
     "soi": "SOI",
 }
 
@@ -66,11 +66,12 @@ async def rooms_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
 
     args = context.args
     if not args or args[0] not in NAME_TO_BUILDING_ID:
-        await update.message.reply_markdown("Please provide a valid department name.\n" "\n") # TODO: Add default department name, it has to be stored in the database.
+        await update.message.reply_markdown("Please provide a valid department name.")
+        # TODO: Add default department name, it has to be stored in the database.
         return
 
     building_id = NAME_TO_BUILDING_ID[args[0].lower()]
-    
+
     api_url = f"http://127.0.0.1:5002/rooms/{building_id}"
     response = requests.get(api_url)
     data = response.json()
@@ -89,7 +90,7 @@ async def rooms_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
             return
         case 200:
             message = f"*Rooms for {data["building_name"]}*\n\n"
-            
+
             rooms_fromatted = [Room(*room).format() for room in data["rooms"]]
             message += "\n".join(rooms_fromatted)
 
