@@ -1,5 +1,5 @@
 BUILDING_ID_TO_NAME = {
-    "E0504": "Polo Teconolgoico-Rovereto",
+    "E0504": "Polo Tecnolgoico-Rovereto",
     "E0801": "Palazzo Prodi",
     "E0601": "Sociologia",
     "E0502": "Povo",

@@ -1,17 +1,9 @@
 from datetime import datetime
 from flask import Flask, Response, jsonify
-from typing import NamedTuple
 
 from .rooms_mapping import BUILDING_ID_TO_NAME
 from .scraper import get_rooms as scraper_get_rooms
-
-
-class Room(NamedTuple):
-    name: str # The name of the room
-    capacity: int # The number of people that can fit in the room
-    is_free: bool # Whether the room is free or not in the current time
-    event: str # The name of the professor or event that is happening in the room
-    time: str # The time when the room changes from free to busy or viceversa
+from .Room import Room
 
 
 app = Flask(__name__)
@@ -36,22 +28,24 @@ def get_rooms(building_id: str) -> tuple[Response, int]:
         time = 0
 
         # Best code so far, prepare to be amazed \s 🤓
-        # Check if the current room event, whether it is free right now, and if not, when the event ends 
+        # Check if the current room event, whether it is free right now, and if not, when the event ends
         current_event_row = df_events_current[df_events_current["CodiceAula"] == row["room_code"]]
         if not current_event_row.empty:
             current_event_row = current_event_row.iloc[0]
-            event_name = current_event_row["utenti"] or current_event_row["nome"] 
+            event_name = current_event_row["utenti"] or current_event_row["nome"]
             if current_event_row["Annullato"] == "0":
                 is_free = False
                 time = current_event_row["timestamp_to"]
 
-        future_event_row = df_events_future[df_events_future["CodiceAula"] == row["room_code"]].sort_values("timestamp_from")
+        future_event_row = df_events_future[df_events_future["CodiceAula"] == row["room_code"]].sort_values(
+            "timestamp_from"
+        )
         if is_free:
-            # If it's free now we need to find the next event (if any) that happens in that room 
+            # If it's free now we need to find the next event (if any) that happens in that room
             for _, event in future_event_row.iterrows():
-                if event["Annullato"] == "0":   # Check if the event is cancelled before going through
+                if event["Annullato"] == "0":  # Check if the event is cancelled before going through
                     # If an event is found update time and name
-                    time = event["timestamp_from"]  
+                    time = event["timestamp_from"]
                     event_name = event["utenti"] or event["nome"]
                     break
                 # If no event is found time is never updated and stays at 0
@@ -65,15 +59,15 @@ def get_rooms(building_id: str) -> tuple[Response, int]:
                 if event["Annullato"] == "1" or event["timestamp_from"] != time:
                     time = event["timestamp_from"]
                     break
-                # if the event has no gap and isn't cancelled we need to set the time variable to the end so we can see if there is a gap with the next event                    
+                # if the event has no gap and isn't cancelled we need to set the time variable to the end so we can see if there is a gap with the next event
                 time = event["timestamp_to"]
-        
+
         # Format time to a huamn readable format if exists, othwerise the room is free all day and we can leave an empty string
         if time:
-            time_str = datetime.fromtimestamp(time).strftime("%H:%M") 
+            time_str = datetime.fromtimestamp(time).strftime("%H:%M")
         else:
             time_str = ""
-    
+
         room = Room(room_name, capacity, is_free, event_name, time_str)
         rooms.append(room)
 

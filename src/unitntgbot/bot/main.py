@@ -61,6 +61,7 @@ def entrypoint() -> None:
     app.add_handler(CommandHandler("map", map_handler))
     app.add_handler(CommandHandler("menu", canteen_handler))
     app.add_handler(CommandHandler("rooms", rooms_handler))
+    app.add_handler(CommandHandler("locuspocus", rooms_handler))
     app.add_handler(CommandHandler("setup", setup_handler))
     app.add_handler(CommandHandler("transports", transports_handler))
 
