@@ -7,6 +7,7 @@ class Service(StrEnum):
     CANTEEN = "canteen"
     EXAMS = "exams"
     LECTURES = "lectures"
+    ROOMS = "rooms"
 
 
 def main() -> None:
@@ -35,5 +36,7 @@ def main() -> None:
             from unitntgbot.backend.exams import entrypoint
         case Service.LECTURES:
             from unitntgbot.backend.lectures import entrypoint
+        case Service.ROOMS:
+            from unitntgbot.backend.rooms import entrypoint
 
     entrypoint()
