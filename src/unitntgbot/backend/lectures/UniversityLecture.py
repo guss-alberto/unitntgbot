@@ -63,6 +63,6 @@ class UniversityLecture(NamedTuple):
             )
 
         return (
-            f"{self._get_clock_emoji()} • _cancelled_\n" 
+            f"{self._get_clock_emoji()} • _cancelled_\n"
             f"{self._get_book_emoji()} • _{self.course_name}_"
         )

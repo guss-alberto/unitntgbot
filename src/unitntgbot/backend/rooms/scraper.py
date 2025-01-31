@@ -1,10 +1,40 @@
+import time
+from functools import wraps
+
 import pandas as pd
 import requests
 
 from .rooms_mapping import ROOM_ID_TO_NAME
 
 
-def get_rooms(building_id: str) -> tuple[pd.DataFrame, pd.DataFrame | None, pd.DataFrame | None] | None:
+def _timed_memoize(duration: int):
+    def decorator(func):
+        cache: dict[str, dict]= {}
+
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            current_time = time.time()
+
+            building_id = args[0]
+
+
+            # If the value is still valid return it
+            if building_id in cache and current_time - cache[building_id]["timestamp"] < duration:
+                return cache[building_id]["value"]
+
+            cache[building_id] = {}
+            # Otherwise update the cache
+            cache[building_id]["value"] = func(*args, **kwargs)
+            cache[building_id]["timestamp"] = current_time
+            return cache[building_id]["value"]
+
+        return wrapper
+
+    return decorator
+
+
+@_timed_memoize(60 * 30)  # Buffer lasts for 30 minutes
+def get_rooms(building_id: str) -> tuple[pd.DataFrame, pd.DataFrame | None, int] | None:
     """
     Get the list of rooms available for a specific building.
 
@@ -38,18 +68,10 @@ def get_rooms(building_id: str) -> tuple[pd.DataFrame, pd.DataFrame | None, pd.D
 
     now_unix = data["file_timestamp"]
     if not data["events"]:
-        return df_rooms, None, None
+        return df_rooms, None, now_unix
 
     df_events = pd.DataFrame(data["events"])[
         ["CodiceAula", "timestamp_from", "timestamp_to", "utenti", "nome", "Annullato"]
-    ]
+    ].sort_values("timestamp_from")
 
-    # Find the lectures/events that are happening right now and later in the day
-    df_events_current = df_events[(df_events["timestamp_from"] < now_unix) & (df_events["timestamp_to"] > now_unix)]
-    df_events_future = df_events[df_events["timestamp_from"] > now_unix]
-
-    return df_rooms, df_events_current, df_events_future
-
-
-# def entrypoint():
-#     get_rooms("E0503")
+    return df_rooms, df_events, now_unix

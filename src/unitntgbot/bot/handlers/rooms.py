@@ -3,10 +3,10 @@
 # /rooms mesiano ........ Mostra le aule libere e occupate a Mesiano
 
 import requests
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Message, Update
 from telegram.ext import ContextTypes
 
-from unitntgbot.backend.rooms.Room import Room
+from unitntgbot.backend.rooms.Room import Event, Room
 
 NAME_TO_BUILDING_ID = {
     # E0504
@@ -24,8 +24,9 @@ NAME_TO_BUILDING_ID = {
     "socio": "E0601",
     "s": "E0601",
     # E0502
-    "bernardo clesio": "E0502",
+    "bernardo-clesio": "E0502",
     "bernardo": "E0502",
+    "clesio": "E0502",
     # E0503
     "povo": "E0503",
     "pov": "E0503",
@@ -34,6 +35,7 @@ NAME_TO_BUILDING_ID = {
     # E0901
     "san-michele": "E0901",
     "smichele": "E0901",
+    "sm": "E0901",
     # E0705
     "psicologia": "E0705",
     "psico": "E0705",
@@ -60,6 +62,51 @@ NAME_TO_BUILDING_ID = {
 }
 
 
+async def _send_room_message(message: Message, data: dict, status_code: int) -> None:
+    match status_code:
+        case 404:
+            await message.reply_text("University Room not found in department")
+            return
+        case 500:
+            await message.reply_text("Internal server error")
+            return
+        case 200:
+            capacity = f"_({data["capacity"]} seats)_" if data["capacity"] else ""
+            msg = f"*Room {data["room_name"]} - {data["building_name"]}* {capacity} at {data["time"]}\n\n"
+
+            rooms_formatted = [Event(*room).format() for room in data["room_data"]]
+            msg += "\n".join(rooms_formatted)
+            msg += " all day"
+            await message.reply_markdown(msg)
+            return
+
+
+async def _send_rooms_message(message: Message, data: dict, status_code: int) -> None:
+    keyboard = [
+        [
+            InlineKeyboardButton("✅ Sort by Time", callback_data="room:time"),
+            InlineKeyboardButton("☑️ Sort by Name", callback_data="room:name"),
+        ],
+    ]  # TODO: Add more options such as filter for free, occupied or all rooms.
+    reply_markup = InlineKeyboardMarkup(keyboard)
+
+    match status_code:
+        case 404:
+            await message.reply_text("University Department not found. Somehow...")
+            return
+        case 500:
+            await message.reply_text("Internal server error")
+            return
+        case 200:
+            msg = f"*Rooms for {data["building_name"]}*\n\n"
+
+            rooms_formatted = [Room(*room).format() for room in data["rooms"]]
+            msg += "\n".join(rooms_formatted)
+
+            await message.reply_markdown(msg, reply_markup=reply_markup)
+            return
+
+
 async def rooms_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if not update.message:
         return
@@ -71,31 +118,16 @@ async def rooms_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
         return
 
     building_id = NAME_TO_BUILDING_ID[args[0].lower()]
+    room_name = args[1] if len(args) > 1 else None
 
-    api_url = f"http://127.0.0.1:5002/rooms/{building_id}"
+    api_url = f"http://127.0.0.1:5002/rooms/{building_id}" + (f"/{room_name}" if room_name is not None else "")
     response = requests.get(api_url)
     data = response.json()
 
-    keyboard = [
-        [
-            InlineKeyboardButton("✅ Sort by Time", callback_data="room:time"),
-            InlineKeyboardButton("☑️ Sort by Name", callback_data="room:name"),
-        ],
-    ]  # TODO: Add more options such as filter for free, occupied or all rooms.
-    reply_markup = InlineKeyboardMarkup(keyboard)
-
-    match response.status_code:
-        case 404:
-            await update.message.reply_text("University Department not found. Somehow...")
-            return
-        case 200:
-            message = f"*Rooms for {data["building_name"]}*\n\n"
-
-            rooms_fromatted = [Room(*room).format() for room in data["rooms"]]
-            message += "\n".join(rooms_fromatted)
-
-            await update.message.reply_markdown(message, reply_markup=reply_markup)
-            return
+    if room_name:
+        await _send_room_message(update.message, data, response.status_code)
+    else:
+        await _send_rooms_message(update.message, data, response.status_code)
 
 
 async def rooms_callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -105,7 +137,7 @@ async def rooms_callback_handler(update: Update, context: ContextTypes.DEFAULT_T
         return
 
     # tg_id = query.message.chat.id
-    # api_url = f"http://127.0.0.1:5001/lectures/{tg_id}"
+    # api_url = f"http://127.0.0.1:5002/rooms/{building_id}"
     # response = requests.get(api_url, params={"date": date.isoformat()})
     # data = response.json()
 

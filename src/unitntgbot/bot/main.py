@@ -9,10 +9,10 @@ from telegram.ext import ApplicationBuilder, CallbackQueryHandler, CommandHandle
 from .handlers.canteen import canteen_callback_handler, canteen_handler
 from .handlers.exams import exams_callback_handler, exams_handler
 from .handlers.help import help_handler
-from .handlers.lectures import add_lectures_handler, get_lectures_handler, get_lectures_callback_handler
+from .handlers.lectures import get_lectures_callback_handler, get_lectures_handler
 from .handlers.map import map_callback_handler, map_handler
 from .handlers.rooms import rooms_callback_handler, rooms_handler
-from .handlers.setup import setup_callback_handler, setup_handler
+# from .handlers.setup import setup_callback_handler, setup_handler
 from .handlers.transports import transports_callback_handler, transports_handler
 
 
@@ -57,12 +57,11 @@ def entrypoint() -> None:
     app.add_handler(CommandHandler("exams", exams_handler))
     app.add_handler(CommandHandler("help", help_handler))
     app.add_handler(CommandHandler("lectures", get_lectures_handler))
-    app.add_handler(CommandHandler("addlectures", add_lectures_handler))
     app.add_handler(CommandHandler("map", map_handler))
     app.add_handler(CommandHandler("menu", canteen_handler))
     app.add_handler(CommandHandler("rooms", rooms_handler))
     app.add_handler(CommandHandler("locuspocus", rooms_handler))
-    app.add_handler(CommandHandler("setup", setup_handler))
+    # app.add_handler(CommandHandler("setup", setup_handler))
     app.add_handler(CommandHandler("transports", transports_handler))
 
     # app.add_handler(CallbackQueryHandler(exams_handler))
