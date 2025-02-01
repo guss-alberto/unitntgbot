@@ -2,6 +2,7 @@ from datetime import datetime
 
 import pandas as pd
 from flask import Flask, Response, jsonify
+from fuzzywuzzy import process
 
 from .Room import Event, Room
 from .rooms_mapping import BUILDING_ID_TO_NAME
@@ -14,19 +15,22 @@ def process_room(
     get_rooms_result: tuple[pd.DataFrame, pd.DataFrame | None, int],
     room: str,
     date: datetime,
-) -> tuple[list[Event], int] | None:
+) -> tuple[list[Event], str, int] | None:
     df_rooms, df_events, last_update_unix = get_rooms_result
 
-    room_s = df_rooms[df_rooms["name"] == room]
+    # Use fuzzy matching to find the closest room name
+    room_names: list[str] = list(df_rooms["name"])
+    closest_match = process.extractOne(room, room_names, score_cutoff=60)
 
-    if room_s.empty:
-        return None
+    if not closest_match:
+        return None  # 404 room not found
 
-    room_s = room_s.iloc[0]
-    capacity = room_s["capacity"]
+    closest_match = str(closest_match[0])
+    room_s = df_rooms[df_rooms["name"] == closest_match].iloc[0]
+    capacity = int(room_s["capacity"])
 
     if df_events is None:
-        return [Event("", 0, is_free=True)], capacity
+        return [Event("", 0, is_free=True)], closest_match, capacity
 
     room_events = df_events[
         (df_events["CodiceAula"] == room_s["room_code"])
@@ -53,7 +57,7 @@ def process_room(
     # Add final empty block to signal room will be free all day
     if not output[-1].is_free:
         output.append(Event("", time, is_free=True))
-    return output, capacity
+    return output, closest_match, capacity
 
 
 def get_next_event(future_events: pd.DataFrame) -> int:
@@ -143,11 +147,11 @@ def get_room(building_id: str, room_name: str) -> tuple[Response, int]:
     if room_data is None:
         return jsonify({"message": "Room Not Found"}), 404
 
-    room_data, capacity = room_data
+    room_data, actual_name, capacity = room_data
     return jsonify(
         {
             "building_name": BUILDING_ID_TO_NAME[building_id],
-            "room_name": room_name,
+            "room_name": actual_name,
             "capacity": capacity,
             "time": date.strftime("%H:%M"),
             "room_data": room_data,
