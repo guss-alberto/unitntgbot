@@ -73,7 +73,7 @@ def entrypoint() -> None:
     # app.add_handler(CallbackQueryHandler(setup_handler))
     # app.add_handler(CallbackQueryHandler(transports_handler))
     app.add_handler(CallbackQueryHandler(canteen_callback_handler, pattern=r"^menu:"))
-    # app.add_handler(CallbackQueryHandler(exams_callback_handler, pattern))
+    app.add_handler(CallbackQueryHandler(rooms_callback_handler, pattern="^rooms:"))
     # app.add_handler(CallbackQueryHandler(rooms_callback_handler, pattern))
     app.add_handler(CallbackQueryHandler(get_lectures_callback_handler, pattern=r"^lect:"))
 

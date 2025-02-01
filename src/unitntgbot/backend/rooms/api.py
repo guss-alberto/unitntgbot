@@ -3,7 +3,7 @@ from datetime import datetime
 import pandas as pd
 from flask import Flask, Response, jsonify
 
-from .Room import Room, Event
+from .Room import Event, Room
 from .rooms_mapping import BUILDING_ID_TO_NAME
 from .scraper import get_rooms as scraper_get_rooms
 
@@ -26,7 +26,7 @@ def process_room(
     capacity = room_s["capacity"]
 
     if df_events is None:
-        return [Event("", "", is_free=True)], capacity
+        return [Event("", 0, is_free=True)], capacity
 
     room_events = df_events[
         (df_events["CodiceAula"] == room_s["room_code"])
@@ -36,26 +36,23 @@ def process_room(
 
     output: list[Event] = []
     time: int = 0
-    if (room_events["timestamp_from"] < date.timestamp()).empty:
-        output.append(Event("", "Now", is_free=True))
+    if room_events[room_events["timestamp_from"] < date.timestamp()].empty:
+        output.append(Event("", 0, is_free=True))
 
     for _, event in room_events.iterrows():
         event_name = event["utenti"] or event["nome"]
 
         # If we have a previous event and the current one starts more than 15 minutes after it, add the free time
         if time and event["timestamp_from"] > time + 15 * 60:
-            time_str = datetime.fromtimestamp(time).strftime("%H:%M")
-            output.append(Event("", time_str, is_free=True))
+            output.append(Event("", time, is_free=True))
 
-        time_str = datetime.fromtimestamp(event["timestamp_from"]).strftime("%H:%M")
-        output.append(Event(event_name, time_str, is_free=False))
+        output.append(Event(event_name, int(event["timestamp_from"]), is_free=False))
 
-        time = event["timestamp_to"]
+        time = int(event["timestamp_to"])
 
     # Add final empty block to signal room will be free all day
     if not output[-1].is_free:
-        time_str = datetime.fromtimestamp(time).strftime("%H:%M")
-        output.append(Event("", time_str, is_free=True))
+        output.append(Event("", time, is_free=True))
     return output, capacity
 
 
@@ -88,7 +85,7 @@ def process_building(get_rooms_result: tuple[pd.DataFrame, pd.DataFrame | None, 
 
     # Might return nothing as all rooms are free
     if df_events is None:
-        return [Room(row["name"], row["capacity"], is_free=True, event="", time="") for _, row in df_rooms.iterrows()]
+        return [Room(row["name"], row["capacity"], is_free=True, event="", time=0) for _, row in df_rooms.iterrows()]
 
     for _, row in df_rooms.iterrows():
         is_free = True
@@ -99,9 +96,9 @@ def process_building(get_rooms_result: tuple[pd.DataFrame, pd.DataFrame | None, 
         ]
 
         # Check if the current room event, whether it is free right now, and if not, when the event ends
-        current_event = room_events["timestamp_from"] < date.timestamp()
+        current_event = room_events[room_events["timestamp_from"] < date.timestamp()]
         if not current_event.empty:
-            current_event = room_events[current_event].iloc[0]
+            current_event = current_event.iloc[0]
             event_name = current_event["utenti"] or current_event["nome"]
             if current_event["Annullato"] == "0":
                 is_free = False
@@ -111,10 +108,7 @@ def process_building(get_rooms_result: tuple[pd.DataFrame, pd.DataFrame | None, 
 
         time = get_next_event(future_events) if is_free else get_next_gap(future_events, time)
 
-        # Format time to a human readable format if exists, otherwise the room is free all day and we can leave an empty string
-        time_str = datetime.fromtimestamp(time).strftime("%H:%M") if time else ""
-
-        rooms.append(Room(row["name"], row["capacity"], is_free, event_name, time_str))
+        rooms.append(Room(row["name"], row["capacity"], is_free, event_name, int(time)))
     return rooms
 
 

@@ -4,6 +4,7 @@
 
 import requests
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Message, Update
+from telegram.constants import ParseMode
 from telegram.ext import ContextTypes
 
 from unitntgbot.backend.rooms.Room import Event, Room
@@ -62,49 +63,68 @@ NAME_TO_BUILDING_ID = {
 }
 
 
-async def _send_room_message(message: Message, data: dict, status_code: int) -> None:
-    match status_code:
+def _room_events(building_id:str, room: str) -> tuple[str, InlineKeyboardMarkup|None]:
+    api_url = f"http://127.0.0.1:5002/rooms/{building_id}/{room}"
+    response = requests.get(api_url)
+
+    match response.status_code:
         case 404:
-            await message.reply_text("University Room not found in department")
-            return
+            return "University Room not found in department", None
         case 500:
-            await message.reply_text("Internal server error")
-            return
+            return "Internal server error", None
         case 200:
+            data = response.json()
             capacity = f"_({data["capacity"]} seats)_" if data["capacity"] else ""
             msg = f"*Room {data["room_name"]} - {data["building_name"]}* {capacity} at {data["time"]}\n\n"
 
             rooms_formatted = [Event(*room).format() for room in data["room_data"]]
             msg += "\n".join(rooms_formatted)
             msg += " all day"
-            await message.reply_markdown(msg)
-            return
+            return msg, None
+    return "", None
 
 
-async def _send_rooms_message(message: Message, data: dict, status_code: int) -> None:
+def _rooms_status(building_id: str, sort_time: bool = True) -> tuple[str, InlineKeyboardMarkup|None]:
+    api_url = f"http://127.0.0.1:5002/rooms/{building_id}"
+    response = requests.get(api_url)
     keyboard = [
         [
-            InlineKeyboardButton("✅ Sort by Time", callback_data="room:time"),
-            InlineKeyboardButton("☑️ Sort by Name", callback_data="room:name"),
+            InlineKeyboardButton(
+                f"{"✅" if sort_time else ""} Sort by Time",
+                callback_data=f"rooms:time:{building_id}",
+            ),
+            InlineKeyboardButton(
+                f"{"" if sort_time else "✅"}  Sort by Name",
+                callback_data=f"rooms:name:{building_id}",
+            ),
         ],
     ]  # TODO: Add more options such as filter for free, occupied or all rooms.
     reply_markup = InlineKeyboardMarkup(keyboard)
 
-    match status_code:
+    match response.status_code:
         case 404:
-            await message.reply_text("University Department not found. Somehow...")
-            return
+            return "University Department not found. Somehow...", None
         case 500:
-            await message.reply_text("Internal server error")
-            return
+            return "Internal server error", None
         case 200:
-            msg = f"*Rooms for {data["building_name"]}*\n\n"
+            data = response.json()
 
-            rooms_formatted = [Room(*room).format() for room in data["rooms"]]
+            msg = f"*Rooms for {data["building_name"]}* at {data["time"]}\n\n"
+
+            rooms = [Room(*room) for room in data["rooms"]]
+
+            rooms.sort(key=lambda r: r.name)
+            if sort_time:
+                # Port by time descendig if is free and ascending otherwise
+                rooms.sort(key=lambda r: -r.time if r.is_free else r.time)
+                # Put all "free all day" rooms on top
+                rooms.sort(key=lambda r: r.time != 0)
+
+            rooms_formatted = [room.format() for room in rooms]
             msg += "\n".join(rooms_formatted)
 
-            await message.reply_markdown(msg, reply_markup=reply_markup)
-            return
+            return msg, reply_markup
+    return "", None
 
 
 async def rooms_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -118,16 +138,13 @@ async def rooms_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
         return
 
     building_id = NAME_TO_BUILDING_ID[args[0].lower()]
-    room_name = args[1] if len(args) > 1 else None
-
-    api_url = f"http://127.0.0.1:5002/rooms/{building_id}" + (f"/{room_name}" if room_name is not None else "")
-    response = requests.get(api_url)
-    data = response.json()
+    room_name = " ".join(args[1:]) if len(args) > 1 else None
 
     if room_name:
-        await _send_room_message(update.message, data, response.status_code)
+        msg, markup = _room_events(building_id, room_name)
     else:
-        await _send_rooms_message(update.message, data, response.status_code)
+        msg, markup = _rooms_status(building_id)
+    await update.message.reply_markdown(msg, reply_markup=markup)
 
 
 async def rooms_callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -136,18 +153,8 @@ async def rooms_callback_handler(update: Update, context: ContextTypes.DEFAULT_T
     if not query or not query.data or not query.message:
         return
 
-    # tg_id = query.message.chat.id
-    # api_url = f"http://127.0.0.1:5002/rooms/{building_id}"
-    # response = requests.get(api_url, params={"date": date.isoformat()})
-    # data = response.json()
+    _, sort_type, building_id = query.data.split(":")
 
-    # match response.status_code:
-    #     case 400:
-    #         await query.edit_message_text(data["message"])
-    #         return
-    #     case 200:
-    #         message, reply_markup = format_output(date, data["lectures"])
-    #         await query.edit_message_text(message, parse_mode=ParseMode.MARKDOWN, reply_markup=reply_markup)
-    #         return
-    #     case _:
-    #         await query.edit_message_text("An unknown error occured")
+    msg, markup = _rooms_status(building_id, sort_time=sort_type=="time")
+
+    await query.edit_message_text(msg, parse_mode=ParseMode.MARKDOWN, reply_markup=markup)
