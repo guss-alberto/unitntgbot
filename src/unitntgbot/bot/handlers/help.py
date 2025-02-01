@@ -4,19 +4,19 @@
 from telegram import Update
 from telegram.ext import ContextTypes
 
-HELP_MESSAGE = """\
-*Commands:*
-- /setup: Show the setup menu
-- /help: Show this message
-- /menu <arg>: Show the restaurant menu. Arg can be "lunch" or "dinner". Defaults to lunch.
-- /menu dinner: Show the restaurant menu for dinner (only at Tommaso Gar)
-- /rooms description="Show the available rooms"),
-- /map", description="Show the map of the university"),
-- /transports", description="Show the transports"),
-- /lectures", description="Show the lectures"),
-- /exams", description="Show the exams"),
-- /help", description="Show the help message"),
-"""
+HELP_MESSAGE = (
+    "*Commands:*\n"
+    "\\- /setup \\- Show the setup menu\n"
+    "\\- /help \\- Show this message\n"
+    "\\- /menu \\<arg\\> \\- Show the restaurant menu\\. Arg can be \"lunch\" or \"dinner\"\\. Defaults to lunch\\.\n"
+    "\\- /menu: dinner \\- Show the restaurant menu for dinner \\(only at Tommaso Gar\\)\n"
+    "\\- /rooms \\- Show the available rooms\n"
+    "\\- /map \\- Show the map of the university\n"
+    "\\- /transports \\- Show the transports\n"
+    "\\- /lectures \\- Show the lecture\n"
+    "\\- /exams \\- Show the exams\n"
+    "\\- /help \\- Show the help message"
+)
 
 
 async def help_handler(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
