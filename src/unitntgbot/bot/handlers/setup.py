@@ -4,6 +4,10 @@ import requests
 
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import ContextTypes, ConversationHandler, CallbackContext
+from telegram.constants import ParseMode
+import sqlite3
+
+from unitntgbot.backend.rooms.rooms_mapping import BUILDING_ID_TO_NAME
 
 
 async def add_lectures_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -59,11 +63,17 @@ async def setup_callback_handler(update: Update, context: ContextTypes.DEFAULT_T
 
     match query.data:
         case "setup:lecture":
-            await query.edit_message_text("Write your UniTrentoApp token: (Type \"/cancel\" to cancel)")
+            await query.edit_message_text("Write your UniTrentoApp token: \\(Type `/cancel` to cancel\\)", parse_mode=ParseMode.MARKDOWN_V2)
             return 0
         case "setup:department":
-            await query.edit_message_text("Write your default department: (Type \"/cancel\" to cancel)")
-            return 1
+            keyboard = []
+            for department_id, department_name in BUILDING_ID_TO_NAME.items():
+                keyboard.append([InlineKeyboardButton(department_name, callback_data=f"setup:department:{department_id}")])
+            keyboard.append([InlineKeyboardButton("❌ Cancel", callback_data="setup:department:cancel")])
+            reply_markup = InlineKeyboardMarkup(keyboard)
+
+            await query.edit_message_text("Select your default department", reply_markup=reply_markup)
+            return ConversationHandler.END
         case _:
             await query.edit_message_text(text="Invalid option selected")
             return ConversationHandler.END
@@ -78,30 +88,58 @@ async def get_unitrentoapp_token(update: Update, context: CallbackContext) -> in
 
     api_url = f"http://127.0.0.1:5001/lectures/{tg_id}"
     response = requests.post(api_url, params={"unitrentoapp_link": unitrentoapp_link})
-    data = response.json()
 
     match response.status_code:
         case 200:
+            data = response.json()
             await update.message.reply_text(f"{data["number"]} courses addeed successfully!")
             return ConversationHandler.END
         case 400:
+            data = response.json()
             await update.message.reply_text(
-                f'{data["message"]}\nPlease insert a valid UniTrentoApp calendar link. (Type "/cancel" to cancel)'
+                f'{data["message"]}\nPlease insert a valid UniTrentoApp calendar link. (Type "/cancel" to cancel)',
             )
             return 0
+        case 500:
+            await update.message.reply_text("Internal server error")
+            return ConversationHandler.END
 
     return ConversationHandler.END
 
 
 async def get_default_department(update: Update, context: CallbackContext) -> int:
-    if not update.message:
+    query = update.callback_query
+    if not update.effective_message or not query:
+        return ConversationHandler.END
+  
+    data = query.data
+    message = query.message
+    if not data or not message:
         return ConversationHandler.END
 
-    department = update.message.text
+    await query.answer()
 
-    print(department)
+    if data == "setup:department:cancel":
+        await update.effective_message.edit_text("Operation canceled.")
+        return ConversationHandler.END
 
-    await update.message.reply_text(f"Department saved successfully: {department}")
+    department_id = data[len("setup:department:"):]
+    tg_id = message.chat.id
+
+    db = sqlite3.connect("db/settings.db")
+    db.execute(
+        """\
+        CREATE TABLE IF NOT EXISTS DefaultDepartments (
+            id TEXT NOT NULL PRIMARY KEY,
+            department_id TEXT NOT NULL
+        );""",
+    )
+    db.commit()
+    db.execute("INSERT OR REPLACE INTO DefaultDepartments VALUES (?, ?);", (tg_id, department_id))
+    db.commit()
+
+    await update.effective_message.reply_text(f"Department saved successfully: {BUILDING_ID_TO_NAME[department_id]}")
+
     return ConversationHandler.END
 
 
