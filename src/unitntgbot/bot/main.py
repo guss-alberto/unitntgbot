@@ -1,19 +1,18 @@
 import asyncio
 import os
+from warnings import filterwarnings
 
 import telegram
 from dotenv import load_dotenv
 from telegram import Update
 from telegram.ext import (
     ApplicationBuilder,
-    CommandHandler,
-    ConversationHandler,
     CallbackQueryHandler,
     CommandHandler,
+    ConversationHandler,
     MessageHandler,
     filters,
 )
-from warnings import filterwarnings
 from telegram.warnings import PTBUserWarning
 
 from .handlers.canteen import canteen_callback_handler, canteen_handler
@@ -22,7 +21,13 @@ from .handlers.help import help_handler
 from .handlers.lectures import get_lectures_callback_handler, get_lectures_handler
 from .handlers.map import map_callback_handler, map_handler
 from .handlers.rooms import rooms_callback_handler, rooms_handler
-from .handlers.setup import setup_callback_handler, setup_handler, get_unitrentoapp_token, get_default_department, cancel
+from .handlers.setup import (
+    cancel,
+    get_default_department,
+    get_unitrentoapp_token,
+    setup_callback_handler,
+    setup_handler,
+)
 from .handlers.start import start_handler
 from .handlers.transports import transports_callback_handler, transports_handler
 
@@ -80,17 +85,16 @@ def entrypoint() -> None:
     # Handlers to for the UnitrentoApp setup process
     add_lectures = ConversationHandler(
         entry_points=[
-            CallbackQueryHandler(setup_callback_handler, pattern=r"^setup:.*$"),
             CommandHandler("setup", setup_handler),
+            CallbackQueryHandler(get_default_department, pattern=r"^setup:department:.*$"),
+            CallbackQueryHandler(setup_callback_handler, pattern=r"^setup:.*$"),
         ],
         states={
             0: [CommandHandler("cancel", cancel), MessageHandler(filters.TEXT & ~filters.COMMAND, get_unitrentoapp_token)],
-            1: [CommandHandler("cancel", cancel), MessageHandler(filters.TEXT & ~filters.COMMAND, get_default_department)],
         },
         fallbacks=[CommandHandler("cancel", cancel)],
     )
     app.add_handler(add_lectures)
-    app.add_handler(CallbackQueryHandler(setup_callback_handler, pattern=r"^setup:.*$"))
 
     # app.add_handler(CallbackQueryHandler(exams_handler))
     # app.add_handler(CallbackQueryHandler(help_handler))
@@ -101,7 +105,7 @@ def entrypoint() -> None:
     # app.add_handler(CallbackQueryHandler(setup_callback_handler))
     # app.add_handler(CallbackQueryHandler(transports_handler))
     app.add_handler(CallbackQueryHandler(canteen_callback_handler, pattern=r"^menu:"))
-    app.add_handler(CallbackQueryHandler(rooms_callback_handler, pattern="^rooms:"))
+    app.add_handler(CallbackQueryHandler(rooms_callback_handler, pattern=r"^rooms:"))
     # app.add_handler(CallbackQueryHandler(rooms_callback_handler, pattern))
     app.add_handler(CallbackQueryHandler(get_lectures_callback_handler, pattern=r"^lect:"))
 

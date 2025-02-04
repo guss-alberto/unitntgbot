@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 from io import StringIO
 
+import numpy as np
 import pandas as pd
 import requests
 
@@ -16,9 +17,14 @@ HEADERS = {"X-Requested-With": "XMLHttpRequest", "Content-Type": "application/x-
 # - 4 Pizza a Tommaso Gar (useless)
 # - 5 Pizza a Povo 0 (useless)
 # - 6 Mensa Povo 1
-# - 7 Tommaso Garr
+# - 7 Tommaso Garr - also has dinner
 # - 8 Mesiano
 # - 12 Mensa 24 Maggio
+
+
+EMOJIS = "🍝🧆🥦"
+COURSE_LABELS = ["*First course*:\n", "\n*Second course*:\n", "\n*Side dish*:\n"]
+FIXED_ITEMS = [["Pasta All'Olio", "Riso All'Olio"], [], []]
 
 
 def _get_week_canteen_raw(date: datetime, canteen_id: int) -> list[pd.DataFrame]:
@@ -39,6 +45,17 @@ def _get_week_canteen_raw(date: datetime, canteen_id: int) -> list[pd.DataFrame]
     return pd.read_html(StringIO(html))
 
 
+def menu_item_format(items: list[str], emoji: str, lesto: str = "") -> str:
+    output = ""
+    lesto = lesto.replace("\\n", "").strip()
+    for item in items:
+        _item = item.strip()
+        r: bool = _item == lesto  # add ®️ if it's the pick for the ridotto menu
+        output += f" {emoji}{'®️' if r else '`  ` '}{_item.title()}\n"   # To sort of match emoji width we use 2 monospace spaces and 1 regular space
+
+    return output
+
+
 def get_week_meals(date: datetime) -> list[tuple[str, bool, str]]:
     """
     Get the list of all meals for a given week.
@@ -55,58 +72,36 @@ def get_week_meals(date: datetime) -> list[tuple[str, bool, str]]:
     (lesto_df,) = _get_week_canteen_raw(date, 2)  # Get menu for ridotto
 
     # Convert to list and ignore the header
-    lunch_list = lunch_df.T.to_numpy()[1:]
-    dinner_list = dinner_df.T.to_numpy()[1:]
-    lesto_list = lesto_df.T.to_numpy()[1:]
+    lunch_list = lunch_df.T.dropna(axis=0, how="all").to_numpy()[1:]
+    dinner_list = dinner_df.T.dropna(axis=0, how="all").to_numpy()[1:]
+    lesto_list = lesto_df.T.dropna(axis=0, how="all").to_numpy()[1:]
 
     result: list[tuple[str, bool, str]] = []
+
+    day = date.date()
     # for every day monday-friday
     for lunch, lesto, dinner in zip(lunch_list, lesto_list, dinner_list, strict=False):
-        day = date.strftime("%Y-%m-%d")
+        day_str = day.strftime("%Y-%m-%d")
 
-        string = ""
+        output = ""
 
-        try:
-            # Since we replace <br> with "\\n" all entries start with "\\n" too, so we have to skip it every time. this is a hack because operaunitn can't have a proper API
-            for item in lunch[0][2:].split("\\n"):
-                r: bool = item.strip() == lesto[0][2:]  # add ®️ if it's the pick for the ridotto menu
-                string += f" 🍝{'®️' if r else ' '} {item.title()}\n"
+        for i, (label, emoji, fixed) in enumerate(zip(COURSE_LABELS, EMOJIS, FIXED_ITEMS, strict=True)):
+            output += label
+            course_ = lunch[i].split("\\n")[1:] + fixed
+            ridotto = lesto[i] if len(lesto) > i else ""
+            output += menu_item_format(course_, emoji, ridotto)
 
-            string += "\nSecond Course:\n"
-            for item in lunch[1][2:].split("\\n"):
-                r: bool = item.strip() == lesto[1][2:]
-                string += f" 🧆{'®️' if r else ' '} {item.title()}\n"
+        result.append((day_str, False, output))
 
-            string += "\nSide Dishes:\n"
-            # Ridotto allows you to pick your side dish so the check is removed
-            for item in lunch[2][2:].split("\\n"):
-                string += f" 🥦  {item.title()}\n"
-        except TypeError:
-            # convert empty days to empty table rows
-            string = ""
-        result.append((day, False, string))
+        output = ""
+        for i, (label, emoji, fixed) in enumerate(zip(COURSE_LABELS, EMOJIS, FIXED_ITEMS, strict=True)):
+            output += label
+            course_ = dinner[i].split("\\n")[1:] + fixed
+            output += menu_item_format(course_, emoji, "")
 
-        string = ""
+        result.append((day_str, True, output))
 
-        try:
-            # Ridotto is not available for dinner so there is no need to run the check for it
-            for item in dinner[0][2:].split("\\n"):
-                string += f" 🍝  {item.title()}\n"
-
-            string += "\nSecond Course:\n"
-            for item in dinner[1][2:].split("\\n"):
-                string += f" 🧆  {item.title()}\n"
-
-            string += "\nSide Dishes:\n"
-            for item in dinner[2][2:].split("\\n"):
-                string += f" 🥦  {item.title()}\n"
-
-        except TypeError:
-            # convert empty days to empty table rows
-            string = ""
-
-        result.append((day, True, string))
-        date += timedelta(days=1)
+        day += timedelta(days=1)
     return result
 
 
