@@ -1,6 +1,6 @@
-from datetime import datetime
 import re
 import sqlite3
+from datetime import datetime
 
 from flask import Flask, Response, g, jsonify, request
 

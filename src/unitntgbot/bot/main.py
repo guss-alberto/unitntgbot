@@ -97,7 +97,6 @@ def entrypoint() -> None:
     app.add_handler(add_lectures)
 
     # app.add_handler(CallbackQueryHandler(exams_handler))
-    # app.add_handler(CallbackQueryHandler(help_handler))
     # app.add_handler(CallbackQueryHandler(lectures_handler))
     # app.add_handler(CallbackQueryHandler(map_callback_handler, pattern=r".*"))
     # app.add_handler(CallbackQueryHandler(canteen_handler))
@@ -106,7 +105,6 @@ def entrypoint() -> None:
     # app.add_handler(CallbackQueryHandler(transports_handler))
     app.add_handler(CallbackQueryHandler(canteen_callback_handler, pattern=r"^menu:"))
     app.add_handler(CallbackQueryHandler(rooms_callback_handler, pattern=r"^rooms:"))
-    # app.add_handler(CallbackQueryHandler(rooms_callback_handler, pattern))
     app.add_handler(CallbackQueryHandler(get_lectures_callback_handler, pattern=r"^lect:"))
 
     app.run_polling(poll_interval=0.1, allowed_updates=Update.ALL_TYPES)

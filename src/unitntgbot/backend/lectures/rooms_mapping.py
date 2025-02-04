@@ -357,7 +357,7 @@ ROOM_ID_TO_NAME = {
     "E0201/M2/27": "2 mansarda",
     "E0201/M3/27": "3 mansarda",
     "E0201/M4/27": "4 mansarda",
-    "E0502/SEM": "Aula seminari",
+    "E0502/SEM": "Aula seminari Bernardo Clesio (NOT POVO, BUT WHY DOES IT HAVE THE SAME CODE THEN?)",
     "CLab-M": "CLab-M",
     "CLab-S": "CLab-S",
 }

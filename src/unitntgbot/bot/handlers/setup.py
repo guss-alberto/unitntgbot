@@ -107,6 +107,7 @@ async def get_unitrentoapp_token(update: Update, context: CallbackContext) -> in
     return ConversationHandler.END
 
 
+DEFAULT_DEPARTMENT_DATABASE = "db/settings.db"
 async def get_default_department(update: Update, context: CallbackContext) -> int:
     query = update.callback_query
     if not update.effective_message or not query:

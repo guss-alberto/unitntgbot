@@ -1,21 +1,11 @@
 import sqlite3
-from datetime import datetime, timedelta
+from datetime import datetime
 
-from flask import Flask, Response, g, jsonify
+from flask import Flask, Response, g, jsonify, request
 
-from .database import DATABASE, MAX_OFFSET_DAYS, get_menu, create_table, update_db
-
+from .database import DATABASE, create_table, get_menu, update_db
 
 app = Flask(__name__)
-
-
-def _offset_and_format_date(date: datetime, days: int) -> str | None:
-    offset_date = date + timedelta(days=days)
-    delay = datetime.now() - offset_date
-    if abs(delay.days) > MAX_OFFSET_DAYS:
-        return None
-    return offset_date.strftime("%Y-%m-%d")
-
 
 def _get_db() -> sqlite3.Connection:
     db = getattr(g, "_database", None)
@@ -33,39 +23,29 @@ def _close_connection(exception):
         db.close()
 
 
-@app.route("/lunch/<string:day>")
-def get_lunch(day: str) -> Response:
-    try:
-        date = datetime.fromisoformat(day)
-        menu = get_menu(_get_db(), date)
-        return jsonify(
-            {
-                "message": menu,
-                "next": _offset_and_format_date(date, 1),
-                "prev": _offset_and_format_date(date, -1),
-                "nextweek": _offset_and_format_date(date, 7),
-            },
-        )
-    except Exception as e:
-        return jsonify({"message": f"Server error {e}"}, 500)
+@app.get("/menu/<string:lunch_or_dinner>/")
+def get_menu_api(lunch_or_dinner: str) -> tuple[Response, int]:
+    date = request.args.get("date")
+
+    if lunch_or_dinner == "lunch":
+        is_dinner = False
+    elif lunch_or_dinner == "dinner":
+        is_dinner = True
+    else:
+        is_dinner = None
+        return jsonify({"message": "Service not found, valid services are 'lunch' and 'dinner'"}), 404
 
 
-@app.route("/dinner/<string:day>")
-def get_dinner(day: str) -> Response:
-    try:
-        date = datetime.fromisoformat(day)
-        menu = get_menu(_get_db(), date, dinner=True)
-        return jsonify(
-            {
-                "message": menu,
-                "next": _offset_and_format_date(date, 1),
-                "prev": _offset_and_format_date(date, -1),
-                "nextweek": _offset_and_format_date(date, 7),
-            },
-        )
-    except Exception as e:
-        return jsonify({"message": f"Server error {e}"}, 500)
+    if not date:
+        date = datetime.now().date()
+    else:
+        try:
+            date = datetime.fromisoformat(date).date()
+        except ValueError:
+            return jsonify({"message": "Invalid Date Format"}), 400
 
+    menu = get_menu(_get_db(), date, dinner=is_dinner)
+    return jsonify({"menu": menu, "date": date.isoformat()}), 200
 
 def entrypoint() -> None:
     app.run(port=5000, debug=True)
