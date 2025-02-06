@@ -1,6 +1,8 @@
 import re
+import requests
 import sqlite3
 from datetime import datetime
+from .UniversityLecture import UniversityLecture
 
 from flask import Flask, Response, g, jsonify, request
 
@@ -42,15 +44,19 @@ def add_lectures(tg_id: str) -> tuple[Response, int]:
     unitrentoapp_link = unitrentoapp_link.strip()
 
     if not re.match(
-        r"^https:\/\/webapi\.unitn\.it\/unitrentoapp\/profile\/me\/calendar\/[A-F0-9]{64}$", unitrentoapp_link,
+        r"^https:\/\/webapi\.unitn\.it\/unitrentoapp\/profile\/me\/calendar\/[A-F0-9]{64}$",
+        unitrentoapp_link,
     ):
         return jsonify({"message": "Invalid Link"}), 400
 
     db = _get_db()
 
-    number = import_for_user(db, tg_id, unitrentoapp_link)
+    courses = import_for_user(db, tg_id, unitrentoapp_link)
 
-    return jsonify({"message": "Added lectures successfully", "number": number}), 200
+    # Add the courses to the db of the exams service
+    requests.post(f"http://127.0.0.1:5003/exams/user/{tg_id}", json={"courses": [UniversityLecture.extract_course_id(course) for course in courses]})
+
+    return jsonify({"message": "Added lectures successfully", "number": len(courses)}), 200
 
 
 # Ti dice la prossima lezione in programma per l'utente
@@ -68,7 +74,7 @@ def get_next_lecture(tg_id: str) -> tuple[Response, int]:
     # Checking for the any lecture is the same, just check if the first one is today
     is_today = datetime.fromisoformat(next_lectures[0].start).date() == date.date()
 
-    return jsonify({"lectures": next_lectures, "is_today": is_today }), 200
+    return jsonify({"lectures": next_lectures, "is_today": is_today}), 200
 
 
 # Prendi dal DB le lezioni associate all'utente per la data specificata, oppure per oggi se la data non è specificata

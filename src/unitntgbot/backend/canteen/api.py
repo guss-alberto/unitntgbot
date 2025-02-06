@@ -7,6 +7,7 @@ from .database import DATABASE, create_table, get_menu, update_db
 
 app = Flask(__name__)
 
+
 def _get_db() -> sqlite3.Connection:
     db = getattr(g, "_database", None)
     if db is None:
@@ -35,7 +36,6 @@ def get_menu_api(lunch_or_dinner: str) -> tuple[Response, int]:
         is_dinner = None
         return jsonify({"message": "Service not found, valid services are 'lunch' and 'dinner'"}), 404
 
-
     if not date:
         date = datetime.now().date()
     else:
@@ -44,8 +44,10 @@ def get_menu_api(lunch_or_dinner: str) -> tuple[Response, int]:
         except ValueError:
             return jsonify({"message": "Invalid Date Format"}), 400
 
-    menu = get_menu(_get_db(), date, dinner=is_dinner)
+    db = _get_db()
+    menu = get_menu(db, date, dinner=is_dinner)
     return jsonify({"menu": menu, "date": date.isoformat()}), 200
+
 
 def entrypoint() -> None:
     app.run(port=5000, debug=True)

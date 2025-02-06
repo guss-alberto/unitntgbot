@@ -45,7 +45,7 @@ async def canteen_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     response = requests.get("http://127.0.0.1:5000/menu/lunch/")
 
     if response.status_code != 200:  # noqa: PLR2004
-        await update.message.reply_text("Internal server error")
+        await update.message.reply_text("Internal Server Error")
         return
 
     data = response.json()
@@ -72,7 +72,7 @@ async def canteen_callback_handler(update: Update, context: ContextTypes.DEFAULT
     response = requests.get(api_url)
 
     if response.status_code != 200:  # noqa: PLR2004
-        await query.edit_message_text("Internal server error")
+        await query.edit_message_text("Internal Server Error")
         return
 
     data = response.json()

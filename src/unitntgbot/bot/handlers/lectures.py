@@ -45,26 +45,30 @@ async def get_lectures_handler(update: Update, context: ContextTypes.DEFAULT_TYP
     tg_id = update.message.chat_id
     api_url = f"http://127.0.0.1:5001/lectures/{tg_id}"
     response = requests.get(api_url, params={"date": date_arg})
-    data = response.json()
 
     match response.status_code:
         case 400:
+            data = response.json()
             await update.message.reply_text(data["message"])
             return
         case 404:
             await update.message.reply_markdown(
                 "No coursed added to your account yet.\n"
                 "\n"
-                "Use the command `/addlectures <unitrentoapp_link>` first.\n"
+                "Use the command `/setup` first.\n"
                 "\n"
                 "The link can be found in the top right corner of the '*Favourites*' tab in the '*Classes Timetable*' section in UniTrentoApp.",
             )
             return
         case 200:
+            data = response.json()
             date = datetime.fromisoformat(date_arg).date() if date_arg else datetime.now().date()
 
             message, reply_markup = format_output(date, data["lectures"])
             await update.message.reply_markdown(message, reply_markup=reply_markup)
+            return
+        case 500:
+            await update.message.reply_text("Internal Server Error")
             return
         case _:
             await update.message.reply_text("An unknown error occured")

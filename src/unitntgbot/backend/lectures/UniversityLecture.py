@@ -7,7 +7,7 @@ from typing import NamedTuple
 from .rooms_mapping import BUILDING_ID_TO_NAME, ROOM_ID_TO_NAME
 
 _BOOK_EMOJI = "📔📕📗📘📙📓📒"
-_CLOCK_EMOJI = "🕐🕜🕑🕝🕒🕞🕓🕟🕔🕠🕕🕡🕖🕢🕗🕣🕘🕤🕙🕥🕚🕦🕛🕧"
+_CLOCK_EMOJI = "🕛🕧🕐🕜🕑🕝🕒🕞🕓🕟🕔🕠🕕🕡🕖🕢🕗🕣🕘🕤🕙🕥🕚🕦"
 
 
 class UniversityLecture(NamedTuple):
@@ -21,11 +21,15 @@ class UniversityLecture(NamedTuple):
     is_cancelled: bool
 
     @staticmethod
-    def extract_course_id(course_id: str) -> int:
-        numeric_id = re.search  (r"[0-9]+", course_id)
-        if numeric_id:
-            return int(numeric_id.group(0))
-        return 0
+    def extract_course_id(course_id: str) -> str:
+        # """
+        # Extracts the numeric part of the course ID. EC838383_Boato
+        # A course ID is a string similar to "123456" or even "".
+        # """
+        exam_id_match = re.match(r"^EC(.+?)_", course_id)
+        if exam_id_match:
+            return exam_id_match.group(1)
+        return ""
 
     @staticmethod
     def get_full_room_str(room: str) -> str:
@@ -50,19 +54,16 @@ class UniversityLecture(NamedTuple):
 
     def _get_clock_emoji(self) -> str:
         time = datetime.fromisoformat(self.start)
-        hm = int(((time.hour - 1) % 12) * 2 + time.minute / 30 + 0.5)
+        hm = int((time.hour % 12) * 2 + time.minute / 30 + 0.5)
         return _CLOCK_EMOJI[hm]
 
     def format(self) -> str:
         if not self.is_cancelled:
             return (
                 f"{self._get_clock_emoji()} • `{self.start.split("T")[1]} - {self.end.split("T")[1]}`\n"
-                f"{self._get_book_emoji()} • *{self.course_name}*\n" # TODO: Input sanification to prevent issues with markdown breaking
-                f"{"🧑‍🏫" if random.randint(0,100) else "🤓"} • {self.lecturer}\n"
+                f"{self._get_book_emoji()} • *{self.course_name}*\n"  # TODO: Input sanification to prevent issues with markdown breaking
+                f"{"🧑‍🏫" if random.randint(0, 100) else "🤓"} • {self.lecturer}\n"
                 f"📍 • {self.get_full_room_str(self.room)}"
             )
 
-        return (
-            f"{self._get_clock_emoji()} • _cancelled_\n"
-            f"{self._get_book_emoji()} • _{self.course_name}_"
-        )
+        return f"{self._get_clock_emoji()} • _cancelled_\n" f"{self._get_book_emoji()} • _{self.course_name}_"

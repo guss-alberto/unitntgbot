@@ -1,3 +1,3 @@
-from .scraper import entrypoint
+from .api import entrypoint
 
 __all__ = ["entrypoint"]

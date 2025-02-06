@@ -81,7 +81,7 @@ def get_next_lectures_for_user(db: sqlite3.Connection, user_id: str, date: datet
     return [UniversityLecture(*r) for r in res]
 
 
-def import_for_user(db: sqlite3.Connection, user_id: str, unitnapp_url: str) -> int:
+def import_for_user(db: sqlite3.Connection, user_id: str, unitnapp_url: str) -> set[str]:
     global tracked_courses
     courses = import_from_ical(unitnapp_url)
 
@@ -102,7 +102,7 @@ def import_for_user(db: sqlite3.Connection, user_id: str, unitnapp_url: str) -> 
         tracked_courses.union(courses)
         
     db.commit()
-    return len(courses)
+    return courses
 
 
 # This function has to be run every week or with even more frequency to keep the database up to date

@@ -17,7 +17,7 @@ async def add_lectures_handler(update: Update, context: ContextTypes.DEFAULT_TYP
     args = context.args
     if not args:
         await update.message.reply_markdown(
-            "Please provide a valid UniTrentoApp calendar link using `/addlectures <unitrentoapp_link>`.\n"
+            "Please provide a valid UniTrentoApp calendar link using `/setup`.\n"
             "\n"
             "It can be found in the top right corner of the '*Favourites*' tab in the '*Classes Timetable*' section in your app.\n"
             "\n"
@@ -28,6 +28,8 @@ async def add_lectures_handler(update: Update, context: ContextTypes.DEFAULT_TYP
     tg_id = update.message.chat_id
     unitrentoapp_link = args[0]
 
+    
+    # TODO: save on telegram bot db the unitrentoapp link and enable refreshing
     api_url = f"http://127.0.0.1:5001/lectures/{tg_id}"
     response = requests.post(api_url, params={"unitrentoapp_link": unitrentoapp_link})
     data = response.json()
@@ -101,7 +103,7 @@ async def get_unitrentoapp_token(update: Update, context: CallbackContext) -> in
             )
             return 0
         case 500:
-            await update.message.reply_text("Internal server error")
+            await update.message.reply_text("Internal Server Error")
             return ConversationHandler.END
 
     return ConversationHandler.END

@@ -6,13 +6,12 @@ import sqlite3
 import requests
 from pyquery import PyQuery as pq  # noqa: N813
 
+from .UniversityExam import UniversityExam
+
 logger = logging.getLogger(__name__)
 
 EXAMS_LIST_URL = "https://www.esse3.unitn.it/Guide/PaginaListaAppelli.do"
 BASE_URL = "https://www.esse3.unitn.it/"
-
-
-UniversityExam = namedtuple("UniversityExam", ["exam_id", "faculty", "name", "date", "registration_start", "registration_end", "partition", "link", "professors", "is_oral", "is_partial"])
 
 
 def get_university_faculties() -> dict[int, str]:
@@ -229,7 +228,7 @@ def _parse_exam_datetime(exam_datetime: str) -> tuple[str, str]:
 # FAC_ID=10026&CDS_ID=X&AD_ID=X&DOCENTE_ID=X&DATA_ESA=&form_id_form1=form1&actionBar1=Cerca
 
 
-def entrypoint() -> None:
+if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
 
     # Parse the university exams

@@ -71,7 +71,7 @@ def _room_events(building_id:str, room: str) -> tuple[str, InlineKeyboardMarkup|
         case 404:
             return "University Room not found in department", None
         case 500:
-            return "Internal server error", None
+            return "Internal Server Error", None
         case 200:
             data = response.json()
             capacity = f"_({data["capacity"]} seats)_" if data["capacity"] else ""
@@ -105,7 +105,7 @@ def _rooms_status(building_id: str, sort_time: bool = True) -> tuple[str, Inline
         case 404:
             return "University Department not found. Somehow...", None
         case 500:
-            return "Internal server error", None
+            return "Internal Server Error", None
         case 200:
             data = response.json()
 

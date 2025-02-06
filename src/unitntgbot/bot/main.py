@@ -16,10 +16,10 @@ from telegram.ext import (
 from telegram.warnings import PTBUserWarning
 
 from .handlers.canteen import canteen_callback_handler, canteen_handler
-from .handlers.exams import exams_callback_handler, exams_handler
+from .handlers.exams import exams_handler
 from .handlers.help import help_handler
 from .handlers.lectures import get_lectures_callback_handler, get_lectures_handler
-from .handlers.map import map_callback_handler, map_handler
+from .handlers.map import map_handler
 from .handlers.rooms import rooms_callback_handler, rooms_handler
 from .handlers.setup import (
     cancel,
@@ -96,13 +96,7 @@ def entrypoint() -> None:
     )
     app.add_handler(add_lectures)
 
-    # app.add_handler(CallbackQueryHandler(exams_handler))
-    # app.add_handler(CallbackQueryHandler(lectures_handler))
-    # app.add_handler(CallbackQueryHandler(map_callback_handler, pattern=r".*"))
-    # app.add_handler(CallbackQueryHandler(canteen_handler))
-    # app.add_handler(CallbackQueryHandler(rooms_handler))
-    # app.add_handler(CallbackQueryHandler(setup_callback_handler))
-    # app.add_handler(CallbackQueryHandler(transports_handler))
+    # Callback handlers for the inline buttons
     app.add_handler(CallbackQueryHandler(canteen_callback_handler, pattern=r"^menu:"))
     app.add_handler(CallbackQueryHandler(rooms_callback_handler, pattern=r"^rooms:"))
     app.add_handler(CallbackQueryHandler(get_lectures_callback_handler, pattern=r"^lect:"))
