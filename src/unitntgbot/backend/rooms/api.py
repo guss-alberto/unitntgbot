@@ -1,7 +1,7 @@
 from datetime import datetime
 
 import pandas as pd
-from flask import Flask, Response, jsonify
+from flask import Flask, Response, jsonify, request
 from fuzzywuzzy import process
 
 from .Room import Event, Room
@@ -15,7 +15,7 @@ def process_room(
     get_rooms_result: tuple[pd.DataFrame, pd.DataFrame | None, int],
     room: str,
     date: datetime,
-) -> tuple[list[Event], str, int] | None:
+) -> tuple[list[Event], str, str, int] | None:
     df_rooms, df_events, last_update_unix = get_rooms_result
 
     # Use fuzzy matching to find the closest room name
@@ -30,7 +30,7 @@ def process_room(
     capacity = int(room_s["capacity"])
 
     if df_events is None:
-        return [Event("", 0, is_free=True)], closest_match, capacity
+        return [Event("", 0, is_free=True)], closest_match, room_s["room_code"], capacity
 
     room_events = df_events[
         (df_events["CodiceAula"] == room_s["room_code"])
@@ -57,7 +57,7 @@ def process_room(
     # Add final empty block to signal room will be free all day
     if not output[-1].is_free:
         output.append(Event("", time, is_free=True))
-    return output, closest_match, capacity
+    return output, closest_match, room_s["room_code"], capacity
 
 
 def get_next_event(future_events: pd.DataFrame) -> int:
@@ -132,8 +132,13 @@ def get_rooms(building_id: str) -> tuple[Response, int]:
     ), 200
 
 
-@app.route("/rooms/<string:building_id>/<string:room_name>")
-def get_room(building_id: str, room_name: str) -> tuple[Response, int]:
+@app.route("/rooms/<string:building_id>/room")
+def get_room(building_id: str) -> tuple[Response, int]:
+    room_name = request.args.get("room_query")
+    print(room_name)
+    if not room_name:
+        return jsonify({"message": "Room name not provided in `room_query` param"}), 400
+
     result = scraper_get_rooms(building_id)
 
     if not result:
@@ -147,11 +152,12 @@ def get_room(building_id: str, room_name: str) -> tuple[Response, int]:
     if room_data is None:
         return jsonify({"message": "Room Not Found"}), 404
 
-    room_data, actual_name, capacity = room_data
+    room_data, actual_name, room_code, capacity = room_data
     return jsonify(
         {
             "building_name": BUILDING_ID_TO_NAME[building_id],
             "room_name": actual_name,
+            "room_code": room_code,
             "capacity": capacity,
             "time": date.strftime("%H:%M"),
             "room_data": room_data,

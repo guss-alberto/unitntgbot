@@ -63,15 +63,15 @@ NAME_TO_BUILDING_ID = {
 }
 
 
-def _room_events(building_id:str, room: str) -> tuple[str, InlineKeyboardMarkup|None]:
-    api_url = f"http://127.0.0.1:5002/rooms/{building_id}/{room}"
-    response = requests.get(api_url)
+def _room_events(building_id:str, room: str) -> tuple[str, str]:
+    api_url = f"http://127.0.0.1:5002/rooms/{building_id}/room"
+    response = requests.get(api_url, params={"room_query": room})
 
     match response.status_code:
         case 404:
-            return "University Room not found in department", None
-        case 500:
-            return "Internal Server Error", None
+            return "University Room not found in department", ""
+        case 500|400:
+            return "Internal Server Error", ""
         case 200:
             data = response.json()
             capacity = f"_({data["capacity"]} seats)_" if data["capacity"] else ""
@@ -80,8 +80,8 @@ def _room_events(building_id:str, room: str) -> tuple[str, InlineKeyboardMarkup|
             rooms_formatted = [Event(*room).format() for room in data["room_data"]]
             msg += "\n".join(rooms_formatted)
             msg += " all day"
-            return msg, None
-    return "", None
+            return msg, data["room_code"]
+    return "", ""
 
 
 def _rooms_status(building_id: str, sort_time: bool = True) -> tuple[str, InlineKeyboardMarkup|None]:
@@ -141,10 +141,15 @@ async def rooms_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
     room_name = " ".join(args[1:]) if len(args) > 1 else None
 
     if room_name:
-        msg, markup = _room_events(building_id, room_name)
+        msg, room_code = _room_events(building_id, room_name)
+        map_response = requests.get(f"http://127.0.0.1:5004/maps/{room_code}")
+        if map_response.status_code == 200 and room_code:  # noqa: PLR2004
+            await update.message.reply_photo(photo=map_response.content, caption=msg, parse_mode=ParseMode.MARKDOWN)
+        else:
+            await update.message.reply_markdown(msg+"\n\nMap not available for this room")
     else:
         msg, markup = _rooms_status(building_id)
-    await update.message.reply_markdown(msg, reply_markup=markup)
+        await update.message.reply_markdown(msg, reply_markup=markup)
 
 
 async def rooms_callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:

@@ -34,9 +34,7 @@ def _close_connection(exception):
 # TODO: add pages system
 @app.route("/exams/search")
 def get_exams() -> tuple[Response, int]:
-    print(request.args)
     query = request.args.get("query")
-    print(query)
 
     if not query:
         return jsonify({"message": "`query` parameter is missing"}), 400
@@ -64,8 +62,8 @@ def get_exam(tg_id: str) -> tuple[Response, int]:
 
 @app.post("/exams/user/<string:tg_id>/")
 def add_exam(tg_id: str) -> tuple[Response, int]:
-    if not request.json:
-        return jsonify({"message": "Request body is missing"}), 400
+    if not request.json or not request.json.get("courses"):
+        return jsonify({"message": "Request body is missing or wrong"}), 400
 
     courses = request.json.get("courses")
 

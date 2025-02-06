@@ -36,9 +36,6 @@ def render_room_map(svg: str, rooms: set[str]) -> bytes | None:
                 continue
             if label[1:] not in rooms:
                 parent.remove(path)
-                # optimization
-                if len(rooms) == 1:
-                    break
 
     # Convert back to raw svg string
     modified_svg = ET.tostring(root, encoding="utf-8", method="xml")
