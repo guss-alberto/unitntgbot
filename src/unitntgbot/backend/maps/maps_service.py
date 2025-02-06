@@ -1,9 +1,10 @@
 import xml.etree.ElementTree as ET
 
 import cairosvg
+import os
 
 
-def render_room_map(svg: str, rooms: list[str]) -> bytes | None:
+def render_room_map(svg: str, rooms: set[str]) -> bytes | None:
     """
     Render the svg only showing selected rooms.
 
@@ -22,7 +23,7 @@ def render_room_map(svg: str, rooms: list[str]) -> bytes | None:
         bytes: raw png data of the rendered SVG
 
     """
-    root = ET.ElementTree(ET.fromstring(svg)).getroot()  # noqa: S314
+    root = ET.parse(svg).getroot()  # noqa: S314
 
     namespaces = {"inkscape": "http://www.inkscape.org/namespaces/inkscape"}
 
@@ -35,6 +36,9 @@ def render_room_map(svg: str, rooms: list[str]) -> bytes | None:
                 continue
             if label[1:] not in rooms:
                 parent.remove(path)
+                # optimization
+                if len(rooms) == 1:
+                    break
 
     # Convert back to raw svg string
     modified_svg = ET.tostring(root, encoding="utf-8", method="xml")
@@ -43,12 +47,24 @@ def render_room_map(svg: str, rooms: list[str]) -> bytes | None:
     return cairosvg.svg2png(modified_svg)
 
 
-if __name__ == "__main__":
-    with open("src/unitntgbot/backend/rooms_map/maps/map.svg") as f:
-        svg_raw = f.read()
-    png = render_room_map(svg_raw, ["A101", "A104"])
+def get_map_povo(room_id: str) -> str | None:
+    file = None
+    match room_id[:2]:
+        case "A1":
+            file = "P1-floor0.svg"
+        case "A2":
+            file = "P1-floor1.svg"
+        case "B1":
+            file = "P2-floor0.svg"
+    if not file:
+        return None
+    return "src/unitntgbot/backend/maps/maps/Povo/"+file
 
-    with open("output.png", "wb") as f:
-        if png:
-            f.write(png)
 
+def get_map_path(building_id: str, room_id: str) -> str | None:
+    path = None
+    match building_id:
+        case "E0503":
+            path = get_map_povo(room_id)
+
+    return path
