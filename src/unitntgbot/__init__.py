@@ -1,3 +1,3 @@
-from unitntgbot.main import main
+from unitntgbot.main import develop, main
 
-__all__ = ["main"]
+__all__ = ["develop", "main"]

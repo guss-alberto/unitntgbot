@@ -26,6 +26,7 @@ dev = ["ruff==0.8.4", "vulture==2.14"]
 
 [project.scripts]
 unitntgbot = "unitntgbot:main"
+unitntgbot-develop = "unitntgbot:develop"
 
 [build-system]
 requires = ["hatchling"]

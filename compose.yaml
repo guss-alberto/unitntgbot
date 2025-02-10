@@ -9,14 +9,17 @@ services:
     command: bot
     environment:
       TELEGRAM_BOT_TOKEN: $TELEGRAM_BOT_TOKEN
+      DB_PATH: /db/database.sqlite3
       TZ: Europe/Rome
 
-      CANTEEN_SVC_URL:
-      EXAMS_SVC_URL:
-      LECTURES_SVC_URL:
-      MAPS_SVC_URL:
-      ROOMS_SVC_URL:
-      TT_SVC_URL:
+      CANTEEN_SVC_URL: http://canteen_svc:5000
+      EXAMS_SVC_URL: http://exams_svc:5000
+      LECTURES_SVC_URL: http://lectures_svc:5000
+      MAPS_SVC_URL: http://maps_svc:5000
+      ROOMS_SVC_URL: http://rooms_svc:5000
+      # TT_SVC_URL:
+    volumes:
+      - bot-data:/db:rw
 
   canteen_svc:
     <<: *service-common
@@ -39,7 +42,7 @@ services:
     command: lectures
     environment:
       DB_PATH: /db/database.sqlite3
-      EXAMS_SVC_URL:
+      EXAMS_SVC_URL: http://exams_svc:5000
     volumes:
       - lectures-data:/db:rw
 
@@ -52,6 +55,7 @@ services:
     command: rooms
 
 volumes:
+  bot-data:
   canteen-data:
   exams-data:
   lectures-data:

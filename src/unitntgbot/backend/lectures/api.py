@@ -99,4 +99,8 @@ def get_lectures(tg_id: str) -> tuple[Response, int]:
 
 
 def entrypoint() -> None:
-    app.run(port=5001, debug=True)
+    app.run("0.0.0.0")  # noqa: S104
+
+
+def develop(port: int) -> None:
+    app.run(port=port, debug=True)  # noqa: S201

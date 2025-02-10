@@ -166,7 +166,11 @@ def get_room(building_id: str) -> tuple[Response, int]:
 
 
 def entrypoint() -> None:
-    app.run(port=5002, debug=True)
+    app.run("0.0.0.0")  # noqa: S104
+
+
+def develop(port: int) -> None:
+    app.run(port=port, debug=True)  # noqa: S201
 
 
 # room: name, capacity, is_free, event, time

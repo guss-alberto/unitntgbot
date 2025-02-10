@@ -51,4 +51,8 @@ def get_menu_api(lunch_or_dinner: str) -> tuple[Response, int]:
 
 
 def entrypoint() -> None:
-    app.run(port=5000, debug=True)
+    app.run("0.0.0.0")  # noqa: S104
+
+
+def develop(port: int) -> None:
+    app.run(port=port, debug=True)  # noqa: S201
