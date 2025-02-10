@@ -1,0 +1,69 @@
+x-service-common: &service-common
+  build: .
+  # image: ghcr.io/guss-alberto/unitntgbot
+  restart: unless-stopped
+
+services:
+  telegram_bot:
+    <<: *service-common
+    command: bot
+    environment:
+      TELEGRAM_BOT_TOKEN: $TELEGRAM_BOT_TOKEN
+      TZ: Europe/Rome
+
+      CANTEEN_SVC_URL:
+      EXAMS_SVC_URL:
+      LECTURES_SVC_URL:
+      MAPS_SVC_URL:
+      ROOMS_SVC_URL:
+      TT_SVC_URL:
+
+  canteen_svc:
+    <<: *service-common
+    command: canteen
+    environment:
+      DB_PATH: /db/database.sqlite3
+    volumes:
+      - canteen-data:/db:rw
+
+  exams_svc:
+    <<: *service-common
+    command: exams
+    environment:
+      DB_PATH: /db/database.sqlite3
+    volumes:
+      - exams-data:/db:rw
+
+  lectures_svc:
+    <<: *service-common
+    command: lectures
+    environment:
+      DB_PATH: /db/database.sqlite3
+      EXAMS_SVC_URL:
+    volumes:
+      - lectures-data:/db:rw
+
+  maps_svc:
+    <<: *service-common
+    command: maps
+    environment:
+      DB_PATH: /db/database.sqlite3
+      EXAMS_SVC_URL:
+    volumes:
+      - maps-data:/db:rw
+
+  rooms_svc:
+    <<: *service-common
+    command: rooms
+    environment:
+      DB_PATH: /db/database.sqlite3
+      EXAMS_SVC_URL:
+    volumes:
+      - rooms-data:/db:rw
+
+volumes:
+  canteen-data:
+  exams-data:
+  lectures-data:
+  maps-data:
+  rooms-data:
