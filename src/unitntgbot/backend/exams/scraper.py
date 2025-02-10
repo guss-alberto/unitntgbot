@@ -1,11 +1,11 @@
-from collections import namedtuple
 import logging
 import re
 import sqlite3
 
 import requests
-from pyquery import PyQuery as pq  # noqa: N813
+from pyquery import PyQuery as pq
 
+from .settings import settings
 from .UniversityExam import UniversityExam
 
 logger = logging.getLogger(__name__)
@@ -20,8 +20,8 @@ def get_university_faculties() -> dict[int, str]:
 
     Returns:
     dict[int, str]: A dictionary where the keys are the university departments ids and the values are the department names.
-    """
 
+    """
     faculties = {}
 
     response = requests.get(EXAMS_LIST_URL, timeout=30)
@@ -54,8 +54,8 @@ def get_university_exams(university_faculties: dict[int, str]) -> list[Universit
 
     Returns:
     list[UniversityExam]: A list of UniversityExam objects.
-    """
 
+    """
     exams: list[UniversityExam] = []
 
     for faculty_id, faculty_name in university_faculties.items():
@@ -174,8 +174,8 @@ def _parse_registration_period(registration_period: str) -> tuple[str, str]:
 
     Returns:
         str: A tuple containing the registration start and end dates.
-    """
 
+    """
     # Extract registration start
     registration_period_split = registration_period.split(" - ")
     registration_start = _iso_normalize_date(registration_period_split[0])
@@ -193,8 +193,8 @@ def _parse_exam_datetime(exam_datetime: str) -> tuple[str, str]:
 
     Returns:
     tuple[str, str, str]: A tuple containing the exam date, the exam time, and the partition.
+
     """
-    
     # Split date from time and partition
     (
         exam_date,
@@ -236,7 +236,7 @@ if __name__ == "__main__":
     exams = get_university_exams(faculties)
 
     # Put the exams in a SQLite database
-    db = sqlite3.connect("db/exams.db")
+    db = sqlite3.connect(settings.DB_PATH)
     db.execute(
         """\
         CREATE TABLE IF NOT EXISTS Exams (

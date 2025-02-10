@@ -1,18 +1,13 @@
 import re
-import requests
 import sqlite3
 from datetime import datetime
-from .UniversityLecture import UniversityLecture
 
+import requests
 from flask import Flask, Response, g, jsonify, request
 
-from .database import (
-    DATABASE,
-    get_lectures_for_user,
-    get_next_lectures_for_user,
-    import_for_user,
-    update_db,
-)
+from .database import get_lectures_for_user, get_next_lectures_for_user, import_for_user, update_db
+from .settings import settings
+from .UniversityLecture import UniversityLecture
 
 app = Flask(__name__)
 
@@ -20,7 +15,7 @@ app = Flask(__name__)
 def _get_db() -> sqlite3.Connection:
     db = getattr(g, "_database", None)
     if db is None:
-        db = g._database = sqlite3.connect(DATABASE)
+        db = g._database = sqlite3.connect(settings.DB_PATH)
         update_db(db, datetime.fromisoformat("2024-10-16"))
     return db
 
@@ -54,7 +49,11 @@ def add_lectures(tg_id: str) -> tuple[Response, int]:
     courses = import_for_user(db, tg_id, unitrentoapp_link)
 
     # Add the courses to the db of the exams service
-    requests.post(f"http://127.0.0.1:5003/exams/user/{tg_id}", json={"courses": [UniversityLecture.extract_course_id(course) for course in courses]})
+    requests.post(
+        f"{settings.EXAMS_SVC_URL}/exams/user/{tg_id}",
+        json={"courses": [UniversityLecture.extract_course_id(course) for course in courses]},
+        timeout=30,
+    )
 
     return jsonify({"message": "Added lectures successfully", "number": len(courses)}), 200
 
@@ -100,4 +99,8 @@ def get_lectures(tg_id: str) -> tuple[Response, int]:
 
 
 def entrypoint() -> None:
-    app.run(port=5001, debug=True)
+    app.run("0.0.0.0")  # noqa: S104
+
+
+def develop(port: int) -> None:
+    app.run(port=port, debug=True)  # noqa: S201

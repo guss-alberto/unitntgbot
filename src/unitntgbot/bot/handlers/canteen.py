@@ -6,13 +6,14 @@ from datetime import date, datetime, timedelta
 
 import requests
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
-from telegram.ext import ContextTypes
-from typing import Literal
-
 from telegram.constants import ParseMode
+from telegram.ext import ContextTypes
+
+from unitntgbot.bot.settings import settings
+
 
 def format_output(date: date, msg: str, is_dinner: bool = False) -> tuple[str, InlineKeyboardMarkup]:
-    callback = "menu:"+ ("dinner:" if is_dinner else "lunch:")
+    callback = "menu:" + ("dinner:" if is_dinner else "lunch:")
     keyboard = [
         [
             InlineKeyboardButton("⬅️", callback_data=callback + (date - timedelta(days=1)).isoformat()),
@@ -26,7 +27,7 @@ def format_output(date: date, msg: str, is_dinner: bool = False) -> tuple[str, I
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
 
-    message = f"*{"Dinner" if is_dinner else "Lunch" } menu for {date.strftime("%A, %B %d, %Y")}*:\n\n"
+    message = f"*{'Dinner' if is_dinner else 'Lunch'} menu for {date.strftime('%A, %B %d, %Y')}*:\n\n"
     if msg:
         message += msg
     else:
@@ -37,12 +38,12 @@ def format_output(date: date, msg: str, is_dinner: bool = False) -> tuple[str, I
 
 
 async def canteen_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    args = context.args # TODO: Fix it to work with args
+    args = context.args  # TODO: Fix it to work with args
 
     if not update.message:
         return
     # IMPORTANT! USE 127.0.0.1 INSTEAD OF LOCALHOST OR THE REQUESTS ON WINDOWS WILL BE 3 SECONDS LONGER!!!
-    response = requests.get("http://127.0.0.1:5000/menu/lunch/")
+    response = requests.get(f"{settings.CANTEEN_SVC_URL}/menu/lunch/", timeout=30)
 
     if response.status_code != 200:  # noqa: PLR2004
         await update.message.reply_text("Internal Server Error")
@@ -52,8 +53,6 @@ async def canteen_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
 
     message, markup = format_output(datetime.fromisoformat(data["date"]).date(), data["menu"])
     await update.message.reply_markdown_v2(message, reply_markup=markup)
-
-
 
 
 async def canteen_callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -68,8 +67,7 @@ async def canteen_callback_handler(update: Update, context: ContextTypes.DEFAULT
     if date == "now":
         date = ""
 
-    api_url = f"http://127.0.0.1:5000/menu/{menu_type}/?date={date}"
-    response = requests.get(api_url)
+    response = requests.get(f"{settings.CANTEEN_SVC_URL}/menu/{menu_type}/?date={date}", timeout=30)
 
     if response.status_code != 200:  # noqa: PLR2004
         await query.edit_message_text("Internal Server Error")

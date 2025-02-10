@@ -1,5 +1,5 @@
-from typing import NamedTuple
 from datetime import datetime
+from typing import NamedTuple
 
 
 class Room(NamedTuple):
@@ -15,7 +15,7 @@ class Room(NamedTuple):
         time = datetime.fromtimestamp(self.time).strftime("%H:%M")
 
         if self.is_free:
-            return f"✅*{self.name}*{capacity} Free {f"until {time}" if self.time else "all day"}"
+            return f"✅*{self.name}*{capacity} Free {f'until {time}' if self.time else 'all day'}"
 
         # Replace with ⭕️?
         return f"🔴*{self.name}*{capacity} Busy until {time}, Now:\n{self.event.title()}"  # TODO: Input sanification to prevent issues with markdown breaking
@@ -30,6 +30,6 @@ class Event(NamedTuple):
         time = datetime.fromtimestamp(self.time).strftime("%H:%M")
 
         if self.is_free:
-            return f"❇️ {time if self.time else "Now"} - Free"
+            return f"❇️ {time if self.time else 'Now'} - Free"
 
         return f"🟥 {time} - {self.event.title()}"  # TODO: Input sanification to prevent issues with markdown breaking

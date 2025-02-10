@@ -9,6 +9,7 @@ from telegram.constants import ParseMode
 from telegram.ext import ContextTypes
 
 from unitntgbot.backend.lectures.UniversityLecture import UniversityLecture
+from unitntgbot.bot.settings import settings
 
 
 def format_output(date: date, lectures: list) -> tuple[str, InlineKeyboardMarkup]:
@@ -25,7 +26,7 @@ def format_output(date: date, lectures: list) -> tuple[str, InlineKeyboardMarkup
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
 
-    message = f"*Lectures for {date.strftime("%A, %B %d, %Y")}*\n\n"
+    message = f"*Lectures for {date.strftime('%A, %B %d, %Y')}*\n\n"
     if lectures:
         lectures = [UniversityLecture(*lec).format() for lec in lectures]
         message += "\n\n".join(lectures)
@@ -43,8 +44,7 @@ async def get_lectures_handler(update: Update, context: ContextTypes.DEFAULT_TYP
     date_arg = args[0] if args else None
 
     tg_id = update.message.chat_id
-    api_url = f"http://127.0.0.1:5001/lectures/{tg_id}"
-    response = requests.get(api_url, params={"date": date_arg})
+    response = requests.get(f"{settings.LECTURES_SVC_URL}/lectures/{tg_id}", params={"date": date_arg}, timeout=30)
 
     match response.status_code:
         case 400:
@@ -86,8 +86,11 @@ async def get_lectures_callback_handler(update: Update, context: ContextTypes.DE
         date = datetime.fromisoformat(query.data.split(":")[1]).date()
 
     tg_id = query.message.chat.id
-    api_url = f"http://127.0.0.1:5001/lectures/{tg_id}"
-    response = requests.get(api_url, params={"date": date.isoformat()})
+    response = requests.get(
+        f"{settings.LECTURES_SVC_URL}/lectures/{tg_id}",
+        params={"date": date.isoformat()},
+        timeout=30,
+    )
     data = response.json()
 
     match response.status_code:

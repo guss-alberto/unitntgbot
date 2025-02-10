@@ -1,16 +1,14 @@
 import sqlite3
-from datetime import datetime
 
 from flask import Flask, Response, g, jsonify, request
 
 from .database import (
-    DATABASE,
-    create_table,
-    update_db,
-    get_exams_for_user,
     add_courses_for_user,
-    search_exams as search_exams_db,
+    create_table,
+    get_exams_for_user,
 )
+from .database import search_exams as search_exams_db
+from .settings import settings
 
 app = Flask(__name__)
 
@@ -18,7 +16,7 @@ app = Flask(__name__)
 def _get_db() -> sqlite3.Connection:
     db = getattr(g, "_database", None)
     if db is None:
-        db = g._database = sqlite3.connect(DATABASE)
+        db = g._database = sqlite3.connect(settings.DB_PATH)
         create_table(db)
         # update_db(db, datetime.today())  # TODO: Change this later
     return db
@@ -74,4 +72,8 @@ def add_exam(tg_id: str) -> tuple[Response, int]:
 
 
 def entrypoint() -> None:
-    app.run(port=5003, debug=True)
+    app.run("0.0.0.0")  # noqa: S104
+
+
+def develop(port: int) -> None:
+    app.run(port=port, debug=True)  # noqa: S201

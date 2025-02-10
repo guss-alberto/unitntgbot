@@ -1,13 +1,14 @@
 # /setup .............. Shows the setup menu
 
-import requests
-
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
-from telegram.ext import ContextTypes, ConversationHandler, CallbackContext
-from telegram.constants import ParseMode
 import sqlite3
 
+import requests
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
+from telegram.constants import ParseMode
+from telegram.ext import CallbackContext, ContextTypes, ConversationHandler
+
 from unitntgbot.backend.rooms.rooms_mapping import BUILDING_ID_TO_NAME
+from unitntgbot.bot.settings import settings
 
 
 async def add_lectures_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -28,18 +29,20 @@ async def add_lectures_handler(update: Update, context: ContextTypes.DEFAULT_TYP
     tg_id = update.message.chat_id
     unitrentoapp_link = args[0]
 
-    
     # TODO: save on telegram bot db the unitrentoapp link and enable refreshing
-    api_url = f"http://127.0.0.1:5001/lectures/{tg_id}"
-    response = requests.post(api_url, params={"unitrentoapp_link": unitrentoapp_link})
+    response = requests.post(
+        f"{settings.LECTURES_SVC_URL}/lectures/{tg_id}",
+        params={"unitrentoapp_link": unitrentoapp_link},
+        timeout=30,
+    )
     data = response.json()
 
     match response.status_code:
         case 200:
-            await update.message.reply_text(f"{data["number"]} courses addeed successfully!")
+            await update.message.reply_text(f"{data['number']} courses addeed successfully!")
             return
         case 400:
-            await update.message.reply_text(f"{data["message"]}\nPlease insert a valid UniTrentoApp calendar link.")
+            await update.message.reply_text(f"{data['message']}\nPlease insert a valid UniTrentoApp calendar link.")
             return
 
 
@@ -65,12 +68,16 @@ async def setup_callback_handler(update: Update, context: ContextTypes.DEFAULT_T
 
     match query.data:
         case "setup:lecture":
-            await query.edit_message_text("Write your UniTrentoApp token: \\(Type `/cancel` to cancel\\)", parse_mode=ParseMode.MARKDOWN_V2)
+            await query.edit_message_text(
+                "Write your UniTrentoApp token: \\(Type `/cancel` to cancel\\)", parse_mode=ParseMode.MARKDOWN_V2
+            )
             return 0
         case "setup:department":
             keyboard = []
             for department_id, department_name in BUILDING_ID_TO_NAME.items():
-                keyboard.append([InlineKeyboardButton(department_name, callback_data=f"setup:department:{department_id}")])
+                keyboard.append(
+                    [InlineKeyboardButton(department_name, callback_data=f"setup:department:{department_id}")]
+                )
             keyboard.append([InlineKeyboardButton("❌ Cancel", callback_data="setup:department:cancel")])
             reply_markup = InlineKeyboardMarkup(keyboard)
 
@@ -88,13 +95,16 @@ async def get_unitrentoapp_token(update: Update, context: CallbackContext) -> in
     unitrentoapp_link = update.message.text
     tg_id = update.message.chat_id
 
-    api_url = f"http://127.0.0.1:5001/lectures/{tg_id}"
-    response = requests.post(api_url, params={"unitrentoapp_link": unitrentoapp_link})
+    response = requests.post(
+        f"{settings.LECTURES_SVC_URL}/lectures/{tg_id}",
+        params={"unitrentoapp_link": unitrentoapp_link},
+        timeout=30,
+    )
 
     match response.status_code:
         case 200:
             data = response.json()
-            await update.message.reply_text(f"{data["number"]} courses addeed successfully!")
+            await update.message.reply_text(f"{data['number']} courses addeed successfully!")
             return ConversationHandler.END
         case 400:
             data = response.json()
@@ -110,11 +120,13 @@ async def get_unitrentoapp_token(update: Update, context: CallbackContext) -> in
 
 
 DEFAULT_DEPARTMENT_DATABASE = "db/settings.db"
+
+
 async def get_default_department(update: Update, context: CallbackContext) -> int:
     query = update.callback_query
     if not update.effective_message or not query:
         return ConversationHandler.END
-  
+
     data = query.data
     message = query.message
     if not data or not message:
@@ -126,10 +138,10 @@ async def get_default_department(update: Update, context: CallbackContext) -> in
         await update.effective_message.edit_text("Operation canceled.")
         return ConversationHandler.END
 
-    department_id = data[len("setup:department:"):]
+    department_id = data[len("setup:department:") :]
     tg_id = message.chat.id
 
-    db = sqlite3.connect("db/settings.db")
+    db = sqlite3.connect(settings.DB_PATH)
     db.execute(
         """\
         CREATE TABLE IF NOT EXISTS DefaultDepartments (

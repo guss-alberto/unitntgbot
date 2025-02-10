@@ -1,3 +1,3 @@
-from .api import entrypoint
+from .api import develop, entrypoint
 
-__all__ = ["entrypoint"]
+__all__ = ["develop", "entrypoint"]

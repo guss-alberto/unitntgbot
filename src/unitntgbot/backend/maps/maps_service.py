@@ -1,7 +1,6 @@
 import xml.etree.ElementTree as ET
 
 import cairosvg
-import os
 
 
 def render_room_map(svg: str, rooms: set[str]) -> bytes | None:
@@ -29,7 +28,7 @@ def render_room_map(svg: str, rooms: set[str]) -> bytes | None:
 
     for parent in root.findall(".//{http://www.w3.org/2000/svg}*"):
         for path in list(parent):
-            label = path.attrib.get(f"{{{namespaces["inkscape"]}}}label")
+            label = path.attrib.get(f"{{{namespaces['inkscape']}}}label")
             # ignore if no label has been set
             # also ignore if the label doesn't start with ":" for the reason stated in doctrsing
             if not label or label[0] != ":":
@@ -55,7 +54,7 @@ def get_map_povo(room_id: str) -> str | None:
             file = "P2-floor0.svg"
     if not file:
         return None
-    return "src/unitntgbot/backend/maps/maps/Povo/"+file
+    return "src/unitntgbot/backend/maps/maps/Povo/" + file
 
 
 def get_map_path(building_id: str, room_id: str) -> str | None:

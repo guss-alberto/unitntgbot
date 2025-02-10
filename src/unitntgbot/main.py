@@ -41,4 +41,38 @@ def main() -> None:
             from unitntgbot.backend.rooms import entrypoint
         case Service.MAPS:
             from unitntgbot.backend.maps import entrypoint
+
     entrypoint()
+
+
+def develop() -> None:
+    parser = argparse.ArgumentParser(description="A boilerplate script for argparse usage.")
+
+    parser.add_argument(
+        "service",
+        choices=list(Service),
+        help=f"Select a service from: {', '.join([service.value for service in Service])}",
+    )
+    parser.add_argument("--port", "-p", type=int, default=5000, help="Port to run the service on.")
+
+    args = parser.parse_args()
+    service = Service(args.service)
+
+    match service:
+        case Service.BOT:
+            from unitntgbot.bot import entrypoint
+
+            entrypoint()
+            return
+        case Service.CANTEEN:
+            from unitntgbot.backend.canteen import develop
+        case Service.EXAMS:
+            from unitntgbot.backend.exams import develop
+        case Service.LECTURES:
+            from unitntgbot.backend.lectures import develop
+        case Service.ROOMS:
+            from unitntgbot.backend.rooms import develop
+        case Service.MAPS:
+            from unitntgbot.backend.maps import develop
+
+    develop(args.port)

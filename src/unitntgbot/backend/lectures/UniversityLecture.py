@@ -60,10 +60,10 @@ class UniversityLecture(NamedTuple):
     def format(self) -> str:
         if not self.is_cancelled:
             return (
-                f"{self._get_clock_emoji()} • `{self.start.split("T")[1]} - {self.end.split("T")[1]}`\n"
+                f"{self._get_clock_emoji()} • `{self.start.split('T')[1]} - {self.end.split('T')[1]}`\n"
                 f"{self._get_book_emoji()} • *{self.course_name}*\n"  # TODO: Input sanification to prevent issues with markdown breaking
-                f"{"🧑‍🏫" if random.randint(0, 100) else "🤓"} • {self.lecturer}\n"
+                f"{'🧑‍🏫' if random.randint(0, 100) else '🤓'} • {self.lecturer}\n"
                 f"📍 • {self.get_full_room_str(self.room)}"
             )
 
-        return f"{self._get_clock_emoji()} • _cancelled_\n" f"{self._get_book_emoji()} • _{self.course_name}_"
+        return f"{self._get_clock_emoji()} • _cancelled_\n{self._get_book_emoji()} • _{self.course_name}_"
