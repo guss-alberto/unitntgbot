@@ -1,4 +1,4 @@
-import requests
+import httpx
 from telegram import Update
 from telegram.ext import ContextTypes
 
@@ -13,10 +13,12 @@ async def exams_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
 
     if not context.args:
         tg_id = update.message.chat_id
-        response = requests.get(f"{settings.EXAMS_SVC_URL}/exams/user/{tg_id}", timeout=30)
+        async with httpx.AsyncClient() as client:
+            response = await client.get(f"{settings.EXAMS_SVC_URL}/exams/user/{tg_id}", timeout=30)
     else:
         query = " ".join(context.args)
-        response = requests.get(f"{settings.EXAMS_SVC_URL}/exams/search", params={"query": query}, timeout=30)
+        async with httpx.AsyncClient() as client:
+            response = await client.get(f"{settings.EXAMS_SVC_URL}/exams/search", params={"query": query}, timeout=30)
 
     match response.status_code:
         case 200:

@@ -4,7 +4,7 @@
 
 from datetime import date, datetime, timedelta
 
-import requests
+import httpx
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.constants import ParseMode
 from telegram.ext import ContextTypes
@@ -12,7 +12,7 @@ from telegram.ext import ContextTypes
 from unitntgbot.bot.settings import settings
 
 
-def format_output(date: date, msg: str, is_dinner: bool = False) -> tuple[str, InlineKeyboardMarkup]:
+def format_output(date: date, msg: str, *, is_dinner: bool = False) -> tuple[str, InlineKeyboardMarkup]:
     callback = "menu:" + ("dinner:" if is_dinner else "lunch:")
     keyboard = [
         [
@@ -42,8 +42,9 @@ async def canteen_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
 
     if not update.message:
         return
-    # IMPORTANT! USE 127.0.0.1 INSTEAD OF LOCALHOST OR THE REQUESTS ON WINDOWS WILL BE 3 SECONDS LONGER!!!
-    response = requests.get(f"{settings.CANTEEN_SVC_URL}/menu/lunch/", timeout=30)
+
+    async with httpx.AsyncClient() as client:
+        response = await client.get(f"{settings.CANTEEN_SVC_URL}/menu/lunch/", timeout=30)
 
     if response.status_code != 200:  # noqa: PLR2004
         await update.message.reply_text("Internal Server Error")
@@ -67,7 +68,8 @@ async def canteen_callback_handler(update: Update, context: ContextTypes.DEFAULT
     if date == "now":
         date = ""
 
-    response = requests.get(f"{settings.CANTEEN_SVC_URL}/menu/{menu_type}/?date={date}", timeout=30)
+    async with httpx.AsyncClient() as client:
+        response = await client.get(f"{settings.CANTEEN_SVC_URL}/menu/{menu_type}/?date={date}", timeout=30)
 
     if response.status_code != 200:  # noqa: PLR2004
         await query.edit_message_text("Internal Server Error")
@@ -75,5 +77,9 @@ async def canteen_callback_handler(update: Update, context: ContextTypes.DEFAULT
 
     data = response.json()
 
-    message, markup = format_output(datetime.fromisoformat(data["date"]).date(), data["menu"], menu_type == "dinner")
+    message, markup = format_output(
+        datetime.fromisoformat(data["date"]).date(),
+        data["menu"],
+        is_dinner=menu_type == "dinner",
+    )
     await query.edit_message_text(message, reply_markup=markup, parse_mode=ParseMode.MARKDOWN_V2)

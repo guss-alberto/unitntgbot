@@ -53,6 +53,7 @@ ignore = [
     "S101",   # Checks for uses of the assert keyword.
     "S311",   # Standard pseudo-random generators are not suitable for cryptographic purposes
     "TD002",  # Checks that a TODO comment includes an author.
+    "TD003",  # Missing issue link for this TODO
     "TRY400", # Use logging.exception() instead of logging.error() for logging exceptions
 ]
 

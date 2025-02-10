@@ -2,7 +2,7 @@
 # /rooms povo ........... Mostra le aule libere e occupate a Povo
 # /rooms mesiano ........ Mostra le aule libere e occupate a Mesiano
 
-import requests
+import httpx
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.constants import ParseMode
 from telegram.ext import ContextTypes
@@ -64,12 +64,13 @@ NAME_TO_BUILDING_ID = {
 }
 
 
-def _room_events(building_id: str, room: str) -> tuple[str, str]:
-    response = requests.get(
-        f"{settings.ROOMS_SVC_URL}/rooms/{building_id}/room",
-        params={"room_query": room},
-        timeout=30,
-    )
+async def _room_events(building_id: str, room: str) -> tuple[str, str]:
+    async with httpx.AsyncClient() as client:
+        response = await client.get(
+            f"{settings.ROOMS_SVC_URL}/rooms/{building_id}/room",
+            params={"room_query": room},
+            timeout=30,
+        )
 
     match response.status_code:
         case 404:
@@ -88,8 +89,10 @@ def _room_events(building_id: str, room: str) -> tuple[str, str]:
     return "", ""
 
 
-def _rooms_status(building_id: str, sort_time: bool = True) -> tuple[str, InlineKeyboardMarkup | None]:
-    response = requests.get(f"{settings.ROOMS_SVC_URL}/rooms/{building_id}", timeout=30)
+async def _rooms_status(building_id: str, *, sort_time: bool = True) -> tuple[str, InlineKeyboardMarkup | None]:
+    async with httpx.AsyncClient() as client:
+        response = await client.get(f"{settings.ROOMS_SVC_URL}/rooms/{building_id}", timeout=30)
+
     keyboard = [
         [
             InlineKeyboardButton(
@@ -144,14 +147,15 @@ async def rooms_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
     room_name = " ".join(args[1:]) if len(args) > 1 else None
 
     if room_name:
-        msg, room_code = _room_events(building_id, room_name)
-        map_response = requests.get(f"{settings.MAPS_SVC_URL}/maps/{room_code}", timeout=30)
+        msg, room_code = await _room_events(building_id, room_name)
+        async with httpx.AsyncClient() as client:
+            map_response = await client.get(f"{settings.MAPS_SVC_URL}/maps/{room_code}", timeout=30)
         if map_response.status_code == 200 and room_code:  # noqa: PLR2004
             await update.message.reply_photo(photo=map_response.content, caption=msg, parse_mode=ParseMode.MARKDOWN)
         else:
             await update.message.reply_markdown(msg + "\n\nMap not available for this room")
     else:
-        msg, markup = _rooms_status(building_id)
+        msg, markup = await _rooms_status(building_id)
         await update.message.reply_markdown(msg, reply_markup=markup)
 
 
@@ -163,6 +167,6 @@ async def rooms_callback_handler(update: Update, context: ContextTypes.DEFAULT_T
 
     _, sort_type, building_id = query.data.split(":")
 
-    msg, markup = _rooms_status(building_id, sort_time=sort_type == "time")
+    msg, markup = await _rooms_status(building_id, sort_time=sort_type == "time")
 
     await query.edit_message_text(msg, parse_mode=ParseMode.MARKDOWN, reply_markup=markup)

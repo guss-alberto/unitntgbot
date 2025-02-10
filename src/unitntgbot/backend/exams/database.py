@@ -28,7 +28,7 @@ def create_table(db: sqlite3.Connection) -> None:
            id TEXT NOT NULL,
            course_id TEXT NOT NULL,
            PRIMARY KEY (id, course_id)
-        );"""
+        );""",
     )
     db.commit()
 
@@ -54,7 +54,7 @@ def search_exams(db: sqlite3.Connection, query: str) -> list[UniversityExam]:
         DATE(date) >= DATE(CURRENT_TIMESTAMP) AND
         (
             name LIKE '%' || ? || '%'
-            OR professors LIKE '%' || ? || '%' 
+            OR professors LIKE '%' || ? || '%'
             OR id = ?
         )
         ORDER BY date
@@ -88,4 +88,3 @@ def get_exams_for_user(db: sqlite3.Connection, tg_id: str) -> list[UniversityExa
 def add_courses_for_user(db: sqlite3.Connection, tg_id: str, courses: list[str]) -> None:
     db.executemany("INSERT OR IGNORE INTO Users VALUES (?, ?);", [(tg_id, course) for course in courses])
     db.commit()
-    return

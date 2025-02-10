@@ -5,7 +5,7 @@ from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import ContextTypes
 
 
-async def map_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+async def map_handler(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
     keyboard = [
         [InlineKeyboardButton("a", callback_data="1")],
         [InlineKeyboardButton("Option 2", callback_data="2")],

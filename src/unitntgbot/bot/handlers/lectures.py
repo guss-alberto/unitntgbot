@@ -3,7 +3,7 @@
 
 from datetime import date, datetime, timedelta
 
-import requests
+import httpx
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.constants import ParseMode
 from telegram.ext import ContextTypes
@@ -44,7 +44,13 @@ async def get_lectures_handler(update: Update, context: ContextTypes.DEFAULT_TYP
     date_arg = args[0] if args else None
 
     tg_id = update.message.chat_id
-    response = requests.get(f"{settings.LECTURES_SVC_URL}/lectures/{tg_id}", params={"date": date_arg}, timeout=30)
+
+    async with httpx.AsyncClient() as client:
+        response = await client.get(
+            f"{settings.LECTURES_SVC_URL}/lectures/{tg_id}",
+            params={"date": date_arg},
+            timeout=30,
+        )
 
     match response.status_code:
         case 400:
@@ -74,7 +80,7 @@ async def get_lectures_handler(update: Update, context: ContextTypes.DEFAULT_TYP
             await update.message.reply_text("An unknown error occured")
 
 
-async def get_lectures_callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+async def get_lectures_callback_handler(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
     query = update.callback_query
 
     if not query or not query.data or not query.message:
@@ -86,11 +92,13 @@ async def get_lectures_callback_handler(update: Update, context: ContextTypes.DE
         date = datetime.fromisoformat(query.data.split(":")[1]).date()
 
     tg_id = query.message.chat.id
-    response = requests.get(
-        f"{settings.LECTURES_SVC_URL}/lectures/{tg_id}",
-        params={"date": date.isoformat()},
-        timeout=30,
-    )
+
+    async with httpx.AsyncClient() as client:
+        response = await client.get(
+            f"{settings.LECTURES_SVC_URL}/lectures/{tg_id}",
+            params={"date": date.isoformat()},
+            timeout=30,
+        )
     data = response.json()
 
     match response.status_code:
