@@ -17,7 +17,7 @@ services:
       LECTURES_SVC_URL: http://lectures_svc:5000
       MAPS_SVC_URL: http://maps_svc:5000
       ROOMS_SVC_URL: http://rooms_svc:5000
-      # TT_SVC_URL:
+      TT_SVC_URL: N/A
     volumes:
       - bot-data:/db:rw
 
@@ -46,9 +46,9 @@ services:
     volumes:
       - lectures-data:/db:rw
 
-  maps_svc:
-    <<: *service-common
-    command: maps
+  # maps_svc:
+  #   <<: *service-common
+  #   command: maps
 
   rooms_svc:
     <<: *service-common
