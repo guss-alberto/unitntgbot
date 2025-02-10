@@ -9,14 +9,13 @@ from .rooms_mapping import ROOM_ID_TO_NAME
 
 def _timed_memoize(duration: int):
     def decorator(func):
-        cache: dict[str, dict]= {}
+        cache: dict[str, dict] = {}
 
         @wraps(func)
         def wrapper(*args, **kwargs):
             current_time = time.time()
 
             building_id = args[0]
-
 
             # If the value is still valid return it
             if building_id in cache and current_time - cache[building_id]["timestamp"] < duration:

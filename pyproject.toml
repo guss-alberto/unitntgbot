@@ -13,6 +13,7 @@ dependencies = [
     "flask>=3.1.0",
     "fuzzywuzzy>=0.18.0",
     "pandas>=2.2.3",
+    "pydantic-settings>=2.7.1",
     "pyquery>=2.0.1",
     "python-dotenv>=1.0.1",
     "python-levenshtein>=0.26.1",

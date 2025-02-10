@@ -1,11 +1,10 @@
 import sqlite3
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from .scraper import UniversityLecture, get_courses_from_easyacademy, import_from_ical
 
-DATABASE = "db/lectures.db"
+tracked_courses: set[str] = set()
 
-tracked_courses:set[str] = set()
 
 def _create_tables(db: sqlite3.Connection) -> None:
     db.execute(
@@ -93,14 +92,14 @@ def import_for_user(db: sqlite3.Connection, user_id: str, unitnapp_url: str) -> 
     )
 
     if not courses.issubset(tracked_courses):
-        lectures = get_courses_from_easyacademy(courses-tracked_courses, datetime.now())
+        lectures = get_courses_from_easyacademy(courses - tracked_courses, datetime.now())
 
         db.executemany(
             "INSERT OR REPLACE INTO Lectures VALUES (?, ?, ?, ?, ?, ?, ?, ?);",
             lectures,
         )
         tracked_courses.union(courses)
-        
+
     db.commit()
     return courses
 
@@ -109,7 +108,7 @@ def import_for_user(db: sqlite3.Connection, user_id: str, unitnapp_url: str) -> 
 # TODO: If any lecture gets modified notify users subbed to it
 def update_db(db: sqlite3.Connection, date: datetime) -> None:
     global tracked_courses
-    _create_tables(db) # Creates the tables if it does not yet exist
+    _create_tables(db)  # Creates the tables if it does not yet exist
 
     cur = db.cursor()
 

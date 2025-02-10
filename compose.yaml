@@ -46,24 +46,12 @@ services:
   maps_svc:
     <<: *service-common
     command: maps
-    environment:
-      DB_PATH: /db/database.sqlite3
-      EXAMS_SVC_URL:
-    volumes:
-      - maps-data:/db:rw
 
   rooms_svc:
     <<: *service-common
     command: rooms
-    environment:
-      DB_PATH: /db/database.sqlite3
-      EXAMS_SVC_URL:
-    volumes:
-      - rooms-data:/db:rw
 
 volumes:
   canteen-data:
   exams-data:
   lectures-data:
-  maps-data:
-  rooms-data:

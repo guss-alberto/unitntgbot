@@ -1,10 +1,8 @@
 import sqlite3
-from datetime import date, datetime, timedelta
+from datetime import datetime
 
-from .scraper import get_university_faculties, get_university_exams
+from .scraper import get_university_exams, get_university_faculties
 from .UniversityExam import UniversityExam
-
-DATABASE = "db/exams.db"
 
 
 def create_table(db: sqlite3.Connection) -> None:

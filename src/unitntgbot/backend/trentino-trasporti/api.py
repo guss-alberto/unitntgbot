@@ -1,6 +1,7 @@
 import base64
-import requests
 import re
+
+import requests
 
 BASE_URL = "https://app-tpl.tndigit.it"
 USERNAME = "mittmobile"

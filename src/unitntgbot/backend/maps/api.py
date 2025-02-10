@@ -1,5 +1,4 @@
 from collections import defaultdict
-from datetime import datetime
 
 from flask import Flask, Response, jsonify, make_response, request
 
@@ -11,11 +10,11 @@ app = Flask(__name__)
 @app.get("/maps/<string:building_id>/<string:room_ids>")
 def get_map_single(building_id: str, room_ids: str) -> tuple[Response | str, int]:
     """
-    Returns a png image containing the highlited rooms that could be found,
+    Return a png image containing the highlited rooms that could be found.
+
     The function assumes all roomsa are in the same floor, and if they aren't,
     it will only render those in the same floor as the first one.
     """
-
     rooms = room_ids.split("|")
     if len(rooms) > 30:
         return "Too many rooms were provided", 413  # HTTP code for payload too large
@@ -35,7 +34,6 @@ def get_map_single(building_id: str, room_ids: str) -> tuple[Response | str, int
 
 @app.get("/maps/multi")
 def get_maps_multiple() -> tuple[Response, int]:
-
     if not request.json or not request.json.get("rooms"):
         return jsonify({"message": "Please provide room codes in a json format array called 'rooms'"}), 400
 

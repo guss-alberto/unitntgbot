@@ -1,11 +1,14 @@
 import logging
 import re
 import sqlite3
+import sys
 from datetime import datetime
 
 import requests
 
+from .settings import settings
 from .UniversityLecture import UniversityLecture
+
 
 def _iso_normalize_date(date: str) -> str:
     d: list[str] = date.split("-")
@@ -105,13 +108,13 @@ if __name__ == "__main__":
 
     if courses is None:
         logger.error("Invalid URL")
-        exit(1)
+        sys.exit(1)
 
     lectures = get_courses_from_easyacademy(courses, date)
     logger.info("Found %s", len(lectures))
 
     # Put the lectures in a SQLite database
-    db = sqlite3.connect("db/lectures.db")
+    db = sqlite3.connect(settings.DB_PATH)
     db.execute(
         """\
         CREATE TABLE IF NOT EXISTS Lectures (

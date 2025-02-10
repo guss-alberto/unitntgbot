@@ -1,9 +1,6 @@
 import asyncio
-import os
-from warnings import filterwarnings
 
 import telegram
-from dotenv import load_dotenv
 from telegram import Update
 from telegram.ext import (
     ApplicationBuilder,
@@ -13,7 +10,6 @@ from telegram.ext import (
     MessageHandler,
     filters,
 )
-from telegram.warnings import PTBUserWarning
 
 from .handlers.canteen import canteen_callback_handler, canteen_handler
 from .handlers.exams import exams_handler
@@ -29,7 +25,8 @@ from .handlers.setup import (
     setup_handler,
 )
 from .handlers.start import start_handler
-from .handlers.transports import transports_callback_handler, transports_handler
+from .handlers.transports import transports_handler
+from .settings import settings
 
 
 async def set_commands(bot: telegram.Bot) -> None:
@@ -55,15 +52,8 @@ async def set_commands(bot: telegram.Bot) -> None:
 
 
 def entrypoint() -> None:
-    load_dotenv()
-    TELEGRAM_BOT_TOKEN: str | None = os.getenv("TELEGRAM_BOT_TOKEN")
-
-    if not TELEGRAM_BOT_TOKEN:
-        msg = "TELEGRAM_BOT_TOKEN is not set in .env file"
-        raise ValueError(msg)
-
     # Create the bot application
-    app = ApplicationBuilder().token(TELEGRAM_BOT_TOKEN).build()
+    app = ApplicationBuilder().token(settings.TELEGRAM_BOT_TOKEN).build()
 
     # Setup commands to show in the menu
     el = asyncio.get_event_loop()
@@ -90,7 +80,10 @@ def entrypoint() -> None:
             CallbackQueryHandler(setup_callback_handler, pattern=r"^setup:.*$"),
         ],
         states={
-            0: [CommandHandler("cancel", cancel), MessageHandler(filters.TEXT & ~filters.COMMAND, get_unitrentoapp_token)],
+            0: [
+                CommandHandler("cancel", cancel),
+                MessageHandler(filters.TEXT & ~filters.COMMAND, get_unitrentoapp_token),
+            ],
         },
         fallbacks=[CommandHandler("cancel", cancel)],
     )

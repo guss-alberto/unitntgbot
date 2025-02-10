@@ -3,11 +3,12 @@
 # /rooms mesiano ........ Mostra le aule libere e occupate a Mesiano
 
 import requests
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Message, Update
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.constants import ParseMode
 from telegram.ext import ContextTypes
 
 from unitntgbot.backend.rooms.Room import Event, Room
+from unitntgbot.bot.settings import settings
 
 NAME_TO_BUILDING_ID = {
     # E0504
@@ -63,19 +64,22 @@ NAME_TO_BUILDING_ID = {
 }
 
 
-def _room_events(building_id:str, room: str) -> tuple[str, str]:
-    api_url = f"http://127.0.0.1:5002/rooms/{building_id}/room"
-    response = requests.get(api_url, params={"room_query": room})
+def _room_events(building_id: str, room: str) -> tuple[str, str]:
+    response = requests.get(
+        f"{settings.ROOMS_SVC_URL}/rooms/{building_id}/room",
+        params={"room_query": room},
+        timeout=30,
+    )
 
     match response.status_code:
         case 404:
             return "University Room not found in department", ""
-        case 500|400:
+        case 500 | 400:
             return "Internal Server Error", ""
         case 200:
             data = response.json()
-            capacity = f"_({data["capacity"]} seats)_" if data["capacity"] else ""
-            msg = f"*Room {data["room_name"]} - {data["building_name"]}* {capacity} at {data["time"]}\n\n"
+            capacity = f"_({data['capacity']} seats)_" if data["capacity"] else ""
+            msg = f"*Room {data['room_name']} - {data['building_name']}* {capacity} at {data['time']}\n\n"
 
             rooms_formatted = [Event(*room).format() for room in data["room_data"]]
             msg += "\n".join(rooms_formatted)
@@ -84,17 +88,16 @@ def _room_events(building_id:str, room: str) -> tuple[str, str]:
     return "", ""
 
 
-def _rooms_status(building_id: str, sort_time: bool = True) -> tuple[str, InlineKeyboardMarkup|None]:
-    api_url = f"http://127.0.0.1:5002/rooms/{building_id}"
-    response = requests.get(api_url)
+def _rooms_status(building_id: str, sort_time: bool = True) -> tuple[str, InlineKeyboardMarkup | None]:
+    response = requests.get(f"{settings.ROOMS_SVC_URL}/rooms/{building_id}", timeout=30)
     keyboard = [
         [
             InlineKeyboardButton(
-                f"{"✅" if sort_time else ""} Sort by Time",
+                f"{'✅' if sort_time else ''} Sort by Time",
                 callback_data=f"rooms:time:{building_id}",
             ),
             InlineKeyboardButton(
-                f"{"" if sort_time else "✅"}  Sort by Name",
+                f"{'' if sort_time else '✅'}  Sort by Name",
                 callback_data=f"rooms:name:{building_id}",
             ),
         ],
@@ -109,7 +112,7 @@ def _rooms_status(building_id: str, sort_time: bool = True) -> tuple[str, Inline
         case 200:
             data = response.json()
 
-            msg = f"*Rooms for {data["building_name"]}* at {data["time"]}\n\n"
+            msg = f"*Rooms for {data['building_name']}* at {data['time']}\n\n"
 
             rooms = [Room(*room) for room in data["rooms"]]
 
@@ -142,11 +145,11 @@ async def rooms_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
 
     if room_name:
         msg, room_code = _room_events(building_id, room_name)
-        map_response = requests.get(f"http://127.0.0.1:5004/maps/{room_code}")
+        map_response = requests.get(f"{settings.MAPS_SVC_URL}/maps/{room_code}", timeout=30)
         if map_response.status_code == 200 and room_code:  # noqa: PLR2004
             await update.message.reply_photo(photo=map_response.content, caption=msg, parse_mode=ParseMode.MARKDOWN)
         else:
-            await update.message.reply_markdown(msg+"\n\nMap not available for this room")
+            await update.message.reply_markdown(msg + "\n\nMap not available for this room")
     else:
         msg, markup = _rooms_status(building_id)
         await update.message.reply_markdown(msg, reply_markup=markup)
@@ -160,6 +163,6 @@ async def rooms_callback_handler(update: Update, context: ContextTypes.DEFAULT_T
 
     _, sort_type, building_id = query.data.split(":")
 
-    msg, markup = _rooms_status(building_id, sort_time=sort_type=="time")
+    msg, markup = _rooms_status(building_id, sort_time=sort_type == "time")
 
     await query.edit_message_text(msg, parse_mode=ParseMode.MARKDOWN, reply_markup=markup)

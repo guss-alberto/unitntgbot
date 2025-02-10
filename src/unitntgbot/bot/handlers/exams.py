@@ -1,25 +1,24 @@
 import requests
-
 from telegram import Update
 from telegram.ext import ContextTypes
 
 from unitntgbot.backend.exams.UniversityExam import UniversityExam
+from unitntgbot.bot.settings import settings
+
 
 # TODO: pages
 async def exams_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if not update.message:
         return
-    
+
     if not context.args:
         tg_id = update.message.chat_id
-        api_url = f"http://127.0.0.1:5003/exams/user/{tg_id}"
-        response = requests.get(api_url)
+        response = requests.get(f"{settings.EXAMS_SVC_URL}/exams/user/{tg_id}", timeout=30)
     else:
         query = " ".join(context.args)
-        api_url = "http://127.0.0.1:5003/exams/search"
-        response = requests.get(api_url, params={"query": query})
+        response = requests.get(f"{settings.EXAMS_SVC_URL}/exams/search", params={"query": query}, timeout=30)
 
-    match(response.status_code):
+    match response.status_code:
         case 200:
             data = response.json()
             exams = [UniversityExam(*exam) for exam in data["exams"]]

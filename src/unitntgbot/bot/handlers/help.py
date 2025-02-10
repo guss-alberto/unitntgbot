@@ -8,7 +8,7 @@ HELP_MESSAGE = (
     "*Commands:*\n"
     "\\- /setup \\- Show the setup menu\n"
     "\\- /help \\- Show this message\n"
-    "\\- /menu \\<arg\\> \\- Show the restaurant menu\\. Arg can be \"lunch\" or \"dinner\"\\. Defaults to lunch\\.\n"
+    '\\- /menu \\<arg\\> \\- Show the restaurant menu\\. Arg can be "lunch" or "dinner"\\. Defaults to lunch\\.\n'
     "\\- /menu: dinner \\- Show the restaurant menu for dinner \\(only at Tommaso Gar\\)\n"
     "\\- /rooms \\- Show the available rooms\n"
     "\\- /map \\- Show the map of the university\n"

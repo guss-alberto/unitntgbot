@@ -3,7 +3,8 @@ from datetime import datetime
 
 from flask import Flask, Response, g, jsonify, request
 
-from .database import DATABASE, create_table, get_menu, update_db
+from .database import create_table, get_menu, update_db
+from .settings import settings
 
 app = Flask(__name__)
 
@@ -11,7 +12,7 @@ app = Flask(__name__)
 def _get_db() -> sqlite3.Connection:
     db = getattr(g, "_database", None)
     if db is None:
-        db = g._database = sqlite3.connect(DATABASE)
+        db = g._database = sqlite3.connect(settings.DB_PATH)
         create_table(db)
         update_db(db, datetime.today())  # TODO: Change this later
     return db

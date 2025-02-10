@@ -1,7 +1,6 @@
 from datetime import datetime, timedelta
 from io import StringIO
 
-import numpy as np
 import pandas as pd
 import requests
 
@@ -51,7 +50,7 @@ def menu_item_format(items: list[str], emoji: str, lesto: str = "") -> str:
     for item in items:
         _item = item.strip()
         r: bool = _item == lesto  # add ®️ if it's the pick for the ridotto menu
-        output += f" {emoji}{'®️' if r else '`  ` '}{_item.title()}\n"   # To sort of match emoji width we use 2 monospace spaces and 1 regular space
+        output += f" {emoji}{'®️' if r else '`  ` '}{_item.title()}\n"  # To sort of match emoji width we use 2 monospace spaces and 1 regular space
 
     return output
 

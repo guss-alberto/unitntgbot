@@ -1,6 +1,6 @@
+import random
 from datetime import datetime
 from typing import NamedTuple
-import random
 
 _CLOCK_EMOJI = "🕛🕧🕐🕜🕑🕝🕒🕞🕓🕟🕔🕠🕕🕡🕖🕢🕗🕣🕘🕤🕙🕥🕚🕦"
 
@@ -20,7 +20,7 @@ class UniversityExam(NamedTuple):
 
     def _get_clock_emoji(self) -> str:
         time = datetime.fromisoformat(self.date)
-        hm = int((time.hour  % 12) * 2 + time.minute / 30 + 0.5)
+        hm = int((time.hour % 12) * 2 + time.minute / 30 + 0.5)
         return _CLOCK_EMOJI[hm]
 
     def format(self) -> str:
@@ -37,6 +37,6 @@ class UniversityExam(NamedTuple):
         return (
             first_line + "\n"
             f"📝 *{self.exam_id}* - *{self.name}*\n"
-            f"{"🧑‍🏫" if random.randint(0, 69) else "🤓"} *{self.professors}*\n"
+            f"{'🧑‍🏫' if random.randint(0, 69) else '🤓'} *{self.professors}*\n"
             f"🔗 [Link]({self.link})"
         )
