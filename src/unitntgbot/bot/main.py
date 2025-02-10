@@ -1,9 +1,7 @@
-import asyncio
-
 import telegram
 from telegram import Update
 from telegram.ext import (
-    ApplicationBuilder,
+    Application,
     CallbackQueryHandler,
     CommandHandler,
     ConversationHandler,
@@ -29,15 +27,15 @@ from .handlers.transports import transports_handler
 from .settings import settings
 
 
-async def set_commands(bot: telegram.Bot) -> None:
+async def set_commands(app: Application) -> None:
     """
     Set the commands to show in the menu of the bot in the bottom left corner.
 
     Args:
-        bot (telegram.Bot): The bot to set the commands to
+        app (telegram.ext.Application): The app containing the bot to set the commands to
 
     """
-    await bot.set_my_commands(
+    await app.bot.set_my_commands(
         [
             telegram.BotCommand(command="setup", description="Setup the bot"),
             telegram.BotCommand(command="rooms", description="Show the available rooms"),
@@ -52,12 +50,7 @@ async def set_commands(bot: telegram.Bot) -> None:
 
 
 def entrypoint() -> None:
-    # Create the bot application
-    app = ApplicationBuilder().token(settings.TELEGRAM_BOT_TOKEN).build()
-
-    # Setup commands to show in the menu
-    el = asyncio.get_event_loop()
-    el.run_until_complete(set_commands(app.bot))
+    app = Application.builder().token(settings.TELEGRAM_BOT_TOKEN).post_init(set_commands).build()
 
     # filterwarnings(action="ignore", message=r".*CallbackQueryHandler", category=PTBUserWarning)
 
@@ -94,4 +87,4 @@ def entrypoint() -> None:
     app.add_handler(CallbackQueryHandler(rooms_callback_handler, pattern=r"^rooms:"))
     app.add_handler(CallbackQueryHandler(get_lectures_callback_handler, pattern=r"^lect:"))
 
-    app.run_polling(poll_interval=0.1, allowed_updates=Update.ALL_TYPES)
+    app.run_polling(allowed_updates=Update.ALL_TYPES)
