@@ -45,7 +45,7 @@ def get_courses_from_easyacademy(courses: set[str], date: datetime) -> list[Univ
     for cella in data["celle"]:
         couse_id: str = cella["id"]
         course_id: str = cella["codice_insegnamento"]
-        course_name: str = cella["nome_insegnamento"]
+        event_name: str = cella["nome_insegnamento"]
         lecturer: str = cella["docente"]
         is_cancelled: bool = cella["Annullato"] == "1"
 
@@ -59,7 +59,7 @@ def get_courses_from_easyacademy(courses: set[str], date: datetime) -> list[Univ
         lecture = UniversityLecture(
             couse_id,
             course_id,
-            course_name,
+            event_name,
             lecturer,
             start,
             end,

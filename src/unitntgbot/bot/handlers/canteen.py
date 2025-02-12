@@ -32,7 +32,7 @@ def format_output(date: date, msg: str, *, is_dinner: bool = False) -> tuple[str
         message += msg
     else:
         message += "NOT AVAILABLE"
-    if not is_dinner:
+    if "®️" in msg:
         message += "\n®️ indicates the menu item is the choice for the 'ridotto' menu"
     return message, reply_markup
 

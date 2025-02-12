@@ -12,6 +12,7 @@ from .settings import settings
 
 app = Flask(__name__)
 
+MAX_PER_PAGE = 10
 
 def _get_db() -> sqlite3.Connection:
     db = getattr(g, "_database", None)
@@ -33,7 +34,7 @@ def _close_connection(exception):
 @app.route("/exams/search")
 def get_exams() -> tuple[Response, int]:
     query = request.args.get("query")
-
+    start = int(request.args.get("start", "0"))
     if not query:
         return jsonify({"message": "`query` parameter is missing"}), 400
 
@@ -44,18 +45,19 @@ def get_exams() -> tuple[Response, int]:
     if not exams:
         return jsonify({"message": "No exam found with given query", "exams": exams}), 404
 
-    return jsonify({"exams": exams}), 200
+    return jsonify({"exams": exams[start:start+MAX_PER_PAGE], "total": len(exams)}), 200
 
 
 @app.get("/exams/user/<string:tg_id>/")
 def get_exam(tg_id: str) -> tuple[Response, int]:
     db = _get_db()
+    start = int(request.args.get("start", "0"))
     exams = get_exams_for_user(db, tg_id)
 
     if not exams:
         return jsonify({"message": "No exams found for user"}), 404
 
-    return jsonify({"exams": exams}), 200
+    return jsonify({"exams": exams[start:start+MAX_PER_PAGE], "total": len(exams)}), 200
 
 
 @app.post("/exams/user/<string:tg_id>/")

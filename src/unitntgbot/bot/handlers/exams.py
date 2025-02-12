@@ -1,7 +1,8 @@
 import httpx
-from telegram import Update
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import ContextTypes
 
+from unitntgbot.backend.exams.api import MAX_PER_PAGE
 from unitntgbot.backend.exams.UniversityExam import UniversityExam
 from unitntgbot.bot.settings import settings
 
