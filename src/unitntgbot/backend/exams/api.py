@@ -1,4 +1,6 @@
 import sqlite3
+from datetime import datetime
+from math import ceil
 
 from flask import Flask, Response, g, jsonify, request
 
@@ -6,20 +8,23 @@ from .database import (
     add_courses_for_user,
     create_table,
     get_exams_for_user,
+    update_db,
 )
 from .database import search_exams as search_exams_db
 from .settings import settings
+from .UniversityExam import UniversityExam
 
 app = Flask(__name__)
 
-MAX_PER_PAGE = 10
+ITEMS_PER_PAGE = 10
+
 
 def _get_db() -> sqlite3.Connection:
     db = getattr(g, "_database", None)
     if db is None:
         db = g._database = sqlite3.connect(settings.DB_PATH)
         create_table(db)
-        # update_db(db, datetime.today())  # TODO: Change this later
+        #update_db(db, datetime.today())  # TODO: Change this later
     return db
 
 
@@ -30,11 +35,24 @@ def _close_connection(exception):
         db.close()
 
 
+def page_parser(res: list[UniversityExam], page: int) -> dict:
+    n_items = len(res)
+    n_pages = ceil(n_items / ITEMS_PER_PAGE) if n_items else 0
+    page = max(1, min(page, n_pages)) if n_pages else 1
+    offset = (page - 1) * ITEMS_PER_PAGE
+
+    return {
+        "exams": res[offset : offset + ITEMS_PER_PAGE],
+        "n_items": n_items,
+        "n_pages": n_pages,
+        "page": page,
+    }
+
 # TODO: add pages system
 @app.route("/exams/search")
 def get_exams() -> tuple[Response, int]:
     query = request.args.get("query")
-    start = int(request.args.get("start", "0"))
+    page = int(request.args.get("page", "0"))
     if not query:
         return jsonify({"message": "`query` parameter is missing"}), 400
 
@@ -45,19 +63,20 @@ def get_exams() -> tuple[Response, int]:
     if not exams:
         return jsonify({"message": "No exam found with given query", "exams": exams}), 404
 
-    return jsonify({"exams": exams[start:start+MAX_PER_PAGE], "total": len(exams)}), 200
+    return jsonify(page_parser(exams, page)), 200
+
 
 
 @app.get("/exams/user/<string:tg_id>/")
 def get_exam(tg_id: str) -> tuple[Response, int]:
     db = _get_db()
-    start = int(request.args.get("start", "0"))
+    page = int(request.args.get("page", "0"))
     exams = get_exams_for_user(db, tg_id)
 
     if not exams:
         return jsonify({"message": "No exams found for user"}), 404
 
-    return jsonify({"exams": exams[start:start+MAX_PER_PAGE], "total": len(exams)}), 200
+    return jsonify(page_parser(exams, page)), 200
 
 
 @app.post("/exams/user/<string:tg_id>/")

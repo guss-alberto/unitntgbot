@@ -10,7 +10,7 @@ from telegram.ext import (
 )
 
 from .handlers.canteen import canteen_callback_handler, canteen_handler
-from .handlers.exams import exams_handler
+from .handlers.exams import exams_callback_handler, exams_handler
 from .handlers.help import help_handler
 from .handlers.lectures import get_lectures_callback_handler, get_lectures_handler
 from .handlers.map import map_handler
@@ -85,6 +85,7 @@ def entrypoint() -> None:
     # Callback handlers for the inline buttons
     app.add_handler(CallbackQueryHandler(canteen_callback_handler, pattern=r"^menu:"))
     app.add_handler(CallbackQueryHandler(rooms_callback_handler, pattern=r"^rooms:"))
+    app.add_handler(CallbackQueryHandler(exams_callback_handler, pattern=r"^exams:"))
     app.add_handler(CallbackQueryHandler(get_lectures_callback_handler, pattern=r"^lect:"))
 
     app.run_polling(allowed_updates=Update.ALL_TYPES)

@@ -57,8 +57,7 @@ def search_exams(db: sqlite3.Connection, query: str) -> list[UniversityExam]:
             OR professors LIKE '%' || ? || '%'
             OR id = ?
         )
-        ORDER BY date
-        LIMIT 20;""",
+        ORDER BY date;""",
         (query, query, query),
     )
     exams = cur.fetchall()
