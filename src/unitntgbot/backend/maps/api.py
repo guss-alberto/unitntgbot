@@ -1,68 +1,116 @@
 from collections import defaultdict
+import uuid
 
 from flask import Flask, Response, jsonify, make_response, request
 
-from .maps_service import get_map_path, render_room_map
+from .renderer import get_building_name_and_floor, render_map
 
 app = Flask(__name__)
 
 
-@app.get("/maps/<string:building_id>/<string:room_ids>")
-def get_map_single(building_id: str, room_ids: str) -> tuple[Response | str, int]:
-    """
-    Return a png image containing the highlited rooms that could be found.
+# Get the map for a single floor in a building
+@app.get("/maps/<string:building_id>")
+def get_map_single(building_id: str) -> tuple[Response, int]:
+    rooms = request.args.get("rooms")
+    if not rooms:
+        return (
+            jsonify(
+                {"message": "Please provide room_id codes as a comma separated list in the 'rooms' query parameter"}
+            ),
+            400,
+        )
 
-    The function assumes all roomsa are in the same floor, and if they aren't,
-    it will only render those in the same floor as the first one.
-    """
-    rooms = room_ids.split("|")
-    if len(rooms) > 30:
-        return "Too many rooms were provided", 413  # HTTP code for payload too large
+    rooms = rooms.upper()
 
-    path = get_map_path(building_id, rooms[0])
-    if not path:
-        return "Room not found or building not available", 404
+    rooms = rooms.split(",")
+    if len(rooms) > 20:
+        return jsonify({"message": "Too many rooms were provided"}), 413  # HTTP code for payload too large
 
-    image = render_room_map(path, set(rooms))
-    if not image:
-        return "An unknown error occured", 500
+    first_room = rooms[0]
+    building_name_and_floor = get_building_name_and_floor(building_id, first_room)
+    if building_name_and_floor is None:
+        return jsonify({"message": "Room not found or building not available"}), 404
+
+    building_name, floor = building_name_and_floor
+    image = render_map(building_name, floor, set(rooms))
+    if image is None:
+        return jsonify({"message": "An unknown error occured"}), 500
 
     response = make_response(image)
     response.headers.set("Content-Type", "image/png")
     return response, 200
 
 
+# Get the map for multiple floors and buildings
 @app.get("/maps/multi")
 def get_maps_multiple() -> tuple[Response, int]:
-    if not request.json or not request.json.get("rooms"):
-        return jsonify({"message": "Please provide room codes in a json format array called 'rooms'"}), 400
+    rooms = request.args.get("rooms")
+    if not rooms:
+        return (
+            jsonify(
+                {
+                    "message": "Please provide building_id/room_id codes as a comma separated list in the 'rooms' query parameter"
+                }
+            ),
+            400,
+        )
 
-    rooms = request.json.get("rooms")
+    rooms = rooms.upper()
 
-    room_map: dict[tuple[str, str], list[str]] = defaultdict(list)
+    rooms = rooms.split(",")
+    if len(rooms) > 20:
+        return jsonify({"message": "Too many rooms were provided"}), 413
+
+    # Create a dictionary to map building_name and floor to a set of room_ids that are present
+    # This is done because "building_id" is the id given for a site, and not for a building like
+    # "povo1" and "povo2" which have the same "building_id"
+    room_map: dict[tuple[str, int], set[str]] = defaultdict(set)
 
     for room in rooms:
         room_split = room.split("/")
-
-        # If the room cannot be split into building and room id, then skip it
-        if len(room_split) < 2:  # noqa: PLR2004
+        if len(room_split) != 2:  # noqa: PLR2004
             continue
 
-        building_id, room_id, *_ = room_split
+        building_id, room_id = room_split
+        building_name_and_floor = get_building_name_and_floor(building_id, room_id)
+        if building_name_and_floor is None:
+            continue
 
-        path = get_map_path(building_id, room_id)
+        building_name, floor = building_name_and_floor
+        room_map[(building_name, floor)].add(room_id)
 
-        if path is not None:
-            room_map[path, building_id].append(room_id)
+    if not room_map:
+        return jsonify({"message": "No rooms were found"}), 404
 
-    urls = []
-    for key, rooms in room_map.items():
-        urls.append(f"/maps/{key[1]}/{'|'.join(rooms)}")
+    images = []
+    for (building_name, floor), room_ids in room_map.items():
+        image = render_map(building_name, floor, room_ids)
+        if image is None:
+            continue
+        images.append(image)
+        
+    if not images:
+        return jsonify({"message": "An unknown error occured"}), 500
 
-    if len(urls) == 0:
-        return jsonify({"message": "no rooms found in database", "urls": urls}), 404
+    # Send the images back as a multipart response
+    # Define the multipart boundary
+    boundary = str(uuid.uuid4())
 
-    return jsonify({"urls": urls}), 200
+    # Build the multipart response body
+    response_body = []
+    for i, image in enumerate(images):
+        response_body.append(f"--{boundary}")
+        response_body.append("Content-Type: image/png")
+        response_body.append(f"Content-Disposition: inline; filename=image{i}.png")
+        response_body.append("")
+        response_body.append(image)
+
+    response_body.append(f"--{boundary}--")
+    response_body = b"\r\n".join(part if isinstance(part, bytes) else part.encode("utf-8") for part in response_body)
+
+    response = make_response(response_body)
+    response.headers["Content-Type"] = f"multipart/mixed; boundary=\"{boundary}\""
+    return response, 200
 
 
 def entrypoint() -> None:

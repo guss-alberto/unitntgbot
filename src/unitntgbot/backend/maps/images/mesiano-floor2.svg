@@ -1,0 +1,82 @@
+<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    @font-face {
+      font-family: 'JetBrains Mono';
+      src: url('JetBrainsMono.ttf');
+    }
+
+    text {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 16pt;
+      letter-spacing: -1.5pt;
+    }
+  </style>
+
+  <defs>
+    <symbol id="stairs45x45">
+      <path d="M32.5,15l-5,0l0,5l-5,0l0,5l-5,0l0,5l-5,0" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+    </symbol>
+    <symbol id="stairs40x40">
+      <path d="M30,12.5l-5,0l0,5l-5,0l0,5l-5,0l0,5l-5,0" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+    </symbol>
+    <symbol id="pc">
+      <path d="M512 64H64V352H512V64ZM64 0H512c35.3 0 64 28.7 64 64V352c0 35.3-28.7 64-64 64H336l10.7 32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H160c-17.7 0-32-14.3-32-32s14.3-32 32-32h69.3L240 416H64c-35.3 0-64-28.7-64-64V64C0 28.7 28.7 0 64 0Z" transform="scale(0.03125)" />
+    </symbol>
+  </defs>
+
+  <rect width="100%" height="100%" fill="#333" />
+
+  <text x="60" y="60" fill="#fff" text-anchor="start" dominant-baseline="central" font-weight="bold">Mesiano - 2nd Floor</text>
+
+  <polygon points="260,120 350,120 350,110 450,110 450,120 540,120 540,205 495,205 495,180 450,180 450,240 460,240 460,260 475,260 480,265 480,295 475,300 460,300 460,320 450,320 450,365 460,375 510,375 510,415 600,415 600,345 680,345 680,400 695,415 695,435 680,450 680,500 630,500 630,480 455,480 455,500 345,500 345,480 170,480 170,500 120,500 120,450 105,435 105,415 120,400 120,345 200,345 200,415 290,415 290,375 340,375 350,365 350,320 340,320 340,300 325,300 320,295 320,265 325,260 340,260 340,240 350,240 350,180 305,180 305,205 260,205" fill="none" stroke="#000" stroke-width="5" />
+
+  <polygon points="260,120 350,120 350,180 305,180 305,205 260,205" fill="none" stroke="#000" stroke-width="5" />
+  <polygon points="450,120 540,120 540,205 495,205 495,180 450,180" fill="none" stroke="#000" stroke-width="5" />
+  <polygon points="420,180 450,180 450,220 410,220 410,190" fill="none" stroke="#000" stroke-width="5" />
+  <use x="410" y="180" href="#stairs40x40" />
+  <polygon points="350,180 380,180 390,190 390,220 350,220" fill="none" stroke="#000" stroke-width="5" />
+  <use x="350" y="180" href="#stairs40x40" />
+
+  <polygon id="2R" points="120,345 200,345 200,415 170,415 170,400 120,400" fill="none" stroke="#000" stroke-width="5" />
+  <text x="160" y="375" fill="#fff" dominant-baseline="central" text-anchor="middle">2R</text>
+  <polygon id="2F" points="600,345 680,345 680,400 630,400 630,415 600,415" fill="none" stroke="#000" stroke-width="5" />
+  <text x="640" y="375" fill="#fff" dominant-baseline="central" text-anchor="middle">2F</text>
+  <polygon id="2E" points="630,400 680,400 695,415 695,435 680,450 680,500 630,500" fill="none" stroke="#000" stroke-width="5" />
+  <text x="655" y="450" fill="#fff" dominant-baseline="central" text-anchor="middle">2E</text>
+  <polygon id="2C" points="585,435 630,435 630,480 585,480" fill="none" stroke="#000" stroke-width="5" />
+  <text x="607.5" y="457.5" fill="#fff" dominant-baseline="central" text-anchor="middle">2C</text>
+  <polygon id="2B" points="540,435 585,435 585,480 540,480" fill="none" stroke="#000" stroke-width="5" />
+  <text x="562.5" y="457.5" fill="#fff" dominant-baseline="central" text-anchor="middle">2B</text>
+  <polygon id="2A" points="455,435 540,435 540,480 455,480" fill="none" stroke="#000" stroke-width="5" />
+  <text x="497.5" y="457.5" fill="#fff" dominant-baseline="central" text-anchor="middle">2A</text>
+  <polygon points="345,435 375,435 390,450 410,450 425,435 455,435 455,500 345,500" fill="none" stroke="#000" stroke-width="5" />
+
+  <polygon id="2M" points="260,435 345,435 345,480 260,480" fill="none" stroke="#000" stroke-width="5" />
+  <text x="302.5" y="457.5" fill="#fff" dominant-baseline="central" text-anchor="middle">2M</text>
+  <polygon id="2N" points="215,435 260,435 260,480 215,480" fill="none" stroke="#000" stroke-width="5" />
+  <text x="237.5" y="457.5" fill="#fff" dominant-baseline="central" text-anchor="middle">2N</text>
+  <polygon id="2P" points="170,435 215,435 215,480 170,480" fill="none" stroke="#000" stroke-width="5" />
+  <text x="192.5" y="457.5" fill="#fff" dominant-baseline="central" text-anchor="middle">2P</text>
+  <polygon id="2Q" points="120,450 170,450 170,500 120,500" fill="none" stroke="#000" stroke-width="5" />
+  <text x="145" y="475" fill="#fff" dominant-baseline="central" text-anchor="middle">2Q</text>
+
+  <polygon points="410,220 450,220 450,240 410,240" fill="none" stroke="#000" stroke-width="5" />
+  <polygon id="est" points="410,240 460,240 460,260 475,260 480,265 480,295 475,300 460,300 460,320 410,320" fill="none" stroke="#000" stroke-width="5" />
+  <text x="455" y="280" fill="#fff" dominant-baseline="central" text-anchor="middle" style="font-size: 12pt;">EAST</text>
+  <use href="#pc" x="427.5" y="280" fill="#fff" transform="translate(-9, -9)" />
+  <polygon points="410,320 450,320 450,365 445,370 410,370" fill="none" stroke="#000" stroke-width="5" />
+
+  <polygon points="350,220 390,220 390,240 350,240" fill="none" stroke="#000" stroke-width="5" />
+  <polygon id="ovest" points="340,240 390,240 390,260 390,320 340,320 340,300 325,300 320,295 320,265 325,260 340,260" fill="none" stroke="#000" stroke-width="5" />
+  <text x="367.5" y="280" fill="#fff" dominant-baseline="central" text-anchor="middle" style="font-size: 12pt;">WEST</text>
+  <use href="#pc" x="340" y="280" fill="#fff" transform="translate(-9, -9)" />
+  <polygon points="350,320 390,320 390,370 355,370 350,365" fill="none" stroke="#000" stroke-width="5" />
+
+  <polygon points="290,375 340,375 345,380 345,415 290,415" fill="none" stroke="#000" stroke-width="5" />
+  <polygon points="460,375 510,375 510,415 455,415 455,380" fill="none" stroke="#000" stroke-width="5" />
+
+  <polygon points="350,365 355,370 390,370 390,400 375,415 345,415 345,380 340,375" fill="none" stroke="#000" stroke-width="5" />
+  <use x="345" y="370" href="#stairs45x45" />
+  <polygon points="450,365 445,370 410,370 410,400 425,415 455,415 455,380 460,375" fill="none" stroke="#000" stroke-width="5" />
+  <use x="410" y="370" href="#stairs45x45" />
+</svg>

@@ -1,0 +1,101 @@
+<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    @font-face {
+      font-family: 'JetBrains Mono';
+      src: url('JetBrainsMono.ttf');
+    }
+
+    text {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 16pt;
+      letter-spacing: -1.5pt;
+    }
+  </style>
+
+  <defs>
+    <symbol id="stairs">
+      <path d="M47.5,21.25l-7.5,0l0,7.5l-7.5,0l0,7.5l-7.5,0l0,7.5l-7.5,0" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" />
+    </symbol>
+    <symbol id="pc">
+      <path d="M512 64H64V352H512V64ZM64 0H512c35.3 0 64 28.7 64 64V352c0 35.3-28.7 64-64 64H336l10.7 32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H160c-17.7 0-32-14.3-32-32s14.3-32 32-32h69.3L240 416H64c-35.3 0-64-28.7-64-64V64C0 28.7 28.7 0 64 0Z" transform="scale(0.03125)" />
+    </symbol>
+  </defs>
+
+  <rect width="100%" height="100%" fill="#333" />
+
+  <text x="60" y="60" fill="#fff" text-anchor="start" dominant-baseline="middle" font-weight="bold">Povo 1 - 1st Floor</text>
+
+  <polygon points="80,100 720,100 720,500 80,500" fill="none" stroke="#000" stroke-width="5" />
+  <polygon points="280,240 520,240 520,360 280,360" fill="none" stroke="#000" stroke-width="5" />
+
+  <polygon id="A208" points="80,100 190,100 190,175 80,175" fill="none" stroke="#000" stroke-width="5" />
+  <text x="135" y="137.5" fill="#fff" dominant-baseline="middle" text-anchor="middle">A208</text>
+  <polygon id="A207" points="80,175 190,175 190,255 80,255" fill="none" stroke="#000" stroke-width="5" />
+  <text x="135" y="215" fill="#fff" dominant-baseline="middle" text-anchor="middle">A207</text>
+  <polygon id="A206" points="80,255 190,255 190,345 80,345" fill="none" stroke="#000" stroke-width="5" />
+  <text x="135" y="300" fill="#fff" dominant-baseline="middle" text-anchor="middle">A206</text>
+  <polygon id="A205" points="80,345 190,345 190,425 80,425" fill="none" stroke="#000" stroke-width="5" />
+  <text x="135" y="385" fill="#fff" dominant-baseline="middle" text-anchor="middle">A205</text>
+  <polygon id="A204" points="80,425 190,425 190,500 80,500" fill="none" stroke="#000" stroke-width="5" />
+  <text x="135" y="462.5" fill="#fff" dominant-baseline="middle" text-anchor="middle">A204</text>
+
+  <polygon id="LAB" points="610,100 720,100 720,255 610,255" fill="none" stroke="#000" stroke-width="5" />
+  <text x="665" y="177.5" fill="#fff" dominant-baseline="middle" text-anchor="middle">LAB</text>
+  <polygon id="A201" points="610,255 720,255 720,345 610,345" fill="none" stroke="#000" stroke-width="5" />
+  <text x="675" y="300" fill="#fff" dominant-baseline="middle" text-anchor="middle">A201</text>
+  <use href="#pc" x="640" y="300" fill="#fff" transform="translate(-9, -9)" />
+  <polygon id="A202" points="610,345 720,345 720,425 610,425" fill="none" stroke="#000" stroke-width="5" />
+  <text x="675" y="385" fill="#fff" dominant-baseline="middle" text-anchor="middle">A202</text>
+  <use href="#pc" x="640" y="385" fill="#fff" transform="translate(-9, -9)" />
+
+  <polygon id="A203" points="610,425 720,425 720,500 610,500" fill="none" stroke="#000" stroke-width="5" />
+  <text x="665" y="462.5" fill="#fff" dominant-baseline="middle" text-anchor="middle">A203</text>
+
+  <polygon points="215,100 280,100 280,165 215,165" fill="none" stroke="#000" stroke-width="5" />
+  <use x="215" y="100" href="#stairs" />
+  <polygon id="A221" points="280,100 340,100 340,165 280,165" fill="none" stroke="#000" stroke-width="5" />
+  <text x="310" y="132.5" fill="#fff" dominant-baseline="middle" text-anchor="middle">A221</text>
+  <polygon id="A222" points="340,100 405,100 405,165 340,165" fill="none" stroke="#000" stroke-width="5" />
+  <text x="372.5" y="132.5" fill="#fff" dominant-baseline="middle" text-anchor="middle">A222</text>
+  <polygon id="A223" points="405,100 460,100 460,165 405,165" fill="none" stroke="#000" stroke-width="5" />
+  <text x="432.5" y="132.5" fill="#fff" dominant-baseline="middle" text-anchor="middle">A223</text>
+  <polygon id="A224" points="460,100 520,100 520,165 460,165" fill="none" stroke="#000" stroke-width="5" />
+  <text x="490" y="132.5" fill="#fff" dominant-baseline="middle" text-anchor="middle">A224</text>
+  <polygon points="520,100 585,100 585,165 520,165" fill="none" stroke="#000" stroke-width="5" />
+  <use x="520" y="100" href="#stairs" />
+
+  <polygon points="215,190 280,190 280,270 215,270" fill="none" stroke="#000" stroke-width="5" />
+  <polygon id="A220" points="280,190 340,190 340,240 280,240" fill="none" stroke="#000" stroke-width="5" />
+  <text x="310" y="215" fill="#fff" dominant-baseline="middle" text-anchor="middle">A220</text>
+  <polygon id="A219" points="340,190 400,190 400,240 340,240" fill="none" stroke="#000" stroke-width="5" />
+  <text x="370" y="215" fill="#fff" dominant-baseline="middle" text-anchor="middle">A219</text>
+  <polygon id="A218" points="400,190 460,190 460,240 400,240" fill="none" stroke="#000" stroke-width="5" />
+  <text x="430" y="215" fill="#fff" dominant-baseline="middle" text-anchor="middle">A218</text>
+  <polygon id="A217" points="460,190 520,190 520,240 460,240" fill="none" stroke="#000" stroke-width="5" />
+  <text x="490" y="215" fill="#fff" dominant-baseline="middle" text-anchor="middle">A217</text>
+  <polygon points="520,190 585,190 585,410 520,410" fill="none" stroke="#000" stroke-width="5" />
+
+  <polygon points="215,330 280,330 280,410 215,410" fill="none" stroke="#000" stroke-width="5" />
+  <polygon id="A213" points="280,360 340,360 340,410 280,410" fill="none" stroke="#000" stroke-width="5" />
+  <text x="310" y="385" fill="#fff" dominant-baseline="middle" text-anchor="middle">A213</text>
+  <polygon id="A214" points="340,360 400,360 400,410 340,410" fill="none" stroke="#000" stroke-width="5" />
+  <text x="370" y="385" fill="#fff" dominant-baseline="middle" text-anchor="middle">A214</text>
+  <polygon id="A215" points="400,360 460,360 460,410 400,410" fill="none" stroke="#000" stroke-width="5" />
+  <text x="430" y="385" fill="#fff" dominant-baseline="middle" text-anchor="middle">A215</text>
+  <polygon id="A216" points="460,360 520,360 520,410 460,410" fill="none" stroke="#000" stroke-width="5" />
+  <text x="490" y="385" fill="#fff" dominant-baseline="middle" text-anchor="middle">A216</text>
+
+  <polygon points="215,435 280,435 280,500 215,500" fill="none" stroke="#000" stroke-width="5" />
+  <use x="215" y="435" href="#stairs" />
+  <polygon id="A212" points="280,435 340,435 340,500 280,500" fill="none" stroke="#000" stroke-width="5" />
+  <text x="310" y="467.5" fill="#fff" dominant-baseline="middle" text-anchor="middle">A212</text>
+  <polygon id="A211" points="340,435 395,435 395,500 340,500" fill="none" stroke="#000" stroke-width="5" />
+  <text x="367.5" y="467.5" fill="#fff" dominant-baseline="middle" text-anchor="middle">A211</text>
+  <polygon id="A210" points="395,435 460,435 460,500 395,500" fill="none" stroke="#000" stroke-width="5" />
+  <text x="427.5" y="467.5" fill="#fff" dominant-baseline="middle" text-anchor="middle">A210</text>
+  <polygon id="A209" points="460,435 520,435 520,500 460,500" fill="none" stroke="#000" stroke-width="5" />
+  <text x="490" y="467.5" fill="#fff" dominant-baseline="middle" text-anchor="middle">A209</text>
+  <polygon points="520,435 585,435 585,500 520,500" fill="none" stroke="#000" stroke-width="5" />
+  <use x="520" y="435" href="#stairs" />
+
+</svg>
