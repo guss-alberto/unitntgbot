@@ -1,0 +1,78 @@
+<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    @font-face {
+      font-family: 'JetBrains Mono';
+      src: url('JetBrainsMono.ttf');
+    }
+
+    text {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 16pt;
+      letter-spacing: -1.5pt;
+    }
+  </style>
+
+  <defs>
+    <symbol id="stairs">
+      <path d="M37.5,11.25l-7.5,0l0,7.5l-7.5,0l0,7.5l-7.5,0l0,7.5l-7.5,0" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" />
+    </symbol>
+    <symbol id="pc">
+      <path d="M512 64H64V352H512V64ZM64 0H512c35.3 0 64 28.7 64 64V352c0 35.3-28.7 64-64 64H336l10.7 32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H160c-17.7 0-32-14.3-32-32s14.3-32 32-32h69.3L240 416H64c-35.3 0-64-28.7-64-64V64C0 28.7 28.7 0 64 0Z" transform="scale(0.03125)" />
+    </symbol>
+  </defs>
+
+  <rect x="0" y="0" width="800" height="600" fill="#333" />
+
+  <text x="60" y="60" fill="#fff" text-anchor="start" dominant-baseline="central" font-weight="bold">Povo 2 - Ground Floor</text>
+
+  <polygon points="110,240 235,240 235,225 225,225 225,100 305,100 305,225 295,225 295,240 505,240 505,225 495,225 495,100 575,100 575,225 565,225 565,240 690,240 690,500 110,500" fill="none" stroke="#000" stroke-width="5" />
+  <polygon points="250,330 550,330 550,410 250,410" fill="none" stroke="#000" stroke-width="5" />
+
+  <line x1="220" x2="220" y1="270" y2="285" stroke="#f00" stroke-width="3" />
+  <line x1="572.5" x2="572.5" y1="440" y2="455" stroke="#f00" stroke-width="3" />
+
+  <polygon id="B107" points="225,225 225,100 305,100 305,225" fill="none" stroke="#000" stroke-width="5" />
+  <text x="265" y="162.5" fill="#fff" text-anchor="middle" dominant-baseline="central">B107</text>
+
+  <polygon points="205,240 235,240 235,270 205,270" fill="none" stroke="#000" stroke-width="5" />
+  <polygon points="565,240 595,240 595,270 565,270" fill="none" stroke="#000" stroke-width="5" />
+
+  <polygon id="B106" points="610,240 690,240 690,320 610,320" fill="none" stroke="#000" stroke-width="5" />
+  <text x="660" y="280" fill="#fff" text-anchor="middle" dominant-baseline="central">B106</text>
+  <use href="#pc" x="627.5" y="280" fill="#fff" transform="translate(-9, -8)" />
+  <polygon id="B108" points="610,320 690,320 690,360 610,360" fill="none" stroke="#000" stroke-width="5" />
+  <text x="650" y="340" fill="#fff" text-anchor="middle" dominant-baseline="central">B108</text>
+  <polygon id="B109" points="610,360 690,360 690,440 610,440" fill="none" stroke="#000" stroke-width="5" />
+  <text x="650" y="400" fill="#fff" text-anchor="middle" dominant-baseline="central">B109</text>
+
+  <polygon points="205,285 250,285 250,330 205,330" fill="none" stroke="#000" stroke-width="5" />
+  <use href="#stairs" x="205" y="285" />
+  <polygon points="550,285 595,285 595,330 550,330" fill="none" stroke="#000" stroke-width="5" />
+  <use href="#stairs" x="550" y="285" />
+  <polygon points="205,455 250,455 250,500 205,500" fill="none" stroke="#000" stroke-width="5" />
+  <use href="#stairs" x="205" y="455" />
+  <polygon points="550,455 595,455 595,500 550,500" fill="none" stroke="#000" stroke-width="5" />
+  <use href="#stairs" x="550" y="455" />
+
+  <polygon points="520,285 550,285 550,330 520,330" fill="none" stroke="#000" stroke-width="5" />
+  <polygon id="B110" points="490,285 520,285 520,330 490,330" fill="none" stroke="#000" stroke-width="5" />
+  <text fill="#fff" text-anchor="middle" dominant-baseline="central" style="font-size: 12pt;" transform="translate(505, 307.5) rotate(-90)">B110</text>
+  <polygon id="B111" points="460,285 490,285 490,330 460,330" fill="none" stroke="#000" stroke-width="5" />
+  <text fill="#fff" text-anchor="middle" dominant-baseline="central" style="font-size: 12pt;" transform="translate(475, 307.5) rotate(-90)">B111</text>
+  <polygon id="B112" points="430,285 460,285 460,330 430,330" fill="none" stroke="#000" stroke-width="5" />
+  <text fill="#fff" text-anchor="middle" dominant-baseline="central" style="font-size: 12pt;" transform="translate(445, 307.5) rotate(-90)">B112</text>
+  <polygon points="400,285 430,285 430,330 400,330" fill="none" stroke="#000" stroke-width="5" />
+  <polygon points="370,285 400,285 400,330 370,330" fill="none" stroke="#000" stroke-width="5" />
+  <polygon points="340,285 370,285 370,330 340,330" fill="none" stroke="#000" stroke-width="5" />
+  <polygon points="310,285 340,285 340,330 310,330" fill="none" stroke="#000" stroke-width="5" />
+  <polygon points="280,285 310,285 310,330 280,330" fill="none" stroke="#000" stroke-width="5" />
+  <polygon points="250,285 280,285 280,330 250,330" fill="none" stroke="#000" stroke-width="5" />
+
+  <polygon points="205,330 250,330 250,410 550,410 550,375 595,375 595,410 595,440 205,440" fill="none" stroke="#000" stroke-width="5" />
+  <polygon points="550,330 595,330 595,360 550,360" fill="none" stroke="#000" stroke-width="5" />
+  
+  <polygon points="250,455 550,455 550,500 250,500" fill="none" stroke="#000" stroke-width="5" />
+  <polygon points="610,455 690,455 690,500 610,500" fill="none" stroke="#000" stroke-width="5" />
+
+  <polygon points="110,240 190,240 190,500 110,500" fill="none" stroke="#000" stroke-width="5" />
+</svg>
