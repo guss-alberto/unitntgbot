@@ -28,8 +28,8 @@
   <polygon points="110,240 235,240 235,225 225,225 225,100 305,100 305,225 295,225 295,240 505,240 505,225 495,225 495,100 575,100 575,225 565,225 565,240 690,240 690,500 110,500" fill="none" stroke="#000" stroke-width="5" />
   <polygon points="250,330 550,330 550,410 250,410" fill="none" stroke="#000" stroke-width="5" />
 
-  <line x1="220" x2="220" y1="270" y2="285" stroke="#f00" stroke-width="3" />
-  <line x1="572.5" x2="572.5" y1="440" y2="455" stroke="#f00" stroke-width="3" />
+  <line x1="220" x2="220" y1="270" y2="285" stroke="#aaa" stroke-width="3" />
+  <line x1="572.5" x2="572.5" y1="440" y2="455" stroke="#aaa" stroke-width="3" />
 
   <polygon id="B107" points="225,225 225,100 305,100 305,225" fill="none" stroke="#000" stroke-width="5" />
   <text x="265" y="162.5" fill="#fff" text-anchor="middle" dominant-baseline="central">B107</text>

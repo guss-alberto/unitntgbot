@@ -9,30 +9,17 @@ app = Flask(__name__)
 
 
 # Get the map for a single floor in a building
-@app.get("/maps/<string:building_id>")
-def get_map_single(building_id: str) -> tuple[Response, int]:
-    rooms = request.args.get("rooms")
-    if not rooms:
-        return (
-            jsonify(
-                {"message": "Please provide room_id codes as a comma separated list in the 'rooms' query parameter"}
-            ),
-            400,
-        )
+@app.get("/maps/<building_id>/<room_id>")
+def get_map_single(building_id: str, room_id: str) -> tuple[Response, int]:
+    building_id = building_id.upper()
+    room_id = room_id.upper()
 
-    rooms = rooms.upper()
-
-    rooms = rooms.split(",")
-    if len(rooms) > 20:
-        return jsonify({"message": "Too many rooms were provided"}), 413  # HTTP code for payload too large
-
-    first_room = rooms[0]
-    building_name_and_floor = get_building_name_and_floor(building_id, first_room)
+    building_name_and_floor = get_building_name_and_floor(building_id, room_id)
     if building_name_and_floor is None:
         return jsonify({"message": "Room not found or building not available"}), 404
 
     building_name, floor = building_name_and_floor
-    image = render_map(building_name, floor, set(rooms))
+    image = render_map(building_name, floor, {room_id})
     if image is None:
         return jsonify({"message": "An unknown error occured"}), 500
 
@@ -56,10 +43,7 @@ def get_maps_multiple() -> tuple[Response, int]:
         )
 
     rooms = rooms.upper()
-
     rooms = rooms.split(",")
-    if len(rooms) > 20:
-        return jsonify({"message": "Too many rooms were provided"}), 413
 
     # Create a dictionary to map building_name and floor to a set of room_ids that are present
     # This is done because "building_id" is the id given for a site, and not for a building like
@@ -88,7 +72,7 @@ def get_maps_multiple() -> tuple[Response, int]:
         if image is None:
             continue
         images.append(image)
-        
+
     if not images:
         return jsonify({"message": "An unknown error occured"}), 500
 
@@ -109,7 +93,7 @@ def get_maps_multiple() -> tuple[Response, int]:
     response_body = b"\r\n".join(part if isinstance(part, bytes) else part.encode("utf-8") for part in response_body)
 
     response = make_response(response_body)
-    response.headers["Content-Type"] = f"multipart/mixed; boundary=\"{boundary}\""
+    response.headers["Content-Type"] = f'multipart/mixed; boundary="{boundary}"'
     return response, 200
 
 

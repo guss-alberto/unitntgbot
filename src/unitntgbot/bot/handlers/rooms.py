@@ -2,9 +2,12 @@
 # /rooms povo ........... Mostra le aule libere e occupate a Povo
 # /rooms mesiano ........ Mostra le aule libere e occupate a Mesiano
 
+import email
 import httpx
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
+import io
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, InputMediaPhoto, Update
 from telegram.constants import ParseMode
+from telegram.error import BadRequest
 from telegram.ext import ContextTypes
 
 from unitntgbot.backend.rooms.Room import Event, Room
@@ -64,7 +67,7 @@ NAME_TO_BUILDING_ID = {
 }
 
 
-async def _room_events(building_id: str, room: str) -> tuple[str, str]:
+async def _room_events(building_id: str, room: str) -> tuple[str, str, InlineKeyboardMarkup | None]:
     async with httpx.AsyncClient() as client:
         response = await client.get(
             f"{settings.ROOMS_SVC_URL}/rooms/{building_id}/room",
@@ -72,11 +75,21 @@ async def _room_events(building_id: str, room: str) -> tuple[str, str]:
             timeout=30,
         )
 
+    keyboard = [
+        [
+            InlineKeyboardButton(
+                f"🗺️ View Room Location",
+                callback_data=f"rooms:s:{building_id}:{room}",
+            )
+        ]
+    ]  # TODO: Add more options such as filter for free, occupied or all rooms.
+    reply_markup = InlineKeyboardMarkup(keyboard)
+
     match response.status_code:
         case 404:
-            return "University Room not found in department", ""
+            return "University Room not found in department", "", None
         case 500 | 400:
-            return "Internal Server Error", ""
+            return "Internal Server Error", "", None
         case 200:
             data = response.json()
             capacity = f"_({data['capacity']} seats)_" if data["capacity"] else ""
@@ -85,11 +98,15 @@ async def _room_events(building_id: str, room: str) -> tuple[str, str]:
             rooms_formatted = [Event(*room).format() for room in data["room_data"]]
             msg += "\n".join(rooms_formatted)
             msg += " all day"
-            return msg, data["room_code"]
-    return "", ""
+            return msg, data["room_code"], reply_markup
+
+    return "", "", None
 
 
-async def _rooms_status(building_id: str, *, sort_time: bool = True) -> tuple[str, InlineKeyboardMarkup | None]:
+# Returns a tuple with the message, the keyboard and the rooms map images
+async def _rooms_status(
+    building_id: str, *, sort_time: bool = True, with_images: bool = False
+) -> tuple[str, InlineKeyboardMarkup | None, list[bytes] | None]:
     async with httpx.AsyncClient() as client:
         response = await client.get(f"{settings.ROOMS_SVC_URL}/rooms/{building_id}", timeout=30)
 
@@ -97,21 +114,27 @@ async def _rooms_status(building_id: str, *, sort_time: bool = True) -> tuple[st
         [
             InlineKeyboardButton(
                 f"{'✅' if sort_time else ''} Sort by Time",
-                callback_data=f"rooms:time:{building_id}",
+                callback_data=f"rooms:m:time:{building_id}",
             ),
             InlineKeyboardButton(
                 f"{'' if sort_time else '✅'}  Sort by Name",
-                callback_data=f"rooms:name:{building_id}",
+                callback_data=f"rooms:m:name:{building_id}",
             ),
+        ],
+        [
+            InlineKeyboardButton(
+                f"🗺️ View Free Rooms Location",
+                callback_data=f"rooms:m:{"time" if sort_time else "name"}:{building_id}:map",
+            )
         ],
     ]  # TODO: Add more options such as filter for free, occupied or all rooms.
     reply_markup = InlineKeyboardMarkup(keyboard)
 
     match response.status_code:
         case 404:
-            return "University Department not found. Somehow...", None
+            return "University Department not found. Somehow...", None, None
         case 500:
-            return "Internal Server Error", None
+            return "Internal Server Error", None, None
         case 200:
             data = response.json()
 
@@ -121,7 +144,7 @@ async def _rooms_status(building_id: str, *, sort_time: bool = True) -> tuple[st
 
             rooms.sort(key=lambda r: r.name)
             if sort_time:
-                # Port by time descendig if is free and ascending otherwise
+                # Sort by time descending if is free and ascending otherwise
                 rooms.sort(key=lambda r: -r.time if r.is_free else r.time)
                 # Put all "free all day" rooms on top
                 rooms.sort(key=lambda r: r.time != 0)
@@ -129,8 +152,36 @@ async def _rooms_status(building_id: str, *, sort_time: bool = True) -> tuple[st
             rooms_formatted = [room.format() for room in rooms]
             msg += "\n".join(rooms_formatted)
 
-            return msg, reply_markup
-    return "", None
+            images = None
+            if with_images:
+                images = []
+                free_rooms = [f"{building_id}/{room.name}" for room in rooms if room.is_free]
+
+                # Get the map for the free rooms
+                async with httpx.AsyncClient() as client:
+                    map_response = await client.get(
+                        f"{settings.MAPS_SVC_URL}/maps/multi", params={"rooms": ",".join(free_rooms)}, timeout=30
+                    )
+
+                if map_response.status_code == 200:
+                    # Retrieve the full raw response, including headers and body
+                    raw_response = b"".join(
+                        f"{key}: {value}\r\n".encode("utf-8") for key, value in map_response.headers.items()
+                    )
+                    raw_response += b"\r\n"  # End of headers
+                    raw_response += map_response.content  # The response body
+
+                    # This method is used to parse multipart/mixed responses
+                    # The response is a multipart response with multiple images
+                    images_message = email.message_from_bytes(raw_response)
+                    for index, images_part in enumerate(images_message.get_payload()):
+                        # Get the image bytes
+                        image_data = images_part.get_payload(decode=True)
+                        images.append(image_data)
+
+            return msg, reply_markup, images
+
+    return "", None, None
 
 
 async def rooms_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -146,16 +197,13 @@ async def rooms_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
     building_id = NAME_TO_BUILDING_ID[args[0].lower()]
     room_name = " ".join(args[1:]) if len(args) > 1 else None
 
+    # If the room_name was provided reply with the events for that room
+    # Otherwise reply with the status of all rooms
     if room_name:
-        msg, room_code = await _room_events(building_id, room_name)
-        async with httpx.AsyncClient() as client:
-            map_response = await client.get(f"{settings.MAPS_SVC_URL}/maps/{room_code}", timeout=30)
-        if map_response.status_code == 200 and room_code:  # noqa: PLR2004
-            await update.message.reply_photo(photo=map_response.content, caption=msg, parse_mode=ParseMode.MARKDOWN)
-        else:
-            await update.message.reply_markdown(msg + "\n\nMap not available for this room")
+        msg, room_code, markup = await _room_events(building_id, room_name)
+        await update.message.reply_markdown(msg, reply_markup=markup)
     else:
-        msg, markup = await _rooms_status(building_id)
+        msg, markup, images = await _rooms_status(building_id)
         await update.message.reply_markdown(msg, reply_markup=markup)
 
 
@@ -165,8 +213,35 @@ async def rooms_callback_handler(update: Update, context: ContextTypes.DEFAULT_T
     if not query or not query.data or not query.message:
         return
 
-    _, sort_type, building_id = query.data.split(":")
+    rooms_args = query.data.split(":")
 
-    msg, markup = await _rooms_status(building_id, sort_time=sort_type == "time")
+    # It was called from single room event
+    if rooms_args[1] == "s":
+        building_id = rooms_args[2]
+        room_code = rooms_args[3]
 
-    await query.edit_message_text(msg, parse_mode=ParseMode.MARKDOWN, reply_markup=markup)
+        async with httpx.AsyncClient() as client:
+            response = await client.get(f"{settings.MAPS_SVC_URL}/maps/{building_id}/{room_code}", timeout=30)
+        if response.status_code == 200 and room_code:  # noqa: PLR2004
+            await query.message.chat.send_photo(photo=response.content, caption=f"Location of room {room_code}")
+        else:
+            await query.message.chat.send_message("Map not available for this room")
+    # It was called from the rooms status
+    elif rooms_args[1] == "m":
+        sort_type = rooms_args[2]
+        building_id = rooms_args[3]
+        with_images = len(rooms_args) > 4 and rooms_args[4] == "map"
+
+        msg, markup, images = await _rooms_status(building_id, sort_time=sort_type == "time", with_images=with_images)
+
+        try:
+            # Telegram will raise an error if the message is not modified
+            # which is the case when the user clicks on the button to show the map immediately after fetching the rooms status 
+            await query.edit_message_text(msg, parse_mode=ParseMode.MARKDOWN, reply_markup=markup)
+        except BadRequest as e:
+            if not "Message is not modified" in e.message:
+                raise
+
+        if images:
+            media = [InputMediaPhoto(io.BytesIO(img)) for img in images]
+            await query.message.chat.send_media_group(media, caption="Rooms status (the rooms in red are free)")

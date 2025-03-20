@@ -36,7 +36,7 @@ def render_map(building_name: str, floor: int, room_ids: set[str]) -> bytes | No
     namespace = {"svg": "http://www.w3.org/2000/svg"}
     for element in root.findall(".//*[@id]", namespace):
         if element.get("id") in room_ids:
-            element.set("fill", "rgba(0, 70, 160, 0.75)")
+            element.set("fill", "#CE0E2D")
 
     # Edge case for T1A and T1B rooms in mesiano - floor 0
     # If any of those 2 rooms appear then make T1 hidden, and make T1A and T1B visible

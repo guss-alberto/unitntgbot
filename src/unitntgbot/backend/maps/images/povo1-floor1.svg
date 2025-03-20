@@ -41,10 +41,10 @@
 
   <polygon id="LAB" points="610,100 720,100 720,255 610,255" fill="none" stroke="#000" stroke-width="5" />
   <text x="665" y="177.5" fill="#fff" dominant-baseline="middle" text-anchor="middle">LAB</text>
-  <polygon id="A201" points="610,255 720,255 720,345 610,345" fill="none" stroke="#000" stroke-width="5" />
+  <polygon id="A201+PC" points="610,255 720,255 720,345 610,345" fill="none" stroke="#000" stroke-width="5" />
   <text x="675" y="300" fill="#fff" dominant-baseline="middle" text-anchor="middle">A201</text>
   <use href="#pc" x="640" y="300" fill="#fff" transform="translate(-9, -9)" />
-  <polygon id="A202" points="610,345 720,345 720,425 610,425" fill="none" stroke="#000" stroke-width="5" />
+  <polygon id="A202+PC" points="610,345 720,345 720,425 610,425" fill="none" stroke="#000" stroke-width="5" />
   <text x="675" y="385" fill="#fff" dominant-baseline="middle" text-anchor="middle">A202</text>
   <use href="#pc" x="640" y="385" fill="#fff" transform="translate(-9, -9)" />
 

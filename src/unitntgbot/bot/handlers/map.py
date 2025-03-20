@@ -1,41 +1,56 @@
-# /menu .......... Mostra il menu del ristorante
-# /menu dinner ... Mostra il menu del ristorante Cena (solo a Tommaso Gar)
-
+import httpx
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import ContextTypes
 
-
-async def map_handler(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
-    keyboard = [
-        [InlineKeyboardButton("a", callback_data="1")],
-        [InlineKeyboardButton("Option 2", callback_data="2")],
-        [InlineKeyboardButton("Visit Website", url="https://example.com")],
-    ]
-
-    reply_markup = InlineKeyboardMarkup(keyboard)
-
-    if update.message:
-        await update.message.reply_text("What do you want to setup?", reply_markup=reply_markup)
+from unitntgbot.bot.settings import settings
 
 
-async def map_callback_handler(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
-    query = update.callback_query
-
-    if not query:
+async def map_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    if not update.message:
         return
 
-    await query.answer()
+    args = context.args
+    if not args:
+        await update.message.reply_text(
+            "Usage: /map <site_name> <room_code>\n" "Example: /map povo A201\n" "Available sites: povo, mesiano"
+        )
+        return
 
-    keyboard = [
-        [InlineKeyboardButton("Option 1", callback_data="a" * 6)],
-        [InlineKeyboardButton("Option 2", callback_data="menu2")],
-        [InlineKeyboardButton("Visit Website", url="https://example.com")],
-    ]
+    site_name = args[0]
+    room_code = args[1]
 
-    reply_markup = InlineKeyboardMarkup(keyboard)
+    if site_name == "povo":
+        building_id = "E0503"
+    elif site_name == "mesiano":
+        building_id = "E0301"
+    else:
+        await update.message.reply_text("Invalid site name.")
+        return
 
-    # Respond to the button click based on callback data
-    if query.data == "1":
-        await query.edit_message_text(text="You selected Option 1.")
-    elif query.data == "2":
-        await query.edit_message_text(text="Option 2 selected", reply_markup=reply_markup)
+    async with httpx.AsyncClient() as client:
+        response = await client.get(
+            f"{settings.MAPS_SVC_URL}/maps/{building_id}", params={"rooms": room_code}, timeout=30
+        )
+
+        match response.status_code:
+            case 400:
+                data = response.json()
+                await update.message.reply_text(data["message"])
+            case 404:
+                data = response.json()
+                await update.message.reply_text(data["message"])
+                return
+            case 413:
+                data = response.json()
+                await update.message.reply_text(data["message"])
+                return
+            case 500:
+                data = response.json()
+                await update.message.reply_text(data["message"])
+                return
+            case 200:
+                await update.message.reply_photo(photo=response.content, caption=f"Map for {site_name} - {room_code}")
+                pass
+            case _:
+                await update.message.reply_text("An unknown error occurred while fetching the map.")
+                return
