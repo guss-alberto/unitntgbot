@@ -6,13 +6,30 @@ from datetime import datetime
 
 import requests
 
+from .rooms_mapping import BUILDING_ID_TO_NAME, ROOM_ID_TO_NAME
 from .settings import settings
 from .UniversityLecture import UniversityLecture
 
+from telegram.helpers import escape_markdown
 
 def _iso_normalize_date(date: str) -> str:
     d: list[str] = date.split("-")
     return f"{d[2]:0>4}-{d[1]:0>2}-{d[0]:0>2}"
+
+
+def _process_room_name(room_string: str) -> str | None:
+    if not room_string:
+        return None
+    try:
+        rooms: list[str] = []
+        for room in room_string.split("|"):
+            building_id = room.split("/")[0]
+            building_name = BUILDING_ID_TO_NAME[building_id.strip()]
+            room_name = ROOM_ID_TO_NAME[room.strip()]
+            rooms.append(f"{building_name} - {room_name}")
+        return " | ".join(rooms)
+    except KeyError:
+        return None
 
 
 def get_courses_from_easyacademy(courses: set[str], date: datetime) -> list[UniversityLecture]:
@@ -49,21 +66,22 @@ def get_courses_from_easyacademy(courses: set[str], date: datetime) -> list[Univ
         lecturer: str = cella["docente"]
         is_cancelled: bool = cella["Annullato"] == "1"
 
+        # Reformat room name if possible, otherwise take the pre-formatted one
+        room = _process_room_name(cella["codice_aula"]) or cella["aula"]
+
         # Convert the date from "dd-mm-YYYY" to "YYYY-mm-dd", and merge it with the start and end times
         lecture_date: str = _iso_normalize_date(cella["data"])
         start: str = f"{lecture_date}T{cella['ora_inizio']}"
         end: str = f"{lecture_date}T{cella['ora_fine']}"
 
-        room: str = cella["codice_aula"] or cella["aula"]
-
         lecture = UniversityLecture(
             couse_id,
             course_id,
-            event_name,
-            lecturer,
+            escape_markdown(event_name),
+            escape_markdown(lecturer),
             start,
             end,
-            room,
+            escape_markdown(room),
             is_cancelled,
         )
 

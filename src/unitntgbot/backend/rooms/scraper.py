@@ -3,6 +3,7 @@ from functools import wraps
 
 import pandas as pd
 import requests
+from telegram.helpers import escape_markdown
 
 from .rooms_mapping import ROOM_ID_TO_NAME
 
@@ -72,5 +73,8 @@ def get_rooms(building_id: str) -> tuple[pd.DataFrame, pd.DataFrame | None, int]
     df_events = pd.DataFrame(data["events"])[
         ["CodiceAula", "timestamp_from", "timestamp_to", "utenti", "nome", "Annullato"]
     ].sort_values("timestamp_from")
+
+    df_events["nome"] = df_events["nome"].map(escape_markdown)
+    df_events["utenti"] = df_events["utenti"].map(escape_markdown)
 
     return df_rooms, df_events, now_unix
