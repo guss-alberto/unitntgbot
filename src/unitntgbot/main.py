@@ -9,6 +9,7 @@ class Service(StrEnum):
     LECTURES = "lectures"
     ROOMS = "rooms"
     MAPS = "maps"
+    NOTIFICATION_DISPATCHER = "notification_dispatcher"
 
 
 def main() -> None:
@@ -31,6 +32,8 @@ def main() -> None:
     match service:
         case Service.BOT:
             from unitntgbot.bot import entrypoint
+        case Service.NOTIFICATION_DISPATCHER:
+            from unitntgbot.notification_dispatcher import entrypoint
         case Service.CANTEEN:
             from unitntgbot.backend.canteen import entrypoint
         case Service.EXAMS:
@@ -64,6 +67,9 @@ def develop() -> None:
 
             entrypoint()
             return
+        case Service.NOTIFICATION_DISPATCHER:
+            print("Notification Dispatcher does not support development mode.")
+            raise SystemExit(1)
         case Service.CANTEEN:
             from unitntgbot.backend.canteen import develop
         case Service.EXAMS:
