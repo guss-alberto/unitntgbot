@@ -155,7 +155,9 @@ def import_for_user(db: sqlite3.Connection, user_id: str, unitnapp_url: str) -> 
         lectures = get_courses_from_easyacademy(courses - tracked_courses, datetime.now())
 
         db.executemany(
-            "INSERT OR REPLACE INTO Lectures VALUES (?, ?, ?, ?, ?, ?, ?, ?);",
+            """\
+            INSERT OR REPLACE INTO Lectures ( id, course_id, event_name, lecturer, start, end, room, is_cancelled)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?);""",
             lectures,
         )
         tracked_courses.union(courses)
@@ -181,7 +183,7 @@ def update_db(db: sqlite3.Connection, date: datetime) -> None:
     db.executemany(
         """\
         INSERT INTO Lectures (id, course_id, event_name, lecturer, start, end, room, is_cancelled)
-                      VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+                      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         ON CONFLICT DO
         UPDATE SET
             event_name = excluded.event_name,
@@ -202,9 +204,9 @@ def update_db(db: sqlite3.Connection, date: datetime) -> None:
         """,
     )
     cur.execute("""\
-                SELECT DISTINCT Users.id, Audits.*"
-                FROM Audits JOIN Users ON User.course_id = Audits.course_id
-                WHERE DATE(Audits.date) < DATETIME("now", "3 weeks");\
+                SELECT DISTINCT Users.id, Audits.*
+                FROM Audits JOIN Users ON Users.course_id = Audits.course_id
+                WHERE DATE(Audits.time) < DATETIME("now", "3 weeks");
                 """)
     to_notify = cur.fetchall()
     print(to_notify)
