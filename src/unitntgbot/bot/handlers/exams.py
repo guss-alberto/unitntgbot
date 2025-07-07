@@ -25,7 +25,7 @@ def get_keyboard(callback: str, page: int, n_pages: int) -> InlineKeyboardMarkup
     return InlineKeyboardMarkup([keyboard])
 
 
-def process_results (response, callback) -> tuple[str,InlineKeyboardMarkup| None]:
+def process_results(response, callback) -> tuple[str, InlineKeyboardMarkup | None]:
     match response.status_code:
         case 200:
             data = response.json()
@@ -49,6 +49,7 @@ def process_results (response, callback) -> tuple[str,InlineKeyboardMarkup| None
         case _:
             return "An unknown error occured", None
 
+
 async def exams_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if not update.message:
         return
@@ -68,7 +69,6 @@ async def exams_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
         await update.message.reply_markdown(msg, reply_markup=markup, disable_web_page_preview=True)
 
 
-
 async def exams_callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     query = update.callback_query
 
@@ -81,12 +81,17 @@ async def exams_callback_handler(update: Update, context: ContextTypes.DEFAULT_T
     if query_type == "u":
         callback = f"u:{param}"
         async with httpx.AsyncClient() as client:
-            response = await client.get(f"{settings.EXAMS_SVC_URL}/exams/user/{param}", params = {"page": page}, timeout=30)
+            response = await client.get(
+                f"{settings.EXAMS_SVC_URL}/exams/user/{param}", params={"page": page}, timeout=30
+            )
     else:
         callback = f"q:{param}"
         async with httpx.AsyncClient() as client:
-            response = await client.get(f"{settings.EXAMS_SVC_URL}/exams/search", params={"query": param, "page": page}, timeout=30)
-
+            response = await client.get(
+                f"{settings.EXAMS_SVC_URL}/exams/search", params={"query": param, "page": page}, timeout=30
+            )
 
     msg, markup = process_results(response, callback)
-    await query.edit_message_text(msg, reply_markup=markup, parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
+    await query.edit_message_text(
+        msg, reply_markup=markup, parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True
+    )

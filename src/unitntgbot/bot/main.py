@@ -23,7 +23,7 @@ from .handlers.setup import (
     setup_handler,
 )
 from .handlers.start import start_handler
-from .handlers.transports import transports_handler
+from .handlers.tt import tt_handler
 from .settings import settings
 
 
@@ -41,7 +41,7 @@ async def set_commands(app: Application) -> None:
             telegram.BotCommand(command="rooms", description="Show the available rooms"),
             telegram.BotCommand(command="map", description="Show the map of the university"),
             telegram.BotCommand(command="menu", description="Show the canteen menu"),
-            telegram.BotCommand(command="transports", description="Show the transports"),
+            telegram.BotCommand(command="tt", description="Show the Trentino Trasporti bus trips"),
             telegram.BotCommand(command="lectures", description="Show the lectures"),
             telegram.BotCommand(command="exams", description="Show the exams"),
             telegram.BotCommand(command="help", description="Show the help message"),
@@ -63,7 +63,7 @@ def entrypoint() -> None:
     app.add_handler(CommandHandler("menu", canteen_handler))
     app.add_handler(CommandHandler("rooms", rooms_handler))
     app.add_handler(CommandHandler("locuspocus", rooms_handler))
-    app.add_handler(CommandHandler("transports", transports_handler))
+    app.add_handler(CommandHandler("tt", tt_handler))
 
     # Handlers to for the UnitrentoApp setup process
     add_lectures = ConversationHandler(

@@ -236,7 +236,7 @@ async def rooms_callback_handler(update: Update, context: ContextTypes.DEFAULT_T
 
         try:
             # Telegram will raise an error if the message is not modified
-            # which is the case when the user clicks on the button to show the map immediately after fetching the rooms status 
+            # which is the case when the user clicks on the button to show the map immediately after fetching the rooms status
             await query.edit_message_text(msg, parse_mode=ParseMode.MARKDOWN, reply_markup=markup)
         except BadRequest as e:
             if not "Message is not modified" in e.message:

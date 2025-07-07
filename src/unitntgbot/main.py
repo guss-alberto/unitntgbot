@@ -9,6 +9,7 @@ class Service(StrEnum):
     LECTURES = "lectures"
     ROOMS = "rooms"
     MAPS = "maps"
+    TT = "tt"
 
 
 def main() -> None:
@@ -41,6 +42,8 @@ def main() -> None:
             from unitntgbot.backend.rooms import entrypoint
         case Service.MAPS:
             from unitntgbot.backend.maps import entrypoint
+        case Service.TT:
+            from unitntgbot.backend.tt import entrypoint
 
     entrypoint()
 
@@ -61,7 +64,6 @@ def develop() -> None:
     match service:
         case Service.BOT:
             from unitntgbot.bot import entrypoint
-
             entrypoint()
             return
         case Service.CANTEEN:
@@ -74,5 +76,7 @@ def develop() -> None:
             from unitntgbot.backend.rooms import develop
         case Service.MAPS:
             from unitntgbot.backend.maps import develop
+        case Service.TT:
+            from unitntgbot.backend.tt import develop
 
     develop(args.port)

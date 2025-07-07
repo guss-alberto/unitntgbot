@@ -17,7 +17,7 @@ services:
       LECTURES_SVC_URL: http://lectures_svc:5000
       MAPS_SVC_URL: http://maps_svc:5000
       ROOMS_SVC_URL: http://rooms_svc:5000
-      TT_SVC_URL: N/A
+      TT_SVC_URL: http://tt_svc:5000
     volumes:
       - bot-data:/db:rw
 

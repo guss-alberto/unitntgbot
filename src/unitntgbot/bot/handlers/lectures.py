@@ -1,6 +1,3 @@
-# /menu .......... Mostra il menu del ristorante
-# /menu dinner ... Mostra il menu del ristorante Cena (solo a Tommaso Gar)
-
 from datetime import date, datetime, timedelta
 
 import httpx
