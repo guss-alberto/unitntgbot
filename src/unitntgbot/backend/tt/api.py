@@ -1,4 +1,5 @@
 import requests
+from requests import RequestException
 
 from flask import Flask, Response, jsonify, make_response, request
 
@@ -49,7 +50,7 @@ HEADERS = {
 # 	arrivalTime: string;
 # }
 
-
+# TODO: Use cache if requests are very close to each other
 # class TTCache:
 #     def __init__(self) -> None:
 #         self.routes = {}
@@ -73,34 +74,40 @@ def develop(port: int) -> None:
 
 
 @app.get("/<routeId>/<sequence>")
-def getRoutes(routeId: int, sequence: int) -> tuple[Response, int]:
+def getRoutes(routeId: str, sequence: str) -> tuple[Response, int]:
     # Direction 1 is towards Piazza Dante
-    path = f"/gtlservice/trips_new?limit={sequence}&routeId={routeId}&type=U&directionId=1"
+    path = f"/gtlservice/trips_new?limit={int(sequence)+1}&routeId={routeId}&type=U&directionId=1"
 
-    response = requests.get(BASE_URL + path, auth=(USERNAME, PASSWORD), headers=HEADERS)
+    try:
+        response = requests.get(BASE_URL + path, auth=(USERNAME, PASSWORD), timeout=10, headers=HEADERS)
 
-    data = response.json()[-1] # Get the last trip in the list, which is the one at index `sequence` for which data is requested
+    except RequestException:
+        return jsonify({"message": "Trentino Trasporti data seems to be unavailable"}), 503
+
+    # Get the last trip in the list, which is the one at index `sequence` for which data is requested
+    data = response.json()
+
+    if len(data) == 0:
+        return make_response(""), 204
+
+    data = data[-1]
+
+    stop_index = data.get("lastSequenceDetection")
+    stop_index = stop_index - 1 if stop_index != 0 else None
 
     # Filter out useless fields and change stopId to stopName
     data = {
         "delay": data.get("delay"),
-        "lastEventRecivedAt": data.get("lastEventRecivedAt"),
-        "lastSequenceDetection": data.get("lastSequenceDetection"),
+        "lastUpdate": data.get("lastEventRecivedAt"),  # Misspelled in API
+        "currentStopIndex": stop_index,
         "stops": [
             {
-                "arrivalTime": stop_time["arrivalTime"],
-                "stopName": STOP_ID_TO_NAME[stop_time["stopId"]],
+                "arrivalTime": stop_time["arrivalTime"][:-3],  # Remove seconds, it's always 00 anyways
+                "stopName": STOP_ID_TO_NAME.get(stop_time["stopId"], "?Unknown Stop?"),
             }
             for stop_time in data.get("stopTimes", [])
         ],
-        "totaleCorseInLista": data.get("totaleCorseInLista"),
+        "totalRoutesCount": data.get("totaleCorseInLista")
     }
 
-    return jsonify(data), response.status_code
-
-    # data = response.json()
-
-    # with open("trips.json", "w") as file:
-    #     file.write(response.text)
-
-    # return data
+    return jsonify(data), 200

@@ -23,7 +23,7 @@ from .handlers.setup import (
     setup_handler,
 )
 from .handlers.start import start_handler
-from .handlers.tt import tt_handler
+from .handlers.tt import tt_callback_handler, tt_handler
 from .settings import settings
 
 
@@ -87,5 +87,6 @@ def entrypoint() -> None:
     app.add_handler(CallbackQueryHandler(rooms_callback_handler, pattern=r"^rooms:"))
     app.add_handler(CallbackQueryHandler(exams_callback_handler, pattern=r"^exams:"))
     app.add_handler(CallbackQueryHandler(get_lectures_callback_handler, pattern=r"^lect:"))
+    app.add_handler(CallbackQueryHandler(tt_callback_handler, pattern=r"^tt:"))
 
     app.run_polling(allowed_updates=Update.ALL_TYPES)
