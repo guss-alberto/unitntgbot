@@ -1,6 +1,19 @@
 version = 1
 requires-python = ">=3.13"
 
+[manifest]
+members = [
+    "bot",
+    "canteen",
+    "exams",
+    "lectures",
+    "maps",
+    "notification-dispatcher",
+    "rooms",
+    "tt",
+    "unitntgbot",
+]
+
 [[package]]
 name = "aiokafka"
 version = "0.12.0"
@@ -61,6 +74,31 @@ wheels = [
 ]
 
 [[package]]
+name = "bot"
+version = "0.1.0"
+source = { editable = "frontend/bot" }
+dependencies = [
+    { name = "fuzzywuzzy" },
+    { name = "httpx" },
+    { name = "pandas" },
+    { name = "pydantic-settings" },
+    { name = "python-dotenv" },
+    { name = "python-levenshtein" },
+    { name = "python-telegram-bot" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "fuzzywuzzy", specifier = ">=0.18.0" },
+    { name = "httpx", specifier = ">=0.27.0" },
+    { name = "pandas", specifier = ">=2.2.3" },
+    { name = "pydantic-settings", specifier = ">=2.7.1" },
+    { name = "python-dotenv", specifier = ">=1.0.1" },
+    { name = "python-levenshtein", specifier = ">=0.26.1" },
+    { name = "python-telegram-bot", specifier = ">=21.10" },
+]
+
+[[package]]
 name = "cairocffi"
 version = "1.7.1"
 source = { registry = "https://pypi.org/simple" }
@@ -86,6 +124,29 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/d5/e6/ec5900b724e3c44af7f6f51f719919137284e5da4aabe96508baec8a1b40/CairoSVG-2.7.1.tar.gz", hash = "sha256:432531d72347291b9a9ebfb6777026b607563fd8719c46ee742db0aef7271ba0", size = 8399085 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/01/a5/1866b42151f50453f1a0d28fc4c39f5be5f412a2e914f33449c42daafdf1/CairoSVG-2.7.1-py3-none-any.whl", hash = "sha256:8a5222d4e6c3f86f1f7046b63246877a63b49923a1cd202184c3a634ef546b3b", size = 43235 },
+]
+
+[[package]]
+name = "canteen"
+version = "0.1.0"
+source = { editable = "backend/canteen" }
+dependencies = [
+    { name = "flask" },
+    { name = "pandas" },
+    { name = "pydantic-settings" },
+    { name = "pyquery" },
+    { name = "python-dotenv" },
+    { name = "requests" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "flask", specifier = ">=3.1.0" },
+    { name = "pandas", specifier = ">=2.2.3" },
+    { name = "pydantic-settings", specifier = ">=2.7.1" },
+    { name = "pyquery", specifier = ">=2.0.1" },
+    { name = "python-dotenv", specifier = ">=1.0.1" },
+    { name = "requests", specifier = ">=2.32.3" },
 ]
 
 [[package]]
@@ -194,6 +255,31 @@ wheels = [
 ]
 
 [[package]]
+name = "exams"
+version = "0.1.0"
+source = { editable = "backend/exams" }
+dependencies = [
+    { name = "flask" },
+    { name = "fuzzywuzzy" },
+    { name = "pandas" },
+    { name = "pydantic-settings" },
+    { name = "pyquery" },
+    { name = "python-dotenv" },
+    { name = "requests" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "flask", specifier = ">=3.1.0" },
+    { name = "fuzzywuzzy", specifier = ">=0.18.0" },
+    { name = "pandas", specifier = ">=2.2.3" },
+    { name = "pydantic-settings", specifier = ">=2.7.1" },
+    { name = "pyquery", specifier = ">=2.0.1" },
+    { name = "python-dotenv", specifier = ">=1.0.1" },
+    { name = "requests", specifier = ">=2.32.3" },
+]
+
+[[package]]
 name = "flask"
 version = "3.1.0"
 source = { registry = "https://pypi.org/simple" }
@@ -286,6 +372,27 @@ wheels = [
 ]
 
 [[package]]
+name = "lectures"
+version = "0.1.0"
+source = { editable = "backend/lectures" }
+dependencies = [
+    { name = "flask" },
+    { name = "pydantic-settings" },
+    { name = "python-dotenv" },
+    { name = "python-telegram-bot" },
+    { name = "requests" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "flask", specifier = ">=3.1.0" },
+    { name = "pydantic-settings", specifier = ">=2.7.1" },
+    { name = "python-dotenv", specifier = ">=1.0.1" },
+    { name = "python-telegram-bot", specifier = ">=21.10" },
+    { name = "requests", specifier = ">=2.32.3" },
+]
+
+[[package]]
 name = "levenshtein"
 version = "0.26.1"
 source = { registry = "https://pypi.org/simple" }
@@ -337,6 +444,27 @@ wheels = [
 ]
 
 [[package]]
+name = "maps"
+version = "0.1.0"
+source = { editable = "backend/maps" }
+dependencies = [
+    { name = "cairosvg" },
+    { name = "flask" },
+    { name = "pydantic-settings" },
+    { name = "python-dotenv" },
+    { name = "requests" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "cairosvg", specifier = ">=2.7.1" },
+    { name = "flask", specifier = ">=3.1.0" },
+    { name = "pydantic-settings", specifier = ">=2.7.1" },
+    { name = "python-dotenv", specifier = ">=1.0.1" },
+    { name = "requests", specifier = ">=2.32.3" },
+]
+
+[[package]]
 name = "markupsafe"
 version = "3.0.2"
 source = { registry = "https://pypi.org/simple" }
@@ -362,6 +490,27 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/0d/80/0985960e4b89922cb5a0bac0ed39c5b96cbc1a536a99f30e8c220a996ed9/MarkupSafe-3.0.2-cp313-cp313t-musllinux_1_2_x86_64.whl", hash = "sha256:131a3c7689c85f5ad20f9f6fb1b866f402c445b220c19fe4308c0b147ccd2ad9", size = 24098 },
     { url = "https://files.pythonhosted.org/packages/82/78/fedb03c7d5380df2427038ec8d973587e90561b2d90cd472ce9254cf348b/MarkupSafe-3.0.2-cp313-cp313t-win32.whl", hash = "sha256:ba8062ed2cf21c07a9e295d5b8a2a5ce678b913b45fdf68c32d95d6c1291e0b6", size = 15208 },
     { url = "https://files.pythonhosted.org/packages/4f/65/6079a46068dfceaeabb5dcad6d674f5f5c61a6fa5673746f42a9f4c233b3/MarkupSafe-3.0.2-cp313-cp313t-win_amd64.whl", hash = "sha256:e444a31f8db13eb18ada366ab3cf45fd4b31e4db1236a4448f68778c1d1a5a2f", size = 15739 },
+]
+
+[[package]]
+name = "notification-dispatcher"
+version = "0.1.0"
+source = { editable = "frontend/notification_dispatcher" }
+dependencies = [
+    { name = "aiokafka" },
+    { name = "pydantic" },
+    { name = "pydantic-settings" },
+    { name = "python-dotenv" },
+    { name = "python-telegram-bot" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "aiokafka", specifier = ">=0.12.0" },
+    { name = "pydantic", specifier = ">=2.7.1" },
+    { name = "pydantic-settings", specifier = ">=2.7.1" },
+    { name = "python-dotenv", specifier = ">=1.0.1" },
+    { name = "python-telegram-bot", specifier = ">=21.10" },
 ]
 
 [[package]]
@@ -622,6 +771,31 @@ wheels = [
 ]
 
 [[package]]
+name = "rooms"
+version = "0.1.0"
+source = { editable = "backend/rooms" }
+dependencies = [
+    { name = "flask" },
+    { name = "fuzzywuzzy" },
+    { name = "pandas" },
+    { name = "pydantic-settings" },
+    { name = "python-dotenv" },
+    { name = "python-telegram-bot" },
+    { name = "requests" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "flask", specifier = ">=3.1.0" },
+    { name = "fuzzywuzzy", specifier = ">=0.18.0" },
+    { name = "pandas", specifier = ">=2.2.3" },
+    { name = "pydantic-settings", specifier = ">=2.7.1" },
+    { name = "python-dotenv", specifier = ">=1.0.1" },
+    { name = "python-telegram-bot", specifier = ">=21.10" },
+    { name = "requests", specifier = ">=2.32.3" },
+]
+
+[[package]]
 name = "ruff"
 version = "0.8.4"
 source = { registry = "https://pypi.org/simple" }
@@ -686,6 +860,25 @@ wheels = [
 ]
 
 [[package]]
+name = "tt"
+version = "0.1.0"
+source = { editable = "backend/tt" }
+dependencies = [
+    { name = "flask" },
+    { name = "pydantic-settings" },
+    { name = "python-dotenv" },
+    { name = "requests" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "flask", specifier = ">=3.1.0" },
+    { name = "pydantic-settings", specifier = ">=2.7.1" },
+    { name = "python-dotenv", specifier = ">=1.0.1" },
+    { name = "requests", specifier = ">=2.32.3" },
+]
+
+[[package]]
 name = "typing-extensions"
 version = "4.12.2"
 source = { registry = "https://pypi.org/simple" }
@@ -706,21 +899,7 @@ wheels = [
 [[package]]
 name = "unitntgbot"
 version = "0.1.0"
-source = { editable = "." }
-dependencies = [
-    { name = "aiokafka" },
-    { name = "cairosvg" },
-    { name = "flask" },
-    { name = "fuzzywuzzy" },
-    { name = "pandas" },
-    { name = "pydantic-settings" },
-    { name = "pyquery" },
-    { name = "python-dotenv" },
-    { name = "python-levenshtein" },
-    { name = "python-telegram-bot" },
-    { name = "requests" },
-    { name = "schedule" },
-]
+source = { virtual = "." }
 
 [package.dev-dependencies]
 dev = [
@@ -729,20 +908,6 @@ dev = [
 ]
 
 [package.metadata]
-requires-dist = [
-    { name = "aiokafka", specifier = ">=0.12.0" },
-    { name = "cairosvg", specifier = ">=2.7.1" },
-    { name = "flask", specifier = ">=3.1.0" },
-    { name = "fuzzywuzzy", specifier = ">=0.18.0" },
-    { name = "pandas", specifier = ">=2.2.3" },
-    { name = "pydantic-settings", specifier = ">=2.7.1" },
-    { name = "pyquery", specifier = ">=2.0.1" },
-    { name = "python-dotenv", specifier = ">=1.0.1" },
-    { name = "python-levenshtein", specifier = ">=0.26.1" },
-    { name = "python-telegram-bot", specifier = ">=21.10" },
-    { name = "requests", specifier = ">=2.32.3" },
-    { name = "schedule", specifier = ">=1.2.2" },
-]
 
 [package.metadata.requires-dev]
 dev = [

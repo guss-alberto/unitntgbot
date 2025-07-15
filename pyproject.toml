@@ -8,31 +8,13 @@ authors = [
     { name = "Lorenzo Bevilacqua", email = "43483037+ardubev16@users.noreply.github.com" },
 ]
 requires-python = ">=3.13"
-dependencies = [
-    "aiokafka>=0.12.0",
-    "cairosvg>=2.7.1",
-    "flask>=3.1.0",
-    "fuzzywuzzy>=0.18.0",
-    "pandas>=2.2.3",
-    "pydantic-settings>=2.7.1",
-    "pyquery>=2.0.1",
-    "python-dotenv>=1.0.1",
-    "python-levenshtein>=0.26.1",
-    "python-telegram-bot>=21.10",
-    "requests>=2.32.3",
-    "schedule>=1.2.2",
-]
+dependencies = []
 
 [dependency-groups]
 dev = ["ruff==0.8.4", "vulture==2.14"]
 
-[project.scripts]
-unitntgbot = "unitntgbot:main"
-unitntgbot-develop = "unitntgbot:develop"
-
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+[tool.uv.workspace]
+members = ["backend/*", "frontend/*"]
 
 [tool.pyright]
 pythonVersion = "3.13"
@@ -58,6 +40,3 @@ ignore = [
     "TD003",  # Missing issue link for this TODO
     "TRY400", # Use logging.exception() instead of logging.error() for logging exceptions
 ]
-
-[tool.ruff.lint.per-file-ignores]
-"./src/lmbatbot/migrations/versions/*" = ["D400", "D415"]

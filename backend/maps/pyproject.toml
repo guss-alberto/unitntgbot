@@ -1,0 +1,21 @@
+[project]
+name = "maps"
+version = "0.1.0"
+description = "Maps microservice"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "flask>=3.1.0",
+    "pydantic-settings>=2.7.1",
+    "python-dotenv>=1.0.1",
+    "requests>=2.32.3",
+    "cairosvg>=2.7.1",
+]
+
+[project.scripts]
+maps = "maps:entrypoint"
+maps-develop = "maps:develop"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

@@ -1,0 +1,23 @@
+[project]
+name = "rooms"
+version = "0.1.0"
+description = "Rooms microservice"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "flask>=3.1.0",
+    "pydantic-settings>=2.7.1",
+    "python-dotenv>=1.0.1",
+    "requests>=2.32.3",
+    "fuzzywuzzy>=0.18.0",
+    "pandas>=2.2.3",
+    "python-telegram-bot>=21.10",
+]
+
+[project.scripts]
+rooms = "rooms:entrypoint"
+rooms-develop = "rooms:develop"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
