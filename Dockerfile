@@ -1,7 +1,7 @@
 # From example at: https://github.com/astral-sh/uv-docker-example/blob/main/multistage.Dockerfile
 
 # Build app dependencies
-FROM python:3.13.0-slim-bookworm AS builder
+FROM python:3.13.5-slim-bookworm AS builder
 
 ENV UV_COMPILE_BYTECODE=1 UV_LINK_MODE=copy
 COPY --from=ghcr.io/astral-sh/uv:0.7.21 /uv /bin/
@@ -25,7 +25,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 
 
 # Copy app to runtime stage
-FROM python:3.13.0-slim-bookworm
+FROM python:3.13.5-slim-bookworm
 WORKDIR /app
 
 RUN apt-get update \
