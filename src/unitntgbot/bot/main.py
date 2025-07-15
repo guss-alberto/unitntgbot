@@ -17,8 +17,9 @@ from .handlers.map import map_handler
 from .handlers.rooms import rooms_callback_handler, rooms_handler
 from .handlers.setup import (
     cancel,
-    get_default_department,
-    get_unitrentoapp_token,
+    refresh_lectures,
+    set_default_department,
+    set_unitrentoapp_token,
     setup_callback_handler,
     setup_handler,
 )
@@ -64,18 +65,20 @@ def entrypoint() -> None:
     app.add_handler(CommandHandler("rooms", rooms_handler))
     app.add_handler(CommandHandler("locuspocus", rooms_handler))
     app.add_handler(CommandHandler("tt", tt_handler))
+    app.add_handler(CommandHandler("povotrento", tt_handler))
 
     # Handlers to for the UnitrentoApp setup process
     add_lectures = ConversationHandler(
         entry_points=[
             CommandHandler("setup", setup_handler),
-            CallbackQueryHandler(get_default_department, pattern=r"^setup:department:.*$"),
+            CallbackQueryHandler(set_default_department, pattern=r"^setup:department:.*$"),
+            CallbackQueryHandler(refresh_lectures, pattern=r"^setup:refresh_lectures$"),
             CallbackQueryHandler(setup_callback_handler, pattern=r"^setup:.*$"),
         ],
         states={
             0: [
                 CommandHandler("cancel", cancel),
-                MessageHandler(filters.TEXT & ~filters.COMMAND, get_unitrentoapp_token),
+                MessageHandler(filters.TEXT & ~filters.COMMAND, set_unitrentoapp_token),
             ],
         },
         fallbacks=[CommandHandler("cancel", cancel)],

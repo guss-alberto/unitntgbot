@@ -31,22 +31,14 @@ def _close_connection(exception):
 # Aggiungere le lezioni associate al token al DB, e associa l'utente alle lezioni per notificarlo, e cancella tutte le iscrizioni precedenti
 @app.post("/lectures/<string:tg_id>")
 def add_lectures(tg_id: str) -> tuple[Response, int]:
-    unitrentoapp_link = request.args.get("unitrentoapp_link")
+    token = request.args.get("token")
 
-    if not unitrentoapp_link:
-        return jsonify({"message": "Please provide a link in query params as 'unitrentoapp_link'"}), 400
-
-    unitrentoapp_link = unitrentoapp_link.strip()
-
-    if not re.match(
-        r"^https:\/\/webapi\.unitn\.it\/unitrentoapp\/profile\/me\/calendar\/[A-F0-9]{64}$",
-        unitrentoapp_link,
-    ):
-        return jsonify({"message": "Invalid Link"}), 400
+    if not token:
+        return jsonify({"message": "Please provide a token in query params as 'token'"}), 400
 
     db = _get_db()
 
-    courses = import_for_user(db, tg_id, unitrentoapp_link)
+    courses = import_for_user(db, tg_id, token)
 
     # Add the courses to the db of the exams service
     requests.post(

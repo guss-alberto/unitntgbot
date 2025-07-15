@@ -3,6 +3,7 @@
 import sqlite3
 
 import httpx
+import re
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.constants import ParseMode
 from telegram.ext import CallbackContext, ContextTypes, ConversationHandler
@@ -10,53 +11,45 @@ from telegram.ext import CallbackContext, ContextTypes, ConversationHandler
 from unitntgbot.backend.rooms.rooms_mapping import BUILDING_ID_TO_NAME
 from unitntgbot.bot.settings import settings
 
+DB = sqlite3.connect(settings.DB_PATH)
+DB.execute(
+    """\
+    CREATE TABLE IF NOT EXISTS DefaultDepartments (
+        id TEXT PRIMARY KEY,
+        department_id TEXT NOT NULL
+    );""",
+)
+DB.execute(
+    """\
+    CREATE TABLE IF NOT EXISTS LectureTokens (
+        id TEXT PRIMARY KEY,
+        token TEXT NOT NULL
+    );""",
+)
+# DB.execute(
+#     """\
+#     CREATE TABLE IF NOT EXISTS Notifications (
+#         id TEXT PRIMARY KEY,
+#         lecture_notification_time TEXT,
+#         canteen_notification_time TEXT,
+#     );""",
+# )
+DB.commit()
 
-async def add_lectures_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    if not update.message:
-        return
 
-    args = context.args
-    if not args:
-        await update.message.reply_markdown(
-            "Please provide a valid UniTrentoApp calendar link using `/setup`.\n"
-            "\n"
-            "It can be found in the top right corner of the '*Favourites*' tab in the '*Classes Timetable*' section in your app.\n"
-            "\n"
-            "_Note that this removes all courses you are currently following on this Telegram Bot._",
-        )
-        return
-
-    tg_id = update.message.chat_id
-    unitrentoapp_link = args[0]
-
-    # TODO: save on telegram bot db the unitrentoapp link and enable refreshing
-    async with httpx.AsyncClient() as client:
-        response = await client.post(
-            f"{settings.LECTURES_SVC_URL}/lectures/{tg_id}",
-            params={"unitrentoapp_link": unitrentoapp_link},
-            timeout=30,
-        )
-    data = response.json()
-
-    match response.status_code:
-        case 200:
-            await update.message.reply_text(f"{data['number']} courses addeed successfully!")
-            return
-        case 400:
-            await update.message.reply_text(f"{data['message']}\nPlease insert a valid UniTrentoApp calendar link.")
-            return
+MAIN_MENU_REPLY_MARKUP = InlineKeyboardMarkup(
+    [
+        [InlineKeyboardButton("🗓️ Link UniTrentoApp account", callback_data="setup:lecture")],
+        [InlineKeyboardButton("🔄 Refresh Lectures", callback_data="setup:refresh_lectures")],
+        [InlineKeyboardButton("🏫 Set Default Department", callback_data="setup:department")],
+        # [InlineKeyboardButton("☰ Notifications 🔔", callback_data="setup:notifications")],
+    ]
+)
 
 
 async def setup_handler(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
-    keyboard = [
-        [InlineKeyboardButton("Set Lectures Token", callback_data="setup:lecture")],
-        [InlineKeyboardButton("Set Default Department", callback_data="setup:department")],
-    ]
-
-    reply_markup = InlineKeyboardMarkup(keyboard)
-
     if update.message:
-        await update.message.reply_text("Choose an option:", reply_markup=reply_markup)
+        await update.message.reply_text("Choose an option:", reply_markup=MAIN_MENU_REPLY_MARKUP)
 
 
 async def setup_callback_handler(update: Update, _: ContextTypes.DEFAULT_TYPE) -> int:
@@ -70,11 +63,11 @@ async def setup_callback_handler(update: Update, _: ContextTypes.DEFAULT_TYPE) -
     match query.data:
         case "setup:lecture":
             await query.edit_message_text(
-                "Write your UniTrentoApp lectures link: \\(Type `/cancel` to cancel\\)"
+                "Write your *UniTrentoApp* lectures link: \\(Type `/cancel` to cancel\\)"
                 "\n"
-                "It can be found in the top right corner of the '*Favourites*' tab in the '*Classes Timetable*' section in your app.\n"
+                "Your link can be found in the top right corner of the '*Favourites*' tab in the '*Classes Timetable*' section in your app\\.\n"
                 "\n"
-                "_Note that this removes all courses you are currently following on this Telegram Bot._",
+                "_Note that this removes all courses you are currently following on this Telegram Bot\\._",
                 parse_mode=ParseMode.MARKDOWN_V2,
             )
             return 0
@@ -84,7 +77,7 @@ async def setup_callback_handler(update: Update, _: ContextTypes.DEFAULT_TYPE) -
                 keyboard.append(
                     [InlineKeyboardButton(department_name, callback_data=f"setup:department:{department_id}")],
                 )
-            keyboard.append([InlineKeyboardButton("❌ Cancel", callback_data="setup:department:cancel")])
+            keyboard.append([InlineKeyboardButton("Go Back", callback_data="setup:department:back")])
             reply_markup = InlineKeyboardMarkup(keyboard)
 
             await query.edit_message_text("Select your default department", reply_markup=reply_markup)
@@ -94,17 +87,25 @@ async def setup_callback_handler(update: Update, _: ContextTypes.DEFAULT_TYPE) -
             return ConversationHandler.END
 
 
-async def get_unitrentoapp_token(update: Update, _: CallbackContext) -> int:
-    if not update.message:
+async def set_unitrentoapp_token(update: Update, _: CallbackContext) -> int:
+    if not update.message or not update.message.text:
         return ConversationHandler.END
 
     unitrentoapp_link = update.message.text
     tg_id = update.message.chat_id
 
+    regex_full = r"(https:\/\/webapi\.unitn\.it\/unitrentoapp\/profile\/me\/calendar\/)?([A-F0-9]{64})"
+    result = re.search(regex_full, unitrentoapp_link)
+    if result:
+        token = result.group(2)
+    else:
+        await update.message.reply_text('Please insert a valid UniTrentoApp calendar link. (Type "/cancel" to cancel)')
+        return 0
+
     async with httpx.AsyncClient() as client:
         response = await client.post(
             f"{settings.LECTURES_SVC_URL}/lectures/{tg_id}",
-            params={"unitrentoapp_link": unitrentoapp_link},
+            params={"token": token},
             timeout=30,
         )
 
@@ -112,24 +113,15 @@ async def get_unitrentoapp_token(update: Update, _: CallbackContext) -> int:
         case 200:
             data = response.json()
             await update.message.reply_text(f"{data['number']} courses addeed successfully!")
-            return ConversationHandler.END
-        case 400:
-            data = response.json()
-            await update.message.reply_text(
-                f'{data["message"]}\nPlease insert a valid UniTrentoApp calendar link. (Type "/cancel" to cancel)',
-            )
-            return 0
-        case 500:
-            await update.message.reply_text("Internal Server Error")
-            return ConversationHandler.END
+            DB.execute("INSERT OR REPLACE INTO LectureTokens VALUES (?,?);", (tg_id, token))
+            DB.commit()
+        case _:
+            await update.message.reply_text("An unknown error occurred while adding lectures.")
 
     return ConversationHandler.END
 
 
-DEFAULT_DEPARTMENT_DATABASE = "db/settings.db"
-
-
-async def get_default_department(update: Update, _: CallbackContext) -> int:
+async def set_default_department(update: Update, _: CallbackContext) -> int:
     query = update.callback_query
     if not update.effective_message or not query:
         return ConversationHandler.END
@@ -141,26 +133,58 @@ async def get_default_department(update: Update, _: CallbackContext) -> int:
 
     await query.answer()
 
-    if data == "setup:department:cancel":
-        await update.effective_message.edit_text("Operation canceled.")
+    if data == "setup:department:back":
+        await update.effective_message.edit_text("Choose an option:", reply_markup=MAIN_MENU_REPLY_MARKUP)
         return ConversationHandler.END
 
     department_id = data[len("setup:department:") :]
     tg_id = message.chat.id
 
-    db = sqlite3.connect(settings.DB_PATH)
-    db.execute(
-        """\
-        CREATE TABLE IF NOT EXISTS DefaultDepartments (
-            id TEXT NOT NULL PRIMARY KEY,
-            department_id TEXT NOT NULL
-        );""",
-    )
-    db.commit()
-    db.execute("INSERT OR REPLACE INTO DefaultDepartments VALUES (?, ?);", (tg_id, department_id))
-    db.commit()
+    DB.execute("INSERT OR REPLACE INTO DefaultDepartments VALUES (?, ?);", (tg_id, department_id))
+    DB.commit()
 
-    await update.effective_message.reply_text(f"Department saved successfully: {BUILDING_ID_TO_NAME[department_id]}")
+    await update.effective_message.edit_text(f"Department saved successfully: {BUILDING_ID_TO_NAME[department_id]}")
+
+    return ConversationHandler.END
+
+
+async def refresh_lectures(update: Update, _: CallbackContext) -> int:
+    query = update.callback_query
+    if not query or not query.message:
+        return ConversationHandler.END
+
+    await query.answer()
+    tg_id = query.message.chat.id
+
+    token = DB.execute(("SELECT token FROM LectureTokens WHERE id = ?;"), (tg_id,)).fetchone()
+
+    if not token:
+        await query.message.chat.send_message("You have not set your lectures token yet. Please do so first.")
+        return ConversationHandler.END
+
+    async with httpx.AsyncClient() as client:
+        response = await client.post(
+            f"{settings.LECTURES_SVC_URL}/lectures/{tg_id}",
+            params={"token": token},
+            timeout=30,
+        )
+
+    match response.status_code:
+        case 200:
+            data = response.json()
+            await query.edit_message_text(f"{data['number']} courses refreshed successfully!")
+        case _:
+            await query.edit_message_text("An unknown error occurred while refreshing lectures.")
+
+    return ConversationHandler.END
+
+
+async def notifications_handler(update: Update, _: CallbackContext) -> int:
+    query = update.callback_query
+    if not query or not query.message:
+        return ConversationHandler.END
+
+    await query.answer()
 
     return ConversationHandler.END
 
@@ -169,5 +193,5 @@ async def cancel(update: Update, _: CallbackContext) -> int:
     if not update.message:
         return ConversationHandler.END
 
-    await update.message.reply_text("Canceled.")
+    await update.message.reply_text("Operation cancelled")
     return ConversationHandler.END

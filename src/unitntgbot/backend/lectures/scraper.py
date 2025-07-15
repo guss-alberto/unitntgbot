@@ -12,6 +12,7 @@ from .UniversityLecture import UniversityLecture
 
 from telegram.helpers import escape_markdown
 
+
 def _iso_normalize_date(date: str) -> str:
     d: list[str] = date.split("-")
     return f"{d[2]:0>4}-{d[1]:0>2}-{d[0]:0>2}"
@@ -90,7 +91,10 @@ def get_courses_from_easyacademy(courses: set[str], date: datetime) -> list[Univ
     return lectures
 
 
-def import_from_ical(url: str) -> set[str]:
+UNITRENTO_APP_URL = "https://webapi.unitn.it/unitrentoapp/profile/me/calendar"
+
+
+def import_from_ical(token: str) -> set[str]:
     """
     Import courses from a Unitrentoapp calendar.
 
@@ -101,9 +105,9 @@ def import_from_ical(url: str) -> set[str]:
         set[str]: The set of courses the student is enrolled in, similar to "EC146220_MASSA", "EC145810_MARCH" or "EC145614_BOATO".
 
     """
-    response = requests.get(url, timeout=30)
+    response = requests.get(f"{UNITRENTO_APP_URL}/{token}", timeout=30)
     ical = response.text
-
+    
     courses: set[str] = set()
     for course in ical.split("\nUID:"):
         match = re.match(r"^Lezione(.+)\.", course)
@@ -113,6 +117,7 @@ def import_from_ical(url: str) -> set[str]:
     return courses
 
 
+# TODO: Remove this before presenting it
 if __name__ == "__main__":
     logger = logging.getLogger(__name__)
     logging.basicConfig(level=logging.INFO)
