@@ -14,7 +14,6 @@ dependencies = [
 ]
 
 [project.scripts]
-container-run = "canteen.api:main"
 canteen = "canteen.api:main"
 canteen-develop = "canteen.api:develop"
 

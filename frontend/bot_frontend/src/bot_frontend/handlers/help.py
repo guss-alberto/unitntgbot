@@ -8,7 +8,7 @@ HELP_MESSAGE = (
     '\\- /menu \\<arg\\> \\- Show the restaurant menu\\. Arg can be "lunch" or "dinner"\\. Defaults to lunch\\.\n'
     "\\- /menu: dinner \\- Show the restaurant menu for dinner \\(only at Tommaso Gar\\)\n"
     "\\- /rooms \\- Show the available rooms\n"
-    "\\- /map <site> <room> \\- Show where the room is located\n"
+    "\\- /map \\<site\\> \\<room\\> \\- Show where the room is located\n"
     "\\- /tt \\- Show the Trentino Trasporti but trips\n"
     "\\- /lectures \\- Show the lecture\n"
     "\\- /exams \\- Show the exams\n"

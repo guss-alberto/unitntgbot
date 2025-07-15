@@ -12,7 +12,6 @@ dependencies = [
 ]
 
 [project.scripts]
-container-run = "tt.api:main"
 tt = "tt.api:main"
 tt-develop = "tt.api:develop"
 

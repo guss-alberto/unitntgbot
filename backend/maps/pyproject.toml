@@ -13,7 +13,6 @@ dependencies = [
 ]
 
 [project.scripts]
-container-run = "maps.api:main"
 maps = "maps.api:main"
 maps-develop = "maps.api:develop"
 

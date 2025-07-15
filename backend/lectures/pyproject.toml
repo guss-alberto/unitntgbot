@@ -13,7 +13,6 @@ dependencies = [
 ]
 
 [project.scripts]
-container-run = "lectures.api:main"
 lectures = "lectures.api:main"
 lectures-develop = "lectures.api:develop"
 

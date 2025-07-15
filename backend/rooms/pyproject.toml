@@ -15,7 +15,6 @@ dependencies = [
 ]
 
 [project.scripts]
-container-run = "rooms.api:main"
 rooms = "rooms.api:main"
 rooms-develop = "rooms.api:develop"
 

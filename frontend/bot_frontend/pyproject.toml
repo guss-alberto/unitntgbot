@@ -12,11 +12,18 @@ dependencies = [
     "fuzzywuzzy>=0.18.0",
     "pandas>=2.2.3",
     "python-levenshtein>=0.26.1",
+    "exams",
+    "lectures",
+    "rooms",
 ]
 
+[tool.uv.sources]
+exams = { workspace = true }
+lectures = { workspace = true }
+rooms = { workspace = true }
+
 [project.scripts]
-container-run = "bot_frontend.main:main"
-bot = "bot_frontend.main:main"
+bot_frontend = "bot_frontend.main:main"
 
 [build-system]
 requires = ["hatchling"]

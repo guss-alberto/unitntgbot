@@ -106,6 +106,12 @@ services:
       args:
         PACKAGE: rooms
 
+  tt_svc:
+    <<: *service-common
+    build:
+      args:
+        PACKAGE: tt
+
 volumes:
   bot-data:
   canteen-data:
