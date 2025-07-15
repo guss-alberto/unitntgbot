@@ -1,9 +1,8 @@
 import requests
+from flask import Flask, Response, jsonify, make_response, request
 from requests import RequestException
 
-from flask import Flask, Response, jsonify, make_response, request
-
-from .stops_mapping import STOP_ID_TO_NAME
+from tt.stops_mapping import STOP_ID_TO_NAME
 
 BASE_URL = "https://app-tpl.tndigit.it"
 USERNAME = "mittmobile"
@@ -76,7 +75,7 @@ def develop(port: int) -> None:
 @app.get("/<routeId>/<sequence>")
 def getRoutes(routeId: str, sequence: str) -> tuple[Response, int]:
     # Direction 1 is towards Piazza Dante
-    path = f"/gtlservice/trips_new?limit={int(sequence)+1}&routeId={routeId}&type=U&directionId=1"
+    path = f"/gtlservice/trips_new?limit={int(sequence) + 1}&routeId={routeId}&type=U&directionId=1"
 
     try:
         response = requests.get(BASE_URL + path, auth=(USERNAME, PASSWORD), timeout=10, headers=HEADERS)
@@ -107,7 +106,7 @@ def getRoutes(routeId: str, sequence: str) -> tuple[Response, int]:
             }
             for stop_time in data.get("stopTimes", [])
         ],
-        "totalRoutesCount": data.get("totaleCorseInLista")
+        "totalRoutesCount": data.get("totaleCorseInLista"),
     }
 
     return jsonify(data), 200

@@ -4,9 +4,9 @@ import pandas as pd
 from flask import Flask, Response, jsonify, request
 from fuzzywuzzy import process
 
-from .Room import Event, Room
-from .rooms_mapping import BUILDING_ID_TO_NAME
-from .scraper import get_rooms as scraper_get_rooms
+from rooms.Room import Event, Room
+from rooms.rooms_mapping import BUILDING_ID_TO_NAME
+from rooms.scraper import get_rooms as scraper_get_rooms
 
 app = Flask(__name__)
 

@@ -5,12 +5,11 @@ import sys
 from datetime import datetime
 
 import requests
-
-from .rooms_mapping import BUILDING_ID_TO_NAME, ROOM_ID_TO_NAME
-from .settings import settings
-from .UniversityLecture import UniversityLecture
-
 from telegram.helpers import escape_markdown
+
+from lectures.rooms_mapping import BUILDING_ID_TO_NAME, ROOM_ID_TO_NAME
+from lectures.settings import settings
+from lectures.UniversityLecture import UniversityLecture
 
 
 def _iso_normalize_date(date: str) -> str:
@@ -107,7 +106,7 @@ def import_from_ical(token: str) -> set[str]:
     """
     response = requests.get(f"{UNITRENTO_APP_URL}/{token}", timeout=30)
     ical = response.text
-    
+
     courses: set[str] = set()
     for course in ical.split("\nUID:"):
         match = re.match(r"^Lezione(.+)\.", course)

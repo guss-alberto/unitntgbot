@@ -1,13 +1,12 @@
-import re
 import sqlite3
 from datetime import datetime, timedelta
 
 import requests
 from flask import Flask, Response, g, jsonify, request
 
-from .database import get_lectures_for_user, get_next_lectures_for_user, import_for_user, update_db
-from .settings import settings
-from .UniversityLecture import UniversityLecture
+from lectures.database import get_lectures_for_user, get_next_lectures_for_user, import_for_user, update_db
+from lectures.settings import settings
+from lectures.UniversityLecture import UniversityLecture
 
 app = Flask(__name__)
 

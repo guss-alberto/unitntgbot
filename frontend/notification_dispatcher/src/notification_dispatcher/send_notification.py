@@ -1,7 +1,6 @@
 import asyncio
-import json
+
 from aiokafka import AIOKafkaProducer
-from pydantic import BaseModel
 
 KAFKA_SERVER = "localhost:9094"
 KAFKA_TOPIC = "notifications"

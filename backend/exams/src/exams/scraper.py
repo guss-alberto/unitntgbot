@@ -5,8 +5,8 @@ import sqlite3
 import requests
 from pyquery import PyQuery as pq
 
-from .settings import settings
-from .UniversityExam import UniversityExam
+from exams.settings import settings
+from exams.UniversityExam import UniversityExam
 
 logger = logging.getLogger(__name__)
 

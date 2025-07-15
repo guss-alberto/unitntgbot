@@ -6,7 +6,7 @@ from pydantic import BaseModel, ValidationError
 from telegram import Bot
 from telegram.constants import ParseMode
 
-from unitntgbot.notification_dispatcher.settings import settings
+from notification_dispatcher.settings import settings
 
 logger = logging.getLogger(__name__)
 

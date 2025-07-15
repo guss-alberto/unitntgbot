@@ -1,8 +1,8 @@
 import sqlite3
 from datetime import date, datetime
 
-from .scraper import get_week_meals
-from .settings import settings
+from canteen.scraper import get_week_meals
+from canteen.settings import settings
 
 MAX_OFFSET_DAYS = 7 * 8  # 8 weeks
 

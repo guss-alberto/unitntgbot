@@ -5,7 +5,7 @@ import pandas as pd
 import requests
 from telegram.helpers import escape_markdown
 
-from .rooms_mapping import ROOM_ID_TO_NAME
+from rooms.rooms_mapping import ROOM_ID_TO_NAME
 
 
 def _timed_memoize(duration: int):

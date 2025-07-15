@@ -1,7 +1,7 @@
-import cairosvg
 import os
-import re
 import xml.etree.ElementTree as ET
+
+import cairosvg
 
 # Get the path of the images directory, which is the "images" directory in the same directory as this file
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))

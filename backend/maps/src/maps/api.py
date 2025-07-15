@@ -1,9 +1,9 @@
-from collections import defaultdict
 import uuid
+from collections import defaultdict
 
 from flask import Flask, Response, jsonify, make_response, request
 
-from .renderer import get_building_name_and_floor, render_map
+from maps.renderer import get_building_name_and_floor, render_map
 
 app = Flask(__name__)
 

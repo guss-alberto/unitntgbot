@@ -1,10 +1,12 @@
 import sqlite3
 from datetime import datetime
 
-from .scraper import get_university_exams, get_university_faculties
-from .UniversityExam import UniversityExam
+from exams.scraper import get_university_exams, get_university_faculties
+from exams.UniversityExam import UniversityExam
 
 MAX_PER_PAGE = 10
+
+
 def create_table(db: sqlite3.Connection) -> None:
     db.execute(
         """\

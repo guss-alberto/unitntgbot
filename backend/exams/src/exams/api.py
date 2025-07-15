@@ -1,18 +1,16 @@
 import sqlite3
-from datetime import datetime
 from math import ceil
 
 from flask import Flask, Response, g, jsonify, request
 
-from .database import (
+from exams.database import (
     add_courses_for_user,
     create_table,
     get_exams_for_user,
-    update_db,
 )
-from .database import search_exams as search_exams_db
-from .settings import settings
-from .UniversityExam import UniversityExam
+from exams.database import search_exams as search_exams_db
+from exams.settings import settings
+from exams.UniversityExam import UniversityExam
 
 app = Flask(__name__)
 
@@ -24,7 +22,7 @@ def _get_db() -> sqlite3.Connection:
     if db is None:
         db = g._database = sqlite3.connect(settings.DB_PATH)
         create_table(db)
-        #update_db(db, datetime.today())  # TODO: Change this later
+        # update_db(db, datetime.today())  # TODO: Change this later
     return db
 
 
@@ -70,7 +68,6 @@ def get_exams() -> tuple[Response, int]:
         return jsonify({"message": "No exam found with given query", "exams": exams}), 404
 
     return jsonify(page_parser(exams, page)), 200
-
 
 
 @app.get("/exams/user/<string:tg_id>/")

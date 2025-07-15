@@ -1,7 +1,7 @@
 import sqlite3
 from datetime import datetime, timedelta
 
-from .scraper import UniversityLecture, get_courses_from_easyacademy, import_from_ical
+from lectures.scraper import UniversityLecture, get_courses_from_easyacademy, import_from_ical
 
 tracked_courses: set[str] = set()
 

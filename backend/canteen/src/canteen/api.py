@@ -4,8 +4,8 @@ from datetime import datetime, timedelta
 
 from flask import Flask, Response, g, jsonify, request
 
-from .database import create_table, get_menu, update_db
-from .settings import settings
+from canteen.database import create_table, get_menu, update_db
+from canteen.settings import settings
 
 app = Flask(__name__)
 
