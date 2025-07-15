@@ -47,6 +47,14 @@ services:
       KAFKA_SERVER: kafka:9092
       KAFKA_TOPIC: notifications
 
+  updater:
+    <<: *service-common
+    command: updater
+    environment:
+      CANTEEN_SVC_URL: http://canteen_svc:5000
+      EXAMS_SVC_URL: http://exams_svc:5000
+      LECTURES_SVC_URL: http://lectures_svc:5000
+
   canteen_svc:
     <<: *service-common
     command: canteen
@@ -75,6 +83,10 @@ services:
   # maps_svc:
   #   <<: *service-common
   #   command: maps
+
+  # tt:
+  #   <<: *service-common
+  #   command: tt
 
   rooms_svc:
     <<: *service-common

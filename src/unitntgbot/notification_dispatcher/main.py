@@ -12,13 +12,14 @@ logger = logging.getLogger(__name__)
 
 BOT = Bot(token=settings.TELEGRAM_BOT_TOKEN)
 
+
 class NotificationMessage(BaseModel):
     chat_id: int
     message: str
 
     def __init__(self, chat_id: int, message: str):
         super().__init__(chat_id=chat_id, message=message)
-        
+
     async def send_notification(self) -> None:
         try:
             await BOT.send_message(chat_id=self.chat_id, text=self.message, parse_mode=ParseMode.MARKDOWN)
@@ -27,13 +28,12 @@ class NotificationMessage(BaseModel):
             raise
 
 
-
 def entrypoint() -> None:
-    asyncio.run(listen_topic(settings.KAFKA_TOPIC))
+    asyncio.run(listen_topic())
 
 
-async def listen_topic(topic: str) -> None:
-    consumer = AIOKafkaConsumer(topic, bootstrap_servers=settings.KAFKA_SERVER)
+async def listen_topic() -> None:
+    consumer = AIOKafkaConsumer(settings.KAFKA_TOPIC, bootstrap_servers=settings.KAFKA_SERVER)
 
     await consumer.start()
     try:

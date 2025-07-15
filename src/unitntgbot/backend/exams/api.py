@@ -48,6 +48,12 @@ def page_parser(res: list[UniversityExam], page: int) -> dict:
         "page": page,
     }
 
+
+@app.post("/update/")
+def update() -> tuple[Response, int]:
+    update_db(_get_db()) 
+    return Response(), 200
+
 # TODO: add pages system
 @app.route("/exams/search")
 def get_exams() -> tuple[Response, int]:

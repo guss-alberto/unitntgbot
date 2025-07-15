@@ -1,6 +1,6 @@
 import re
 import sqlite3
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import requests
 from flask import Flask, Response, g, jsonify, request
@@ -16,9 +16,12 @@ def _get_db() -> sqlite3.Connection:
     db = getattr(g, "_database", None)
     if db is None:
         db = g._database = sqlite3.connect(settings.DB_PATH)
-        update_db(db, datetime.fromisoformat("2024-10-16"))
     return db
 
+@app.post("/update/")
+def update() -> tuple[Response, int]:
+    update_db(_get_db(), datetime.today(), 3) 
+    return Response(), 200
 
 @app.teardown_appcontext
 def _close_connection(exception):

@@ -1,5 +1,5 @@
 import sqlite3
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from .scraper import UniversityLecture, get_courses_from_easyacademy, import_from_ical
 
@@ -169,7 +169,7 @@ def import_for_user(db: sqlite3.Connection, user_id: str, token: str) -> set[str
 
 # This function has to be run every week or with even more frequency to keep the database up to date
 # TODO: If any lecture gets modified notify users subbed to it
-def update_db(db: sqlite3.Connection, date: datetime) -> None:
+def update_db(db: sqlite3.Connection, date: datetime, weeks: int = 1) -> None:
     global tracked_courses
     _create_tables(db)  # Creates the tables if it does not yet exist
 
@@ -178,7 +178,11 @@ def update_db(db: sqlite3.Connection, date: datetime) -> None:
     cur.execute("SELECT DISTINCT course_id FROM Users;")
     tracked_courses = set(cur.fetchall())
 
-    lectures = get_courses_from_easyacademy(tracked_courses, date)
+    lectures: list[UniversityLecture] = []
+    
+    for i in range (weeks):
+        get_courses_from_easyacademy(tracked_courses, date + timedelta(weeks=i))
+        
     # logger.info("Found %s", len(lectures))
     db.execute("DELETE FROM Audits;")
     db.executemany(

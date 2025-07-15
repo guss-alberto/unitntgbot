@@ -33,7 +33,7 @@ def create_table(db: sqlite3.Connection) -> None:
     db.commit()
 
 
-def update_db(db: sqlite3.Connection, date: datetime) -> None:
+def update_db(db: sqlite3.Connection) -> None:
     # Parse the university exams
     faculties = get_university_faculties()
     exams = get_university_exams(faculties)

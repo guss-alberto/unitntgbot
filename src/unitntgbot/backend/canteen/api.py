@@ -1,5 +1,6 @@
 import sqlite3
-from datetime import datetime
+from datetime import datetime, timedelta
+
 
 from flask import Flask, Response, g, jsonify, request
 
@@ -14,7 +15,6 @@ def _get_db() -> sqlite3.Connection:
     if db is None:
         db = g._database = sqlite3.connect(settings.DB_PATH)
         create_table(db)
-        update_db(db, datetime.today())  # TODO: Change this later
     return db
 
 
@@ -24,6 +24,12 @@ def _close_connection(exception):
     if db is not None:
         db.close()
 
+@app.post("/update/")
+def update() -> tuple[Response, int]:
+    update_db(_get_db(), datetime.today()) 
+    update_db(_get_db(), datetime.today()+timedelta(days=7)) 
+    return Response(), 200
+    
 
 @app.get("/menu/<string:lunch_or_dinner>/")
 def get_menu_api(lunch_or_dinner: str) -> tuple[Response, int]:

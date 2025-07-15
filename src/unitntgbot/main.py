@@ -11,6 +11,7 @@ class Service(StrEnum):
     MAPS = "maps"
     TT = "tt"
     NOTIFICATION_DISPATCHER = "notification_dispatcher"
+    UPDATER = "updater"
 
 
 def main() -> None:
@@ -35,6 +36,8 @@ def main() -> None:
             from unitntgbot.bot import entrypoint
         case Service.NOTIFICATION_DISPATCHER:
             from unitntgbot.notification_dispatcher import entrypoint
+        case Service.UPDATER:
+            from unitntgbot.updater import entrypoint
         case Service.CANTEEN:
             from unitntgbot.backend.canteen import entrypoint
         case Service.EXAMS:
@@ -71,6 +74,9 @@ def develop() -> None:
             return
         case Service.NOTIFICATION_DISPATCHER:
             print("Notification Dispatcher does not support development mode.")
+            raise SystemExit(1)
+        case Service.UPDATER:
+            print("Updater does not support development mode.")
             raise SystemExit(1)
         case Service.CANTEEN:
             from unitntgbot.backend.canteen import develop
