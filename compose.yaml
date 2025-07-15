@@ -53,7 +53,9 @@ services:
 
   updater:
     <<: *service-common
-    command: updater
+    build:
+      args:
+        PACKAGE: updater
     environment:
       CANTEEN_SVC_URL: http://canteen_svc:5000
       EXAMS_SVC_URL: http://exams_svc:5000
@@ -95,10 +97,6 @@ services:
   #   build:
   #     args:
   #       PACKAGE: maps
-
-  # tt:
-  #   <<: *service-common
-  #   command: tt
 
   rooms_svc:
     <<: *service-common

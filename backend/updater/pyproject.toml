@@ -1,0 +1,19 @@
+[project]
+name = "updater"
+version = "0.1.0"
+description = "Trentino Trasporti microservice"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "pydantic-settings>=2.7.1",
+    "pytz>=2024.2",
+    "requests>=2.32.3",
+    "schedule>=1.2.2",
+]
+
+[project.scripts]
+updater = "updater.main:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

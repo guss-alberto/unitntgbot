@@ -1,11 +1,12 @@
-import requests
-import schedule
 import time
 
-from unitntgbot.updater.settings import settings
+import requests
+import schedule
+
+from updater.settings import settings
 
 
-def entrypoint() -> None:
+def main() -> None:
     while True:
         # Update the canteen menu once a day
         CANTEEN_UPDATE_URL = f"{settings.CANTEEN_SVC_URL}/update"
