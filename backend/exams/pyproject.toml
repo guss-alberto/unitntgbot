@@ -15,8 +15,9 @@ dependencies = [
 ]
 
 [project.scripts]
-exams = "exams:entrypoint"
-exams-develop = "exams:develop"
+container-run = "exams.api:main"
+exams = "exams.api:main"
+exams-develop = "exams.api:develop"
 
 [build-system]
 requires = ["hatchling"]

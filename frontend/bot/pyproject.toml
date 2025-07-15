@@ -15,7 +15,8 @@ dependencies = [
 ]
 
 [project.scripts]
-bot = "bot:entrypoint"
+container-run = "bot.main:main"
+bot = "bot.main:main"
 
 [build-system]
 requires = ["hatchling"]

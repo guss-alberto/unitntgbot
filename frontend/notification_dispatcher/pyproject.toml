@@ -13,7 +13,8 @@ dependencies = [
 ]
 
 [project.scripts]
-notification_dispatcher = "notification_dispatcher:entrypoint"
+container-run = "notification_dispatcher.main:main"
+notification_dispatcher = "notification_dispatcher.main:main"
 
 [build-system]
 requires = ["hatchling"]

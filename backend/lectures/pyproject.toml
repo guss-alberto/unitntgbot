@@ -13,8 +13,9 @@ dependencies = [
 ]
 
 [project.scripts]
-lectures = "lectures:entrypoint"
-lectures-develop = "lectures:develop"
+container-run = "lectures.api:main"
+lectures = "lectures.api:main"
+lectures-develop = "lectures.api:develop"
 
 [build-system]
 requires = ["hatchling"]

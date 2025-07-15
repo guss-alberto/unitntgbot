@@ -50,7 +50,7 @@ async def set_commands(app: Application) -> None:
     )
 
 
-def entrypoint() -> None:
+def main() -> None:
     app = Application.builder().token(settings.TELEGRAM_BOT_TOKEN).post_init(set_commands).build()
 
     # filterwarnings(action="ignore", message=r".*CallbackQueryHandler", category=PTBUserWarning)

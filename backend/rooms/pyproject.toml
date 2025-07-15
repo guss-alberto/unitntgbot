@@ -15,8 +15,9 @@ dependencies = [
 ]
 
 [project.scripts]
-rooms = "rooms:entrypoint"
-rooms-develop = "rooms:develop"
+container-run = "rooms.api:main"
+rooms = "rooms.api:main"
+rooms-develop = "rooms.api:develop"
 
 [build-system]
 requires = ["hatchling"]

@@ -97,7 +97,7 @@ def get_maps_multiple() -> tuple[Response, int]:
     return response, 200
 
 
-def entrypoint() -> None:
+def main() -> None:
     app.run("0.0.0.0")  # noqa: S104
 
 

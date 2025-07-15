@@ -12,8 +12,9 @@ dependencies = [
 ]
 
 [project.scripts]
-tt = "tt:entrypoint"
-tt-develop = "tt:develop"
+container-run = "tt.api:main"
+tt = "tt.api:main"
+tt-develop = "tt.api:develop"
 
 [build-system]
 requires = ["hatchling"]

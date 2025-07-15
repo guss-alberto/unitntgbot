@@ -65,7 +65,7 @@ HEADERS = {
 app = Flask(__name__)
 
 
-def entrypoint() -> None:
+def main() -> None:
     app.run("0.0.0.0")
 
 

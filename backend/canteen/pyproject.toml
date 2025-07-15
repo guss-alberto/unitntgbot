@@ -14,8 +14,9 @@ dependencies = [
 ]
 
 [project.scripts]
-canteen = "canteen:entrypoint"
-canteen-develop = "canteen:develop"
+container-run = "canteen.api:main"
+canteen = "canteen.api:main"
+canteen-develop = "canteen.api:develop"
 
 [build-system]
 requires = ["hatchling"]

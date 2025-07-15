@@ -165,7 +165,7 @@ def get_room(building_id: str) -> tuple[Response, int]:
     ), 200
 
 
-def entrypoint() -> None:
+def main() -> None:
     app.run("0.0.0.0")  # noqa: S104
 
 

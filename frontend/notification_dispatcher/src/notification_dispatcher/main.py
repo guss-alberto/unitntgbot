@@ -28,7 +28,7 @@ class NotificationMessage(BaseModel):
             raise
 
 
-def entrypoint() -> None:
+def main() -> None:
     asyncio.run(listen_topic())
 
 

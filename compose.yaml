@@ -24,7 +24,9 @@ services:
 
   telegram_bot:
     <<: *service-common
-    command: bot
+    build:
+      args:
+        PACKAGE: bot
     environment:
       TELEGRAM_BOT_TOKEN: $TELEGRAM_BOT_TOKEN
       DB_PATH: /db/database.sqlite3
@@ -41,7 +43,9 @@ services:
 
   notification_dispatcher:
     <<: *service-common
-    command: notification_dispatcher
+    build:
+      args:
+        PACKAGE: notification_dispatcher
     environment:
       TELEGRAM_BOT_TOKEN: $TELEGRAM_BOT_TOKEN
       KAFKA_SERVER: kafka:9092
@@ -57,7 +61,9 @@ services:
 
   canteen_svc:
     <<: *service-common
-    command: canteen
+    build:
+      args:
+        PACKAGE: canteen
     environment:
       DB_PATH: /db/database.sqlite3
     volumes:
@@ -65,7 +71,9 @@ services:
 
   exams_svc:
     <<: *service-common
-    command: exams
+    build:
+      args:
+        PACKAGE: exams
     environment:
       DB_PATH: /db/database.sqlite3
     volumes:
@@ -73,16 +81,20 @@ services:
 
   lectures_svc:
     <<: *service-common
-    command: lectures
+    build:
+      args:
+        PACKAGE: lectures
     environment:
       DB_PATH: /db/database.sqlite3
       EXAMS_SVC_URL: http://exams_svc:5000
     volumes:
       - lectures-data:/db:rw
 
-  # maps_svc:
-  #   <<: *service-common
-  #   command: maps
+  maps_svc:
+    <<: *service-common
+    build:
+      args:
+        PACKAGE: maps
 
   # tt:
   #   <<: *service-common
@@ -90,7 +102,9 @@ services:
 
   rooms_svc:
     <<: *service-common
-    command: rooms
+    build:
+      args:
+        PACKAGE: rooms
 
 volumes:
   bot-data:

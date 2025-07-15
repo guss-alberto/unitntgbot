@@ -13,8 +13,9 @@ dependencies = [
 ]
 
 [project.scripts]
-maps = "maps:entrypoint"
-maps-develop = "maps:develop"
+container-run = "maps.api:main"
+maps = "maps.api:main"
+maps-develop = "maps.api:develop"
 
 [build-system]
 requires = ["hatchling"]
