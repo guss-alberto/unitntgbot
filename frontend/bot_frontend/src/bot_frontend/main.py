@@ -9,13 +9,13 @@ from telegram.ext import (
     filters,
 )
 
-from .handlers.canteen import canteen_callback_handler, canteen_handler
-from .handlers.exams import exams_callback_handler, exams_handler
-from .handlers.help import help_handler
-from .handlers.lectures import get_lectures_callback_handler, get_lectures_handler
-from .handlers.map import map_handler
-from .handlers.rooms import rooms_callback_handler, rooms_handler
-from .handlers.setup import (
+from bot_frontend.handlers.canteen import canteen_callback_handler, canteen_handler
+from bot_frontend.handlers.exams import exams_callback_handler, exams_handler
+from bot_frontend.handlers.help import help_handler
+from bot_frontend.handlers.lectures import get_lectures_callback_handler, get_lectures_handler
+from bot_frontend.handlers.map import map_handler
+from bot_frontend.handlers.rooms import rooms_callback_handler, rooms_handler
+from bot_frontend.handlers.setup import (
     cancel,
     refresh_lectures,
     set_default_department,
@@ -23,9 +23,9 @@ from .handlers.setup import (
     setup_callback_handler,
     setup_handler,
 )
-from .handlers.start import start_handler
-from .handlers.tt import tt_callback_handler, tt_handler
-from .settings import settings
+from bot_frontend.handlers.start import start_handler
+from bot_frontend.handlers.tt import tt_callback_handler, tt_handler
+from bot_frontend.settings import settings
 
 
 async def set_commands(app: Application) -> None:

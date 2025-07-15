@@ -2,7 +2,7 @@ import httpx
 from telegram import Update
 from telegram.ext import ContextTypes
 
-from unitntgbot.bot.settings import settings
+from bot_frontend.settings import settings
 
 
 async def map_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -12,7 +12,7 @@ async def map_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
     args = context.args
     if not args:
         await update.message.reply_text(
-            "Usage: /map <site_name> <room_code>\n" "Example: /map povo A201\n" "Available sites: povo, mesiano"
+            "Usage: /map <site_name> <room_code>\nExample: /map povo A201\nAvailable sites: povo, mesiano"
         )
         return
 

@@ -1,15 +1,15 @@
 # /setup .............. Shows the setup menu
 
+import re
 import sqlite3
 
 import httpx
-import re
+from rooms.rooms_mapping import BUILDING_ID_TO_NAME
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.constants import ParseMode
 from telegram.ext import CallbackContext, ContextTypes, ConversationHandler
 
-from unitntgbot.backend.rooms.rooms_mapping import BUILDING_ID_TO_NAME
-from unitntgbot.bot.settings import settings
+from bot_frontend.settings import settings
 
 DB = sqlite3.connect(settings.DB_PATH)
 DB.execute(

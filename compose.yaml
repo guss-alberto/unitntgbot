@@ -26,7 +26,7 @@ services:
     <<: *service-common
     build:
       args:
-        PACKAGE: bot
+        PACKAGE: bot_frontend
     environment:
       TELEGRAM_BOT_TOKEN: $TELEGRAM_BOT_TOKEN
       DB_PATH: /db/database.sqlite3
@@ -90,11 +90,11 @@ services:
     volumes:
       - lectures-data:/db:rw
 
-  maps_svc:
-    <<: *service-common
-    build:
-      args:
-        PACKAGE: maps
+  # maps_svc:
+  #   <<: *service-common
+  #   build:
+  #     args:
+  #       PACKAGE: maps
 
   # tt:
   #   <<: *service-common

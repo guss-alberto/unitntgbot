@@ -1,10 +1,10 @@
 import httpx
+from exams.UniversityExam import UniversityExam
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.constants import ParseMode
 from telegram.ext import ContextTypes
 
-from unitntgbot.backend.exams.UniversityExam import UniversityExam
-from unitntgbot.bot.settings import settings
+from bot_frontend.settings import settings
 
 
 def get_keyboard(callback: str, page: int, n_pages: int) -> InlineKeyboardMarkup:
@@ -13,12 +13,12 @@ def get_keyboard(callback: str, page: int, n_pages: int) -> InlineKeyboardMarkup
 
     keyboard: list[InlineKeyboardButton] = []
     if has_prev:
-        keyboard.append(InlineKeyboardButton("⬅️", callback_data=f"exams:{page-1}:{callback}"))
+        keyboard.append(InlineKeyboardButton("⬅️", callback_data=f"exams:{page - 1}:{callback}"))
     else:
         keyboard.append(InlineKeyboardButton(" ", callback_data=" "))
 
     if has_next:
-        keyboard.append(InlineKeyboardButton("➡️", callback_data=f"exams:{page+1}:{callback}"))
+        keyboard.append(InlineKeyboardButton("➡️", callback_data=f"exams:{page + 1}:{callback}"))
     else:
         keyboard.append(InlineKeyboardButton(" ", callback_data=" "))
 
@@ -34,11 +34,11 @@ def process_results(response, callback) -> tuple[str, InlineKeyboardMarkup | Non
 
             markup = None
 
-            message = f"*{data["n_items"]} exams found*\n\n{exams_formatted}"
+            message = f"*{data['n_items']} exams found*\n\n{exams_formatted}"
 
             if len(exams) < data["n_items"]:
                 markup = get_keyboard(callback, data["page"], data["n_pages"])
-                message += f"\n\n _Page {data["page"]} of {data["n_pages"]}_"
+                message += f"\n\n _Page {data['page']} of {data['n_pages']}_"
 
             return message, markup
         case 400 | 404:

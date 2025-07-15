@@ -3,7 +3,7 @@ requires-python = ">=3.13"
 
 [manifest]
 members = [
-    "bot",
+    "bot-frontend",
     "canteen",
     "exams",
     "lectures",
@@ -74,9 +74,9 @@ wheels = [
 ]
 
 [[package]]
-name = "bot"
+name = "bot-frontend"
 version = "0.1.0"
-source = { editable = "frontend/bot" }
+source = { editable = "frontend/bot_frontend" }
 dependencies = [
     { name = "fuzzywuzzy" },
     { name = "httpx" },

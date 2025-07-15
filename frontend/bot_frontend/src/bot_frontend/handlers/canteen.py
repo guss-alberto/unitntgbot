@@ -9,7 +9,7 @@ from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.constants import ParseMode
 from telegram.ext import ContextTypes
 
-from unitntgbot.bot.settings import settings
+from bot_frontend.settings import settings
 
 
 def format_output(date: date, msg: str, *, is_dinner: bool = False) -> tuple[str, InlineKeyboardMarkup]:

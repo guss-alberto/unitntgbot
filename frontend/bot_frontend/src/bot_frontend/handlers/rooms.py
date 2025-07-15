@@ -3,15 +3,16 @@
 # /rooms mesiano ........ Mostra le aule libere e occupate a Mesiano
 
 import email
-import httpx
 import io
+
+import httpx
+from rooms.Room import Event, Room
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, InputMediaPhoto, Update
 from telegram.constants import ParseMode
 from telegram.error import BadRequest
 from telegram.ext import ContextTypes
 
-from unitntgbot.backend.rooms.Room import Event, Room
-from unitntgbot.bot.settings import settings
+from bot_frontend.settings import settings
 
 NAME_TO_BUILDING_ID = {
     # E0504
@@ -124,7 +125,7 @@ async def _rooms_status(
         [
             InlineKeyboardButton(
                 f"🗺️ View Free Rooms Location",
-                callback_data=f"rooms:m:{"time" if sort_time else "name"}:{building_id}:map",
+                callback_data=f"rooms:m:{'time' if sort_time else 'name'}:{building_id}:map",
             )
         ],
     ]  # TODO: Add more options such as filter for free, occupied or all rooms.

@@ -1,12 +1,12 @@
 from datetime import date, datetime, timedelta
 
 import httpx
+from lectures.UniversityLecture import UniversityLecture
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.constants import ParseMode
 from telegram.ext import ContextTypes
 
-from unitntgbot.backend.lectures.UniversityLecture import UniversityLecture
-from unitntgbot.bot.settings import settings
+from bot_frontend.settings import settings
 
 
 def format_output(date: date, lectures: list) -> tuple[str, InlineKeyboardMarkup]:

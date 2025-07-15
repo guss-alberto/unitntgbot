@@ -1,5 +1,5 @@
 [project]
-name = "bot"
+name = "bot_frontend"
 version = "0.1.0"
 description = "Telegram bot frontend"
 readme = "README.md"
@@ -15,8 +15,8 @@ dependencies = [
 ]
 
 [project.scripts]
-container-run = "bot.main:main"
-bot = "bot.main:main"
+container-run = "bot_frontend.main:main"
+bot = "bot_frontend.main:main"
 
 [build-system]
 requires = ["hatchling"]
