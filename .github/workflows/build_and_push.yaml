@@ -37,20 +37,21 @@ jobs:
       - name: Rewrite image targets to ghcr
         id: bakepatch
         run: |
-          owner=${GITHUB_REPOSITORY%%/*}
-          repo=${GITHUB_REPOSITORY##*/}
-          jq ".target |= with_entries(
-            if .value.tags then
-              .value.tags |= map(\"${REGISTRY}/${IMAGE_BASE_NAME}\"  + .)
-            else
-              .
-            end
-          )" docker-bake.json > docker-bake-ghcr.json
+          jq --arg registry "$REGISTRY" --arg image_base_name "$IMAGE_BASE_NAME" '
+            .target |= with_entries(
+              .value += {
+                "tags": [
+                  "\($registry)/\($image_base_name)\(.value.args.PACKAGE):latest"
+                ]
+              }
+            )
+          ' docker-bake.json > docker-bake-ghcr.json
 
       - name: Build and push
         id: docker_build
         uses: docker/bake-action@v6
         with:
+          source: "{{defaultContext}}"
           files: docker-bake-ghcr.json
           push: true
 
