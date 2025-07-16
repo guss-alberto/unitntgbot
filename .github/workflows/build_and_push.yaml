@@ -51,9 +51,6 @@ jobs:
         id: docker_build
         uses: docker/bake-action@v6
         with:
-          source: "{{defaultContext}}"
+          source: .
           files: docker-bake-ghcr.json
           push: true
-
-      - name: Image digests
-        run: echo ${{ steps.docker_build.outputs.metadata }}
