@@ -1,5 +1,5 @@
 import requests
-from flask import Flask, Response, jsonify, make_response, request
+from flask import Flask, Response, jsonify, make_response
 from requests import RequestException
 
 from tt.stops_mapping import STOP_ID_TO_NAME

@@ -36,8 +36,8 @@ def get_maps_multiple() -> tuple[Response, int]:
         return (
             jsonify(
                 {
-                    "message": "Please provide building_id/room_id codes as a comma separated list in the 'rooms' query parameter"
-                }
+                    "message": "Please provide building_id/room_id codes as a comma separated list in the 'rooms' query parameter",
+                },
             ),
             400,
         )

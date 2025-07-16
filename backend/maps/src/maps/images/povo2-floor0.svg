@@ -70,7 +70,7 @@
 
   <polygon points="205,330 250,330 250,410 550,410 550,375 595,375 595,410 595,440 205,440" fill="none" stroke="#000" stroke-width="5" />
   <polygon points="550,330 595,330 595,360 550,360" fill="none" stroke="#000" stroke-width="5" />
-  
+
   <polygon points="250,455 550,455 550,500 250,500" fill="none" stroke="#000" stroke-width="5" />
   <polygon points="610,455 690,455 690,500 610,500" fill="none" stroke="#000" stroke-width="5" />
 

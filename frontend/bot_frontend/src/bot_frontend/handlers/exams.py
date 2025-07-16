@@ -82,16 +82,23 @@ async def exams_callback_handler(update: Update, context: ContextTypes.DEFAULT_T
         callback = f"u:{param}"
         async with httpx.AsyncClient() as client:
             response = await client.get(
-                f"{settings.EXAMS_SVC_URL}/exams/user/{param}", params={"page": page}, timeout=30
+                f"{settings.EXAMS_SVC_URL}/exams/user/{param}",
+                params={"page": page},
+                timeout=30,
             )
     else:
         callback = f"q:{param}"
         async with httpx.AsyncClient() as client:
             response = await client.get(
-                f"{settings.EXAMS_SVC_URL}/exams/search", params={"query": param, "page": page}, timeout=30
+                f"{settings.EXAMS_SVC_URL}/exams/search",
+                params={"query": param, "page": page},
+                timeout=30,
             )
 
     msg, markup = process_results(response, callback)
     await query.edit_message_text(
-        msg, reply_markup=markup, parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True
+        msg,
+        reply_markup=markup,
+        parse_mode=ParseMode.MARKDOWN,
+        disable_web_page_preview=True,
     )

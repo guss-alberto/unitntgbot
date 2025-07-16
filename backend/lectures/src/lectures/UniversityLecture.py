@@ -7,6 +7,7 @@ from typing import NamedTuple
 _BOOK_EMOJI = "📔📕📗📘📙📓📒"
 _CLOCK_EMOJI = "🕛🕧🕐🕜🕑🕝🕒🕞🕓🕟🕔🕠🕕🕡🕖🕢🕗🕣🕘🕤🕙🕥🕚🕦"
 
+
 class UniversityLecture(NamedTuple):
     id: str
     course_id: str

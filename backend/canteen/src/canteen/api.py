@@ -1,7 +1,6 @@
 import sqlite3
 from datetime import datetime, timedelta
 
-
 from flask import Flask, Response, g, jsonify, request
 
 from canteen.database import create_table, get_menu, update_db
@@ -24,12 +23,13 @@ def _close_connection(exception):
     if db is not None:
         db.close()
 
+
 @app.post("/update/")
 def update() -> tuple[Response, int]:
-    update_db(_get_db(), datetime.today()) 
-    update_db(_get_db(), datetime.today()+timedelta(days=7)) 
+    update_db(_get_db(), datetime.today())
+    update_db(_get_db(), datetime.today() + timedelta(days=7))
     return Response(), 200
-    
+
 
 @app.get("/menu/<string:lunch_or_dinner>/")
 def get_menu_api(lunch_or_dinner: str) -> tuple[Response, int]:

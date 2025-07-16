@@ -43,7 +43,7 @@ MAIN_MENU_REPLY_MARKUP = InlineKeyboardMarkup(
         [InlineKeyboardButton("🔄 Refresh Lectures", callback_data="setup:refresh_lectures")],
         [InlineKeyboardButton("🏫 Set Default Department", callback_data="setup:department")],
         # [InlineKeyboardButton("☰ Notifications 🔔", callback_data="setup:notifications")],
-    ]
+    ],
 )
 
 

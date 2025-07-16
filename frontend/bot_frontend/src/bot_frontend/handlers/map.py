@@ -12,7 +12,7 @@ async def map_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
     args = context.args
     if not args:
         await update.message.reply_text(
-            "Usage: /map <site_name> <room_code>\nExample: /map povo A201\nAvailable sites: povo, mesiano"
+            "Usage: /map <site_name> <room_code>\nExample: /map povo A201\nAvailable sites: povo, mesiano",
         )
         return
 
@@ -29,7 +29,9 @@ async def map_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
 
     async with httpx.AsyncClient() as client:
         response = await client.get(
-            f"{settings.MAPS_SVC_URL}/maps/{building_id}", params={"rooms": room_code}, timeout=30
+            f"{settings.MAPS_SVC_URL}/maps/{building_id}",
+            params={"rooms": room_code},
+            timeout=30,
         )
 
         match response.status_code:
@@ -50,7 +52,6 @@ async def map_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
                 return
             case 200:
                 await update.message.reply_photo(photo=response.content, caption=f"Map for {site_name} - {room_code}")
-                pass
             case _:
                 await update.message.reply_text("An unknown error occurred while fetching the map.")
                 return

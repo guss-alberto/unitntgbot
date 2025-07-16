@@ -8,7 +8,7 @@ if __name__ == "__main__":
     response = requests.get(url, stream=True)
 
     # Retrieve the full raw response, including headers and body
-    raw_response = b"".join(f"{key}: {value}\r\n".encode("utf-8") for key, value in response.headers.items())  # Headers
+    raw_response = b"".join(f"{key}: {value}\r\n".encode() for key, value in response.headers.items())  # Headers
     raw_response += b"\r\n"  # End of headers
     raw_response += response.raw.read()  # Body
 

@@ -79,10 +79,10 @@ async def _room_events(building_id: str, room: str) -> tuple[str, str, InlineKey
     keyboard = [
         [
             InlineKeyboardButton(
-                f"🗺️ View Room Location",
+                "🗺️ View Room Location",
                 callback_data=f"rooms:s:{building_id}:{room}",
-            )
-        ]
+            ),
+        ],
     ]  # TODO: Add more options such as filter for free, occupied or all rooms.
     reply_markup = InlineKeyboardMarkup(keyboard)
 
@@ -106,7 +106,10 @@ async def _room_events(building_id: str, room: str) -> tuple[str, str, InlineKey
 
 # Returns a tuple with the message, the keyboard and the rooms map images
 async def _rooms_status(
-    building_id: str, *, sort_time: bool = True, with_images: bool = False
+    building_id: str,
+    *,
+    sort_time: bool = True,
+    with_images: bool = False,
 ) -> tuple[str, InlineKeyboardMarkup | None, list[bytes] | None]:
     async with httpx.AsyncClient() as client:
         response = await client.get(f"{settings.ROOMS_SVC_URL}/rooms/{building_id}", timeout=30)
@@ -124,9 +127,9 @@ async def _rooms_status(
         ],
         [
             InlineKeyboardButton(
-                f"🗺️ View Free Rooms Location",
+                "🗺️ View Free Rooms Location",
                 callback_data=f"rooms:m:{'time' if sort_time else 'name'}:{building_id}:map",
-            )
+            ),
         ],
     ]  # TODO: Add more options such as filter for free, occupied or all rooms.
     reply_markup = InlineKeyboardMarkup(keyboard)
@@ -161,13 +164,15 @@ async def _rooms_status(
                 # Get the map for the free rooms
                 async with httpx.AsyncClient() as client:
                     map_response = await client.get(
-                        f"{settings.MAPS_SVC_URL}/maps/multi", params={"rooms": ",".join(free_rooms)}, timeout=30
+                        f"{settings.MAPS_SVC_URL}/maps/multi",
+                        params={"rooms": ",".join(free_rooms)},
+                        timeout=30,
                     )
 
                 if map_response.status_code == 200:
                     # Retrieve the full raw response, including headers and body
                     raw_response = b"".join(
-                        f"{key}: {value}\r\n".encode("utf-8") for key, value in map_response.headers.items()
+                        f"{key}: {value}\r\n".encode() for key, value in map_response.headers.items()
                     )
                     raw_response += b"\r\n"  # End of headers
                     raw_response += map_response.content  # The response body
@@ -240,7 +245,7 @@ async def rooms_callback_handler(update: Update, context: ContextTypes.DEFAULT_T
             # which is the case when the user clicks on the button to show the map immediately after fetching the rooms status
             await query.edit_message_text(msg, parse_mode=ParseMode.MARKDOWN, reply_markup=markup)
         except BadRequest as e:
-            if not "Message is not modified" in e.message:
+            if "Message is not modified" not in e.message:
                 raise
 
         if images:

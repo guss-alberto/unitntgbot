@@ -2,30 +2,17 @@ import asyncio
 import logging
 
 from aiokafka import AIOKafkaConsumer, ConsumerRecord
-from pydantic import BaseModel, ValidationError
+from pydantic import ValidationError
 from telegram import Bot
-from telegram.constants import ParseMode
 
-from notification_dispatcher.settings import settings
+from notification_dispatcher.notification import Notification
+from notification_dispatcher.settings import BotSettings, NotificationSettings
 
-logger = logging.getLogger(__name__)
+BOT_SETTINGS = BotSettings()
+NOTIFICATION_SETTINGS = NotificationSettings()
 
-BOT = Bot(token=settings.TELEGRAM_BOT_TOKEN)
-
-
-class NotificationMessage(BaseModel):
-    chat_id: int
-    message: str
-
-    def __init__(self, chat_id: int, message: str):
-        super().__init__(chat_id=chat_id, message=message)
-
-    async def send_notification(self) -> None:
-        try:
-            await BOT.send_message(chat_id=self.chat_id, text=self.message, parse_mode=ParseMode.MARKDOWN)
-        except Exception as e:
-            logger.error(f"Failed to send message to chat {self.chat_id}: {e}")
-            raise
+LOGGER = logging.getLogger(__name__)
+BOT = Bot(token=BOT_SETTINGS.TELEGRAM_BOT_TOKEN)
 
 
 def main() -> None:
@@ -33,9 +20,15 @@ def main() -> None:
 
 
 async def listen_topic() -> None:
-    consumer = AIOKafkaConsumer(settings.KAFKA_TOPIC, bootstrap_servers=settings.KAFKA_SERVER)
+    consumer = AIOKafkaConsumer(
+        NOTIFICATION_SETTINGS.KAFKA_TOPIC,
+        group_id=None,
+        bootstrap_servers=NOTIFICATION_SETTINGS.KAFKA_SERVER,
+    )
 
     await consumer.start()
+    LOGGER.warning("Started listening to Kafka topic: %s", NOTIFICATION_SETTINGS.KAFKA_TOPIC)
+
     try:
         async for msg in consumer:
             await handle_message(msg)
@@ -45,18 +38,17 @@ async def listen_topic() -> None:
 
 async def handle_message(kafka_message: ConsumerRecord[bytes, bytes]) -> None:
     if kafka_message.key is None or kafka_message.value is None:
-        logger.warning("Received message with missing key or value")
+        LOGGER.warning("Received message with missing key or value")
         return
 
     try:
-        chat_id = int.from_bytes(kafka_message.key)
-        message_text = kafka_message.value.decode("utf-8")
-        message = NotificationMessage(chat_id=chat_id, message=message_text)
+        notification = Notification.from_kafka_message(kafka_message)
     except UnicodeDecodeError:
-        logger.error("Invalid unicode in message: %s", kafka_message.value)
+        LOGGER.error("Invalid unicode in message: %s", kafka_message.value)
         return
     except ValidationError:
-        logger.error("Invalid data in message: %s", kafka_message.value)
+        LOGGER.error("Invalid data in message: %s", kafka_message.value)
         return
 
-    await message.send_notification()
+    await notification.send_message(BOT)
+    LOGGER.warning(f"Notification sent to chat {notification.chat_id}")

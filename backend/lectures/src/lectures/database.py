@@ -1,12 +1,19 @@
+import asyncio
 import sqlite3
 from datetime import datetime, timedelta
 
-from lectures.scraper import UniversityLecture, get_courses_from_easyacademy, import_from_ical
+from notification_dispatcher.notification import Notification
+
+from lectures.LectureUpdate import LectureUpdate
+from lectures.scraper import get_courses_from_easyacademy, import_from_ical
+from lectures.UniversityLecture import UniversityLecture
+
+asyncio.run(Notification.start_producer())
 
 tracked_courses: set[str] = set()
 
 
-def _create_tables(db: sqlite3.Connection) -> None:
+def create_tables(db: sqlite3.Connection) -> None:
     db.execute(
         """\
         CREATE TABLE IF NOT EXISTS Lectures (
@@ -85,7 +92,7 @@ def _create_tables(db: sqlite3.Connection) -> None:
         FOR EACH ROW
         BEGIN
             INSERT INTO Audits
-            VALUES (NEW.course_id, NEW.event_name, NEW.start, NULL, 'insert');
+            VALUES (NEW.course_id, NEW.event_name, NEW.start, NULL, 'add');
         END;""",
     )
     db.commit()
@@ -171,18 +178,16 @@ def import_for_user(db: sqlite3.Connection, user_id: str, token: str) -> set[str
 # TODO: If any lecture gets modified notify users subbed to it
 def update_db(db: sqlite3.Connection, date: datetime, weeks: int = 1) -> None:
     global tracked_courses
-    _create_tables(db)  # Creates the tables if it does not yet exist
-
     cur = db.cursor()
 
     cur.execute("SELECT DISTINCT course_id FROM Users;")
     tracked_courses = set(cur.fetchall())
 
     lectures: list[UniversityLecture] = []
-    
-    for i in range (weeks):
-        get_courses_from_easyacademy(tracked_courses, date + timedelta(weeks=i))
-        
+
+    for i in range(weeks):
+        lectures += get_courses_from_easyacademy(tracked_courses, date + timedelta(weeks=i))
+
     # logger.info("Found %s", len(lectures))
     db.execute("DELETE FROM Audits;")
     db.executemany(
@@ -203,17 +208,24 @@ def update_db(db: sqlite3.Connection, date: datetime, weeks: int = 1) -> None:
     )
     db.execute(
         """\
-            DELETE FROM lectures
-            WHERE last_update < datetime('now', '-1 hour')
-            AND date(start) >= date('now');
+        DELETE FROM Lectures
+        WHERE last_update < datetime('now', '-1 hour')
+        AND date(start) >= date('now');
         """,
     )
-    cur.execute("""\
-                SELECT DISTINCT Users.id, Audits.*
-                FROM Audits JOIN Users ON Users.course_id = Audits.course_id
-                WHERE DATE(Audits.time) < DATETIME("now", "3 weeks");
-                """)
+    cur.execute(
+        """\
+        SELECT DISTINCT Users.id, Audits.*
+        FROM Audits JOIN Users ON Users.course_id = Audits.course_id
+        WHERE DATE(Audits.time) < DATETIME("now", "3 weeks");
+        """,
+    )
     to_notify = cur.fetchall()
-    print(to_notify)
     cur.close()
     db.commit()
+
+    for notification in to_notify:
+        tg_id = notification[0]
+        update = LectureUpdate(*notification[1:])
+
+        Notification(tg_id, update.format()).send_notification()

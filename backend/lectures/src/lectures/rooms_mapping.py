@@ -357,7 +357,7 @@ ROOM_ID_TO_NAME = {
     "E0201/M2/27": "2 mansarda",
     "E0201/M3/27": "3 mansarda",
     "E0201/M4/27": "4 mansarda",
-    "E0502/SEM": None, # Bernardo clesio - aula seminari, This forces he system to use the ["aula"] field instead of the room code which would return povo
+    "E0502/SEM": None,  # Bernardo clesio - aula seminari, This forces he system to use the ["aula"] field instead of the room code which would return povo
     "CLab-M": "CLab-M",
     "CLab-S": "CLab-S",
 }

@@ -26,7 +26,7 @@ def generate_reply_markup(route: dict, sequence: int) -> InlineKeyboardMarkup:
     reply_markup = InlineKeyboardMarkup(keyboard)
 
     if sequence != 0:
-        keyboard.append([InlineKeyboardButton("Go back to first", callback_data=f"tt:0")])
+        keyboard.append([InlineKeyboardButton("Go back to first", callback_data="tt:0")])
 
     return reply_markup
 
@@ -76,7 +76,7 @@ def format_route(route: dict, sequence: int) -> str:
                     "Is it even moving?\n",
                     "Have you checked they aren't on strike today?\n",
                     "The wheels on the bus go round and round...\n",
-                ]
+                ],
             )
 
         current_stop = route["stops"][route["currentStopIndex"]]["stopName"]
@@ -108,11 +108,11 @@ async def tt_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
                 markdown = format_route(route, sequence)
                 reply_markup = generate_reply_markup(route, sequence)
                 await update.message.reply_markdown(markdown, reply_markup=reply_markup)
-                pass
             case _:
                 reply_markup = generate_reply_markup(route, sequence)
                 await update.message.reply_text(
-                    "An unknown error occurred while fetching the bus route.", reply_markup=reply_markup
+                    "An unknown error occurred while fetching the bus route.",
+                    reply_markup=reply_markup,
                 )
                 return
 
@@ -139,10 +139,10 @@ async def tt_callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE
                 markdown = format_route(route, sequence)
                 reply_markup = generate_reply_markup(route, sequence)
                 await query.edit_message_text(markdown, parse_mode=ParseMode.MARKDOWN, reply_markup=reply_markup)
-                pass
             case _:
                 reply_markup = generate_reply_markup(route, sequence)
                 await query.edit_message_text(
-                    "An unknown error occurred while fetching the bus route.", reply_markup=reply_markup
+                    "An unknown error occurred while fetching the bus route.",
+                    reply_markup=reply_markup,
                 )
                 return

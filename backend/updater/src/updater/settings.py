@@ -9,5 +9,5 @@ class Settings(BaseSettings):
     LECTURES_SVC_URL: str = Field(default=...)
     EXAMS_SVC_URL: str = Field(default=...)
 
-settings = Settings()
 
+settings = Settings()

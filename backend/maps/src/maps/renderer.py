@@ -19,14 +19,14 @@ def render_map(building_name: str, floor: int, room_ids: set[str]) -> bytes | No
 
     Returns:
         bytes: The rendered image in png format.
-    """
 
+    """
     filepath = os.path.join(IMAGES_DIR, f"{building_name}-floor{floor}.svg")
 
     if filepath is None:
         return None
 
-    with open(filepath, "r", encoding="utf-8") as f:
+    with open(filepath, encoding="utf-8") as f:
         svg_content = f.read()
 
     # Load SVG file
@@ -66,8 +66,8 @@ def get_building_name_and_floor(building_id: str, room_id: str) -> tuple[str, in
 
     Returns:
         int: The floor number.
-    """
 
+    """
     floor = None
     building_name = None
 

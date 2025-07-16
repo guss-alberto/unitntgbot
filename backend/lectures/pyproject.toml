@@ -9,7 +9,11 @@ dependencies = [
     "pydantic-settings>=2.7.1",
     "requests>=2.32.3",
     "python-telegram-bot>=21.10",
+    "notification_dispatcher",
 ]
+
+[tool.uv.sources]
+notification_dispatcher = { workspace = true }
 
 [project.scripts]
 lectures = "lectures.api:main"

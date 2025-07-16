@@ -1,5 +1,4 @@
 import sqlite3
-from datetime import datetime
 
 from exams.scraper import get_university_exams, get_university_faculties
 from exams.UniversityExam import UniversityExam
