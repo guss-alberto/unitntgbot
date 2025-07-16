@@ -6,6 +6,20 @@ services:
       - 9094:9094
     volumes:
       - kafka-data:/bitnami
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "kafka-cluster.sh",
+          "cluster-id",
+          "--bootstrap-server",
+          "localhost:9092",
+        ]
+      interval: 30s
+      timeout: 30s
+      retries: 3
+      start_period: 10s
+      start_interval: 1s
     environment:
       # KRaft settings
       KAFKA_CFG_NODE_ID: 0
@@ -41,6 +55,9 @@ services:
     build:
       args:
         PACKAGE: notification_dispatcher
+    depends_on:
+      kafka:
+        condition: service_healthy
     environment:
       TELEGRAM_BOT_TOKEN: $TELEGRAM_BOT_TOKEN
       KAFKA_SERVER: kafka:9092
@@ -61,6 +78,9 @@ services:
     build:
       args:
         PACKAGE: canteen
+    depends_on:
+      kafka:
+        condition: service_healthy
     environment:
       DB_PATH: /db/database.sqlite3
     volumes:
@@ -71,6 +91,9 @@ services:
     build:
       args:
         PACKAGE: exams
+    depends_on:
+      kafka:
+        condition: service_healthy
     environment:
       DB_PATH: /db/database.sqlite3
     volumes:
@@ -81,6 +104,9 @@ services:
     build:
       args:
         PACKAGE: lectures
+    depends_on:
+      kafka:
+        condition: service_healthy
     environment:
       DB_PATH: /db/database.sqlite3
       EXAMS_SVC_URL: http://exams_svc:5000
