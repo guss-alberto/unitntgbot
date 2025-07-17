@@ -1,5 +1,6 @@
 import asyncio
 import sqlite3
+from collections import defaultdict
 from datetime import datetime, timedelta
 
 from notification_dispatcher.notification import Notification
@@ -11,6 +12,16 @@ from lectures.UniversityLecture import UniversityLecture
 asyncio.run(Notification.start_producer())
 
 tracked_courses: set[str] = set()
+WEEKS_UPDATED = 4
+
+
+def get_tracked_courses(courses: set[str], date: datetime) -> list[UniversityLecture]:
+    lectures: list[UniversityLecture] = []
+
+    for i in range(WEEKS_UPDATED):
+        lectures += get_courses_from_easyacademy(courses, date + timedelta(weeks=i))
+
+    return lectures
 
 
 def create_tables(db: sqlite3.Connection) -> None:
@@ -38,7 +49,7 @@ def create_tables(db: sqlite3.Connection) -> None:
     )
     db.execute(
         """\
-        CREATE TABLE IF NOT EXISTS Audits (
+        CREATE TABLE IF NOT EXISTS Changes (
            course_id TEXT NOT NULL,
            event_name TEXT NOT NULL,
            time TEXT NOT NULL,
@@ -56,7 +67,7 @@ def create_tables(db: sqlite3.Connection) -> None:
             OLD.start != NEW.start OR
             OLD.event_name != NEW.event_name
         BEGIN
-            INSERT INTO Audits
+            INSERT INTO Changes
             VALUES (OLD.course_id, OLD.event_name, OLD.start, NEW.start, 'edit');
         END;""",
     )
@@ -69,7 +80,7 @@ def create_tables(db: sqlite3.Connection) -> None:
         WHEN
             OLD.is_cancelled != NEW.is_cancelled
         BEGIN
-            INSERT INTO Audits
+            INSERT INTO Changes
             VALUES (OLD.course_id, OLD.event_name, OLD.start, NULL, 'cancel');
         END;""",
     )
@@ -80,7 +91,7 @@ def create_tables(db: sqlite3.Connection) -> None:
         AFTER DELETE ON Lectures
         FOR EACH ROW
         BEGIN
-            INSERT INTO Audits
+            INSERT INTO Changes
             VALUES (OLD.course_id, OLD.event_name, OLD.start, NULL, 'remove');
         END;""",
     )
@@ -91,7 +102,7 @@ def create_tables(db: sqlite3.Connection) -> None:
         AFTER INSERT ON Lectures
         FOR EACH ROW
         BEGIN
-            INSERT INTO Audits
+            INSERT INTO Changes
             VALUES (NEW.course_id, NEW.event_name, NEW.start, NULL, 'add');
         END;""",
     )
@@ -159,23 +170,22 @@ def import_for_user(db: sqlite3.Connection, user_id: str, token: str) -> set[str
         [(user_id, course) for course in courses],
     )
 
+    # if some lectures are not currently being tracked, add them silently without notifying users
     if not courses.issubset(tracked_courses):
-        lectures = get_courses_from_easyacademy(courses - tracked_courses, datetime.now())
-
+        lectures = get_tracked_courses(courses - tracked_courses, datetime.now())
         db.executemany(
             """\
             INSERT OR REPLACE INTO Lectures (id, course_id, event_name, lecturer, start, end, room, is_cancelled)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?);""",
             lectures,
         )
-        tracked_courses.union(courses)
+        tracked_courses = tracked_courses.union(courses)
 
     db.commit()
     return courses
 
 
 # This function has to be run every week or with even more frequency to keep the database up to date
-# TODO: If any lecture gets modified notify users subbed to it
 def update_db(db: sqlite3.Connection, date: datetime, weeks: int = 1) -> None:
     global tracked_courses
     cur = db.cursor()
@@ -183,13 +193,10 @@ def update_db(db: sqlite3.Connection, date: datetime, weeks: int = 1) -> None:
     cur.execute("SELECT DISTINCT course_id FROM Users;")
     tracked_courses = set(cur.fetchall())
 
-    lectures: list[UniversityLecture] = []
-
-    for i in range(weeks):
-        lectures += get_courses_from_easyacademy(tracked_courses, date + timedelta(weeks=i))
+    lectures: list[UniversityLecture] = get_tracked_courses(tracked_courses, date)
 
     # logger.info("Found %s", len(lectures))
-    db.execute("DELETE FROM Audits;")
+    db.execute("DELETE FROM Changes;")
     db.executemany(
         """\
         INSERT INTO Lectures (id, course_id, event_name, lecturer, start, end, room, is_cancelled)
@@ -215,17 +222,27 @@ def update_db(db: sqlite3.Connection, date: datetime, weeks: int = 1) -> None:
     )
     cur.execute(
         """\
-        SELECT DISTINCT Users.id, Audits.*
-        FROM Audits JOIN Users ON Users.course_id = Audits.course_id
-        WHERE DATE(Audits.time) < DATETIME("now", "3 weeks");
+        SELECT DISTINCT Users.id, Changes.*
+        FROM Changes JOIN Users ON Users.course_id = Changes.course_id
+        WHERE DATE(Changes.time) < DATETIME("now", "3 weeks");
         """,
     )
     to_notify = cur.fetchall()
     cur.close()
     db.commit()
 
-    for notification in to_notify:
-        tg_id = notification[0]
-        update = LectureUpdate(*notification[1:])
 
-        Notification(tg_id, update.format()).send_notification()
+    # group by user
+    user_changes = defaultdict(list)
+    for tg_id, *u in to_notify:
+        user_changes[tg_id].append(u)
+
+    # create a single gouped notification for all the updates
+    for tg_id, updates in user_changes.items():
+        formatted_updates = [LectureUpdate(*u).format() for u in updates]
+
+        message = "‼️ *LECTURE UPDATES* ‼️\n"
+        message += f"{len(updates)} lectures have changed\n\n"
+        message += "\n".join(formatted_updates)
+
+        Notification(tg_id, message).send_notification()

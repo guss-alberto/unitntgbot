@@ -1,12 +1,14 @@
 import random
 import re
 from datetime import datetime
-from hashlib import md5
 from typing import NamedTuple
 
 _BOOK_EMOJI = "📔📕📗📘📙📓📒"
 _CLOCK_EMOJI = "🕛🕧🕐🕜🕑🕝🕒🕞🕓🕟🕔🕠🕕🕡🕖🕢🕗🕣🕘🕤🕙🕥🕚🕦"
 
+def get_book (name: str) -> str:
+    emoji_id = abs(hash(name)) % len(_BOOK_EMOJI)
+    return _BOOK_EMOJI[emoji_id]
 
 class UniversityLecture(NamedTuple):
     id: str
@@ -30,9 +32,7 @@ class UniversityLecture(NamedTuple):
         return ""
 
     def _get_book_emoji(self) -> str:
-        hash_hex = md5(self.course_id.encode()).hexdigest()
-        emoji_id = int(hash_hex, 16) % len(_BOOK_EMOJI)
-        return _BOOK_EMOJI[emoji_id]
+        return get_book(self.course_id)
 
     def _get_clock_emoji(self) -> str:
         time = datetime.fromisoformat(self.start)
