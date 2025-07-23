@@ -245,4 +245,4 @@ def update_db(db: sqlite3.Connection, date: datetime, weeks: int = 1) -> None:
         message += f"{len(updates)} lectures have changed\n\n"
         message += "\n".join(formatted_updates)
 
-        Notification(tg_id, message).send_notification()
+        asyncio.run(Notification(tg_id, message).send_notification())

@@ -11,7 +11,6 @@ _NOTIFICATION_SETTINGS = NotificationSettings()
 _LOGGER = logging.getLogger(__name__)
 _producer = None
 
-
 class Notification(BaseModel):
     chat_id: int
     message: str
@@ -29,15 +28,25 @@ class Notification(BaseModel):
         return Notification(chat_id=chat_id, message=message_text)
 
     @staticmethod
+    def is_producer_started() -> bool:
+        return _producer is not None
+
+    @staticmethod
     async def start_producer() -> None:
         global _producer
+        assert _producer is None, "Producer is already initialized. Call stop_producer() first."
         _producer = AIOKafkaProducer(bootstrap_servers=_NOTIFICATION_SETTINGS.KAFKA_SERVER)
         await _producer.start()
 
+    @staticmethod
+    async def stop_producer() -> None:
+        global _producer
+        assert _producer is not None, "Producer is not initialized. Call start_producer() first."
+        await _producer.stop()
+        _producer = None
+
     async def send_message(self, bot: telegram.Bot) -> None:
-        """
-        Sends a notification message using the provided Telegram bot.
-        """
+        """Send a notification message using the provided Telegram bot."""
         try:
             await bot.send_message(
                 chat_id=self.chat_id,
@@ -49,16 +58,30 @@ class Notification(BaseModel):
             raise
 
     async def send_notification(self) -> None:
-        """
-        Sends a notification by producing a message to the Kafka topic.
-        """
+        global _producer
+        """Send a notification by producing a message to the Kafka topic."""
         assert _producer is not None, "Producer is not initialized. Call start_producer() first."
 
         try:
             key = self.chat_id.to_bytes(8, "big")
             value = self.message.encode("utf-8")
-            await _producer.send(_NOTIFICATION_SETTINGS.KAFKA_TOPIC, key=key, value=value)
-            # LOGGER.info(f"Notification sent to chat {self.chat_id}")
+            await _producer.send(_NOTIFICATION_SETTINGS.KAFKA_TOPIC, value, key)
+            _LOGGER.warning(f"Notification sent to chat {self.chat_id}")
         except Exception as e:
             _LOGGER.error(f"Failed to send notification to Kafka: {e}")
             raise
+        finally:
+            await _producer.flush()
+
+    async def send_notification2(self) -> None:
+        producer = AIOKafkaProducer(bootstrap_servers=_NOTIFICATION_SETTINGS.KAFKA_SERVER)
+        await producer.start()
+        try:
+            key = self.chat_id.to_bytes(8, "big")
+            value = self.message.encode("utf-8")
+            await producer.send(_NOTIFICATION_SETTINGS.KAFKA_TOPIC, value, key)
+        except Exception as e:
+            _LOGGER.error(f"Failed to send notification to Kafka: {e}")
+            raise
+        finally:
+            await producer.stop()
