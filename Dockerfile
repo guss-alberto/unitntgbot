@@ -28,6 +28,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 FROM python:3.13.5-slim-bookworm
 WORKDIR /app
 
+# Install system dependencies, libcairo2 is installed only if the package is 'maps'
 ARG PACKAGE
 RUN apt-get update \
     && apt-get install -y --no-install-recommends dumb-init \
@@ -42,7 +43,11 @@ COPY --from=builder /app /app
 # Place executables in the environment at the front of the path
 ENV PATH="/app/.venv/bin:$PATH"
 
+# https://github.com/Yelp/dumb-init
 ENTRYPOINT ["/usr/bin/dumb-init", "--"]
+
+# Swap user to non-root
+USER nobody 
 
 ENV PACKAGE=${PACKAGE}
 CMD ["sh", "-c", "${PACKAGE}"]

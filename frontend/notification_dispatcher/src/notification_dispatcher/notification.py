@@ -58,22 +58,6 @@ class Notification(BaseModel):
             raise
 
     async def send_notification(self) -> None:
-        global _producer
-        """Send a notification by producing a message to the Kafka topic."""
-        assert _producer is not None, "Producer is not initialized. Call start_producer() first."
-
-        try:
-            key = self.chat_id.to_bytes(8, "big")
-            value = self.message.encode("utf-8")
-            await _producer.send(_NOTIFICATION_SETTINGS.KAFKA_TOPIC, value, key)
-            _LOGGER.warning(f"Notification sent to chat {self.chat_id}")
-        except Exception as e:
-            _LOGGER.error(f"Failed to send notification to Kafka: {e}")
-            raise
-        finally:
-            await _producer.flush()
-
-    async def send_notification2(self) -> None:
         producer = AIOKafkaProducer(bootstrap_servers=_NOTIFICATION_SETTINGS.KAFKA_SERVER)
         await producer.start()
         try:

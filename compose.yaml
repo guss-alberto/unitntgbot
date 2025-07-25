@@ -49,6 +49,10 @@ services:
       TT_SVC_URL: http://tt_svc:5000
     volumes:
       - bot-data:/db:rw
+    develop:
+      watch:
+        - action: rebuild
+          path: ./frontend/bot_frontend/src
 
   notification_dispatcher:
     restart: unless-stopped
@@ -62,6 +66,10 @@ services:
       TELEGRAM_BOT_TOKEN: $TELEGRAM_BOT_TOKEN
       KAFKA_SERVER: kafka:9092
       KAFKA_TOPIC: notifications
+    develop:
+      watch:
+        - action: rebuild
+          path: ./frontend/notification_dispatcher/src
 
   updater:
     restart: unless-stopped
@@ -72,6 +80,10 @@ services:
       CANTEEN_SVC_URL: http://canteen_svc:5000
       EXAMS_SVC_URL: http://exams_svc:5000
       LECTURES_SVC_URL: http://lectures_svc:5000
+    develop:
+      watch:
+        - action: rebuild
+          path: ./backend/updater/src
 
   canteen_svc:
     restart: unless-stopped
@@ -87,6 +99,10 @@ services:
       KAFKA_TOPIC: notifications
     volumes:
       - canteen-data:/db:rw
+    develop:
+      watch:
+        - action: rebuild
+          path: ./backend/canteen/src
 
   exams_svc:
     restart: unless-stopped
@@ -102,6 +118,10 @@ services:
       KAFKA_TOPIC: notifications
     volumes:
       - exams-data:/db:rw
+    develop:
+      watch:
+        - action: rebuild
+          path: ./backend/exams/src
 
   lectures_svc:
     restart: unless-stopped
@@ -118,24 +138,40 @@ services:
       KAFKA_TOPIC: notifications
     volumes:
       - lectures-data:/db:rw
+    develop:
+      watch:
+        - action: rebuild
+          path: ./backend/lectures/src
 
   maps_svc:
     restart: unless-stopped
     build:
       args:
         PACKAGE: maps
+    develop:
+      watch:
+        - action: rebuild
+          path: ./backend/maps/src
 
   rooms_svc:
     restart: unless-stopped
     build:
       args:
         PACKAGE: rooms
+    develop:
+      watch:
+        - action: rebuild
+          path: ./backend/rooms/src
 
   tt_svc:
     restart: unless-stopped
     build:
       args:
         PACKAGE: tt
+    develop:
+      watch:
+        - action: rebuild
+          path: ./backend/tt/src
 
 volumes:
   bot-data:
