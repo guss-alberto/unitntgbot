@@ -17,7 +17,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --locked --no-dev --no-install-workspace --package ${PACKAGE}
 
 # Build app
-COPY pyproject.toml uv.lock README.md ./
+COPY pyproject.toml uv.lock ./
 COPY backend ./backend
 COPY frontend ./frontend
 RUN --mount=type=cache,target=/root/.cache/uv \
@@ -28,9 +28,12 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 FROM python:3.13.5-slim-bookworm
 WORKDIR /app
 
+ARG PACKAGE
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-    dumb-init \
+    && apt-get install -y --no-install-recommends dumb-init \
+    && if [ "${PACKAGE:-}" = "maps" ]; then \
+        apt-get install -y --no-install-recommends libcairo2; \
+    fi \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -41,6 +44,5 @@ ENV PATH="/app/.venv/bin:$PATH"
 
 ENTRYPOINT ["/usr/bin/dumb-init", "--"]
 
-ARG PACKAGE
 ENV PACKAGE=${PACKAGE}
 CMD ["sh", "-c", "${PACKAGE}"]

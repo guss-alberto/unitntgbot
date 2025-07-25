@@ -119,11 +119,11 @@ services:
     volumes:
       - lectures-data:/db:rw
 
-  # maps_svc:
-  #   restart: unless-stopped
-  #   build:
-  #     args:
-  #       PACKAGE: maps
+  maps_svc:
+    restart: unless-stopped
+    build:
+      args:
+        PACKAGE: maps
 
   rooms_svc:
     restart: unless-stopped
