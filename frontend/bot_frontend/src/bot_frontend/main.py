@@ -20,6 +20,8 @@ from bot_frontend.handlers.setup import (
     refresh_lectures,
     set_default_department,
     set_unitrentoapp_token,
+    set_notifications,
+    set_notification_time,
     setup_callback_handler,
     setup_handler,
 )
@@ -73,6 +75,8 @@ def main() -> None:
             CommandHandler("setup", setup_handler),
             CallbackQueryHandler(set_default_department, pattern=r"^setup:department:.*$"),
             CallbackQueryHandler(refresh_lectures, pattern=r"^setup:refresh_lectures$"),
+            CallbackQueryHandler(set_notification_time, pattern=r"^setup:notifications:.*:.*$"),
+            CallbackQueryHandler(set_notifications, pattern=r"^setup:notifications:.*$"),
             CallbackQueryHandler(setup_callback_handler, pattern=r"^setup:.*$"),
         ],
         states={

@@ -1,5 +1,6 @@
 import sqlite3
 from datetime import datetime
+import re
 
 import requests
 from flask import Flask, Response, g, jsonify, request
@@ -10,6 +11,8 @@ from lectures.database import (
     get_next_lectures_for_user,
     import_for_user,
     update_db,
+    notify_users_time,
+    set_notification_time,
 )
 from lectures.settings import settings
 from lectures.UniversityLecture import UniversityLecture
@@ -29,6 +32,18 @@ def _get_db() -> sqlite3.Connection:
 def update() -> tuple[Response, int]:
     update_db(_get_db(), datetime.today(), 3)
     return Response(), 200
+
+
+@app.post("/notify/<string:time>")
+def notify(time: str) -> tuple[Response, int]:
+    """
+    Endpoint to notify users about lectures at a specific time.
+    """
+
+    db = _get_db()
+    n_users = notify_users_time(db, time)
+
+    return jsonify({"message": f"Notifications sent to {n_users} users"}), 200
 
 
 @app.teardown_appcontext
@@ -99,6 +114,18 @@ def get_lectures(tg_id: str) -> tuple[Response, int]:
         return jsonify({"message": "User not found"}), 404
 
     return jsonify({"lectures": lectures}), 200
+
+
+@app.post("/<string:tg_id>/notification/<string:time>")
+def set_notification(tg_id: str, time: str) -> tuple[Response, int]:
+    db = _get_db()
+    
+    if not re.match(r"^\d\d:\d\d$", time):
+        return jsonify({"message": "Invalid time format, expected HH:MM"}), 400
+    
+    set_notification_time(db, tg_id, time)
+
+    return jsonify({"message": "Notification time set successfully"}), 200
 
 
 def main() -> None:

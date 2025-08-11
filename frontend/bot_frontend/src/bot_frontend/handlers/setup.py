@@ -26,14 +26,6 @@ DB.execute(
         token TEXT NOT NULL
     );""",
 )
-# DB.execute(
-#     """\
-#     CREATE TABLE IF NOT EXISTS Notifications (
-#         id TEXT PRIMARY KEY,
-#         lecture_notification_time TEXT,
-#         canteen_notification_time TEXT,
-#     );""",
-# )
 DB.commit()
 
 
@@ -42,17 +34,24 @@ MAIN_MENU_REPLY_MARKUP = InlineKeyboardMarkup(
         [InlineKeyboardButton("🗓️ Link UniTrentoApp account", callback_data="setup:lecture")],
         [InlineKeyboardButton("🔄 Refresh Lectures", callback_data="setup:refresh_lectures")],
         [InlineKeyboardButton("🏫 Set Default Department", callback_data="setup:department")],
-        # [InlineKeyboardButton("☰ Notifications 🔔", callback_data="setup:notifications")],
+        [InlineKeyboardButton("🔔 Notifications", callback_data="setup:notifications")],
     ],
 )
 
+NOTIFICATIONS_REPLY_MARKUP = InlineKeyboardMarkup(
+    [
+        [InlineKeyboardButton("🍝 Canteen", callback_data="setup:notifications:canteen")],
+        [InlineKeyboardButton("🗓️ Lectures", callback_data="setup:notifications:lectures")],
+        [InlineKeyboardButton("❌ Go Back", callback_data="setup:notifications:back")],
+    ],
+)
 
 async def setup_handler(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
     if update.message:
         await update.message.reply_text("Choose an option:", reply_markup=MAIN_MENU_REPLY_MARKUP)
 
 
-async def setup_callback_handler(update: Update, _: ContextTypes.DEFAULT_TYPE) -> int:
+async def setup_callback_handler(update: Update, _: ContextTypes.DEFAULT_TYPE) -> int | None:
     query = update.callback_query
 
     if not query or not query.message:
@@ -77,11 +76,19 @@ async def setup_callback_handler(update: Update, _: ContextTypes.DEFAULT_TYPE) -
                 keyboard.append(
                     [InlineKeyboardButton(department_name, callback_data=f"setup:department:{department_id}")],
                 )
-            keyboard.append([InlineKeyboardButton("Go Back", callback_data="setup:department:back")])
+            keyboard.append([InlineKeyboardButton("❌ Go Back", callback_data="setup:department:back")])
             reply_markup = InlineKeyboardMarkup(keyboard)
 
             await query.edit_message_text("Select your default department", reply_markup=reply_markup)
             return ConversationHandler.END
+        case "setup:refresh_lectures":
+            # handled directly, shouldn't ever reach this point
+            pass
+        case "setup:notifications":
+            await query.edit_message_text(
+                "Select the notifications you want to set up",
+                reply_markup=NOTIFICATIONS_REPLY_MARKUP,
+            )
         case _:
             await query.edit_message_text(text="Invalid option selected")
             return ConversationHandler.END
@@ -179,14 +186,84 @@ async def refresh_lectures(update: Update, _: CallbackContext) -> int:
     return ConversationHandler.END
 
 
-async def notifications_handler(update: Update, _: CallbackContext) -> int:
+async def set_notifications(update: Update, _: CallbackContext) -> int:
     query = update.callback_query
-    if not query or not query.message:
+    if not update.effective_message or not query:
+        return ConversationHandler.END
+
+    data = query.data
+    if not data:
         return ConversationHandler.END
 
     await query.answer()
 
+    if data == "setup:notifications:back":
+        await update.effective_message.edit_text("Choose an option:", reply_markup=MAIN_MENU_REPLY_MARKUP)
+        return ConversationHandler.END
+
+    notification_type = data[len("setup:notifications:") :] # Either "canteen" or "lectures"
+
+    keyboard = []
+    row = []
+    for hour in ["06:00", "06:30", "07:00", "07:30", "08:00", "08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "12:00", "12:30"]:
+        row.append(InlineKeyboardButton(hour, callback_data=f"setup:notifications:{notification_type}:{hour}"))
+        if len(row) == 2:
+            keyboard.append(row)
+            row = []
+    
+    await query.edit_message_text(
+        f"Select the time for {notification_type} notifications",
+        reply_markup=InlineKeyboardMarkup(keyboard + [[InlineKeyboardButton("❌ Go Back", callback_data=f"setup:notifications:{notification_type}:back")]]),
+    )
+
     return ConversationHandler.END
+
+
+async def set_notification_time(update: Update, _: CallbackContext) -> int:
+    query = update.callback_query
+    if not update.effective_message or not query:
+        return ConversationHandler.END
+
+    data = query.data
+    message = query.message
+    if not data or not message:
+        return ConversationHandler.END
+
+    await query.answer()
+
+    if re.match(r"^setup:notifications:.*:back$", data):
+        await query.edit_message_text(
+            "Select the notifications you want to set up",
+            reply_markup=NOTIFICATIONS_REPLY_MARKUP,
+        )
+        return ConversationHandler.END
+
+    notification_type, *time = data[len("setup:notifications:") :].split(":")
+    time = ":".join(time)
+    tg_id = message.chat.id
+    
+    if notification_type == "canteen":
+        url = settings.CANTEEN_SVC_URL
+    elif notification_type == "lectures":
+        url = settings.LECTURES_SVC_URL
+    else:
+        return ConversationHandler.END 
+    
+    async with httpx.AsyncClient() as client:
+        response = await client.post(
+            f"{url}/{tg_id}/notification/{time}",
+            timeout=30,
+        )
+
+        match response.status_code:
+            case 200:
+                data = response.json()
+                await query.edit_message_text(f"Notification set successfully for {notification_type} at {time}")
+            case _:
+                await query.edit_message_text("An unknown error occurred while setting notifications.")
+
+
+    return ConversationHandler.END 
 
 
 async def cancel(update: Update, _: CallbackContext) -> int:

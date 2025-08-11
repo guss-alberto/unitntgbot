@@ -1,7 +1,7 @@
 import asyncio
 import sqlite3
 from collections import defaultdict
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date as dtdate
 
 from notification_dispatcher.notification import Notification
 
@@ -55,6 +55,13 @@ def create_tables(db: sqlite3.Connection) -> None:
            time TEXT NOT NULL,
            new_time TEXT,
            event CHECK(event IN ('add', 'edit', 'cancel', 'remove'))
+        );""",
+    )
+    db.execute(
+        """\
+        CREATE TABLE IF NOT EXISTS Notifications (
+           id TEXT PRIMARY KEY,
+           time TEXT,
         );""",
     )
     db.execute(
@@ -246,3 +253,38 @@ def update_db(db: sqlite3.Connection, date: datetime, weeks: int = 1) -> None:
         message += "\n".join(formatted_updates)
 
         asyncio.run(Notification(tg_id, message).send_notification())
+
+
+def notify_users_time(db: sqlite3.Connection, time: str) -> int:
+    cur = db.cursor()
+    cur.execute(
+        """\
+        SELECT id FROM Notifications 
+        WHERE time = ?;
+        """,
+        (time)
+    )
+    
+    parsed_time = datetime.strptime(time, "%H:%M:%S").time()
+    curr_time: datetime = datetime.combine(dtdate.today(), parsed_time)
+
+    notified_users = 0
+    for user_id in cur.fetchall():
+        lectures: list[UniversityLecture] = get_next_lectures_for_user(db, user_id, curr_time)
+        
+        if not lectures:
+            continue
+        
+        notified_users += 1
+        message: str = f"*Lectures for {curr_time.strftime('%A, %Y-%m-%d')}*\n\n"
+        formatted_lectures: list[str] = [lec.format() for lec in lectures]
+        message += "\n\n".join(formatted_lectures)
+        
+        asyncio.run(Notification(user_id, message).send_notification())
+
+    return notified_users 
+
+
+def set_notification_time(db: sqlite3.Connection, tg_id: str, time: str | None) -> None:
+    db.execute("INSERT OR REPLACE INTO Notifications (?, ?);", (tg_id, time))
+    db.commit()

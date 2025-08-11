@@ -1,5 +1,8 @@
+import asyncio
 import sqlite3
-from datetime import date, datetime
+from datetime import date as dtdate, datetime
+
+from notification_dispatcher.notification import Notification
 
 from canteen.scraper import get_week_meals
 from canteen.settings import settings
@@ -17,6 +20,13 @@ def create_table(db: sqlite3.Connection) -> None:
         PRIMARY KEY ( date, is_dinner )
         );""",
     )
+    db.execute(
+        """\
+        CREATE TABLE IF NOT EXISTS Notifications (
+           id TEXT PRIMARY KEY,
+           time TEXT,
+        );""",
+    )
     db.commit()
 
 
@@ -27,7 +37,7 @@ def update_db(db: sqlite3.Connection, date: datetime) -> None:
     db.commit()
 
 
-def get_menu(db: sqlite3.Connection, date: date, *, dinner: bool = False) -> str:  # TODO return None when 404
+def get_menu(db: sqlite3.Connection, date: dtdate, *, dinner: bool = False) -> str:  # TODO return None when 404
     cur = db.cursor()
     cur.execute("SELECT menu FROM Menu WHERE date == ? AND is_dinner == ? LIMIT 1", (date.strftime("%Y-%m-%d"), dinner))
     menu = cur.fetchone()
@@ -37,6 +47,37 @@ def get_menu(db: sqlite3.Connection, date: date, *, dinner: bool = False) -> str
         return menu[0]
 
     return "NOT AVAILABLE"
+
+
+def notify_users_time(db: sqlite3.Connection, time: str) -> int:
+    cur = db.cursor()
+    cur.execute(
+        """\
+        SELECT id FROM Notifications 
+        WHERE time = ?;
+        """,
+        (time)
+    )
+    
+    users = cur.fetchall()
+    cur.close()
+    
+    if not users:
+        return 0
+
+    menu = get_menu(db, dtdate.today())
+    if menu == "NOT AVAILABLE":
+        return 0
+
+    for user_id in users:
+        asyncio.run(Notification(user_id, menu).send_notification())
+
+    return len(users) 
+
+
+def set_notification_time(db: sqlite3.Connection, tg_id: str, time: str | None) -> None:
+    db.execute("INSERT OR REPLACE INTO Notifications (?, ?);", (tg_id, time))
+    db.commit()
 
 
 if __name__ == "__main__":

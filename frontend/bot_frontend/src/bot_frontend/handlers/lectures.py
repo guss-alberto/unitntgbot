@@ -23,7 +23,7 @@ def format_output(date: date, lectures: list) -> tuple[str, InlineKeyboardMarkup
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
 
-    message = f"*Lectures for {date.strftime('%A, %B %d, %Y')}*\n\n"
+    message = f"*Lectures for {date.strftime('%A, %Y-%m-%d')}*\n\n"
     if lectures:
         lectures = [UniversityLecture(*lec).format() for lec in lectures]
         message += "\n\n".join(lectures)

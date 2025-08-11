@@ -49,3 +49,4 @@ class UniversityLecture(NamedTuple):
             )
 
         return f"{self._get_clock_emoji()} • _cancelled_\n{self._get_book_emoji()} • _{self.event_name}_"
+    

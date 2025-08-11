@@ -9,7 +9,11 @@ dependencies = [
     "pandas>=2.2.3",
     "pydantic-settings>=2.7.1",
     "requests>=2.32.3",
+    "notification_dispatcher",
 ]
+
+[tool.uv.sources]
+notification_dispatcher = { workspace = true }
 
 [project.scripts]
 canteen = "canteen.api:main"
