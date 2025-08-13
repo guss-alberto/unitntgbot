@@ -47,7 +47,7 @@ ENV PATH="/app/.venv/bin:$PATH"
 ENTRYPOINT ["/usr/bin/dumb-init", "--"]
 
 # Swap user to non-root
-USER nobody 
+# USER nobody 
 
 ENV PACKAGE=${PACKAGE}
 CMD ["sh", "-c", "${PACKAGE}"]

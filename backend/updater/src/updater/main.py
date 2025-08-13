@@ -1,9 +1,8 @@
 import time
+from typing import NoReturn
 
 import requests
 import schedule
-
-from typing import NoReturn
 
 from updater.settings import settings
 
@@ -23,7 +22,22 @@ def main() -> NoReturn:
     schedule.every().day.at("00:00", "Europe/Rome").do(lambda: requests.post(EXAMS_UPDATE_URL, timeout=30))
 
     # Notify users about lectures and canteen menu at every hour
-    for hour in ["06:00", "06:30", "07:00", "07:30", "08:00", "08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "12:00", "12:30"]:
+    for hour in [
+        "06:00",
+        "06:30",
+        "07:00",
+        "07:30",
+        "08:00",
+        "08:30",
+        "09:00",
+        "09:30",
+        "10:00",
+        "10:30",
+        "11:00",
+        "11:30",
+        "12:00",
+        "12:30",
+    ]:
         NOTIFY_LECTURES_URL = f"{settings.LECTURES_SVC_URL}/notify/{hour}"
         schedule.every().day.at(hour, "Europe/Rome").do(lambda: requests.post(NOTIFY_LECTURES_URL, timeout=30))
         NOTIFY_CANTEEN_URL = f"{settings.CANTEEN_SVC_URL}/notify/{hour}"

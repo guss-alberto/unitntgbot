@@ -24,7 +24,7 @@ def create_table(db: sqlite3.Connection) -> None:
         """\
         CREATE TABLE IF NOT EXISTS Notifications (
            id TEXT PRIMARY KEY,
-           time TEXT,
+           time TEXT
         );""",
     )
     db.commit()
@@ -53,15 +53,15 @@ def notify_users_time(db: sqlite3.Connection, time: str) -> int:
     cur = db.cursor()
     cur.execute(
         """\
-        SELECT id FROM Notifications 
+        SELECT id FROM Notifications
         WHERE time = ?;
         """,
-        (time)
+        (time),
     )
-    
+
     users = cur.fetchall()
     cur.close()
-    
+
     if not users:
         return 0
 
@@ -72,11 +72,11 @@ def notify_users_time(db: sqlite3.Connection, time: str) -> int:
     for user_id in users:
         asyncio.run(Notification(user_id, menu).send_notification())
 
-    return len(users) 
+    return len(users)
 
 
 def set_notification_time(db: sqlite3.Connection, tg_id: str, time: str | None) -> None:
-    db.execute("INSERT OR REPLACE INTO Notifications (?, ?);", (tg_id, time))
+    db.execute("INSERT OR REPLACE INTO Notifications VALUES (?, ?);", (tg_id, time))
     db.commit()
 
 
