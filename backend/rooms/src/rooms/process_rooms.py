@@ -109,4 +109,3 @@ def process_building(get_rooms_result: tuple[pd.DataFrame, pd.DataFrame | None, 
 
         rooms.append(Room(row["name"], row["capacity"], is_free, event_name, int(time)))
     return rooms
-

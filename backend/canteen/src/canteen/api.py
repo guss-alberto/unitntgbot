@@ -47,10 +47,10 @@ def update() -> tuple[Response, int]:
 @app.post("/<string:tg_id>/notification/<string:time>")
 def set_notification(tg_id: str, time: str) -> tuple[Response, int]:
     db = _get_db()
-    
+
     if not re.match(r"^\d\d:\d\d$", time):
         return jsonify({"message": "Invalid time format, expected HH:MM"}), 400
-    
+
     set_notification_time(db, tg_id, time)
 
     return jsonify({"message": "Notification time set successfully"}), 200

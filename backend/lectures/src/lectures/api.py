@@ -44,7 +44,7 @@ def notify(time: str) -> tuple[Response, int]:
 
 
 @app.teardown_appcontext
-def _close_connection(exception)-> None:
+def _close_connection(exception) -> None:
     db = getattr(g, "_database", None)
     if db is not None:
         db.close()

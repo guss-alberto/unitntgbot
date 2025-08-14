@@ -46,6 +46,7 @@ NOTIFICATIONS_REPLY_MARKUP = InlineKeyboardMarkup(
     ],
 )
 
+
 async def setup_handler(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
     if update.message:
         await update.message.reply_text("Choose an option:", reply_markup=MAIN_MENU_REPLY_MARKUP)
@@ -201,19 +202,37 @@ async def set_notifications(update: Update, _: CallbackContext) -> int:
         await update.effective_message.edit_text("Choose an option:", reply_markup=MAIN_MENU_REPLY_MARKUP)
         return ConversationHandler.END
 
-    notification_type = data[len("setup:notifications:") :] # Either "canteen" or "lectures"
+    notification_type = data[len("setup:notifications:") :]  # Either "canteen" or "lectures"
 
     keyboard = []
     row = []
-    for hour in ["06:00", "06:30", "07:00", "07:30", "08:00", "08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "12:00", "12:30"]:
+    for hour in [
+        "06:00",
+        "06:30",
+        "07:00",
+        "07:30",
+        "08:00",
+        "08:30",
+        "09:00",
+        "09:30",
+        "10:00",
+        "10:30",
+        "11:00",
+        "11:30",
+        "12:00",
+        "12:30",
+    ]:
         row.append(InlineKeyboardButton(hour, callback_data=f"setup:notifications:{notification_type}:{hour}"))
         if len(row) == 2:
             keyboard.append(row)
             row = []
-    
+
     await query.edit_message_text(
         f"Select the time for {notification_type} notifications",
-        reply_markup=InlineKeyboardMarkup(keyboard + [[InlineKeyboardButton("❌ Go Back", callback_data=f"setup:notifications:{notification_type}:back")]]),
+        reply_markup=InlineKeyboardMarkup(
+            keyboard
+            + [[InlineKeyboardButton("❌ Go Back", callback_data=f"setup:notifications:{notification_type}:back")]]
+        ),
     )
 
     return ConversationHandler.END
@@ -241,14 +260,14 @@ async def set_notification_time(update: Update, _: CallbackContext) -> int:
     notification_type, *time = data[len("setup:notifications:") :].split(":")
     time = ":".join(time)
     tg_id = message.chat.id
-    
+
     if notification_type == "canteen":
         url = settings.CANTEEN_SVC_URL
     elif notification_type == "lectures":
         url = settings.LECTURES_SVC_URL
     else:
-        return ConversationHandler.END 
-    
+        return ConversationHandler.END
+
     async with httpx.AsyncClient() as client:
         response = await client.post(
             f"{url}/{tg_id}/notification/{time}",
@@ -262,8 +281,7 @@ async def set_notification_time(update: Update, _: CallbackContext) -> int:
             case _:
                 await query.edit_message_text("An unknown error occurred while setting notifications.")
 
-
-    return ConversationHandler.END 
+    return ConversationHandler.END
 
 
 async def cancel(update: Update, _: CallbackContext) -> int:

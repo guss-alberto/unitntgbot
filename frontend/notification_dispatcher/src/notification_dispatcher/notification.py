@@ -11,6 +11,7 @@ _NOTIFICATION_SETTINGS = NotificationSettings()
 _LOGGER = logging.getLogger(__name__)
 _producer = None
 
+
 class Notification(BaseModel):
     chat_id: int
     message: str

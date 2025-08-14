@@ -22,8 +22,9 @@ from lectures.database import LectureUpdate, UniversityLecture, create_tables
 # def main() -> None:
 #     asyncio.run(send())
 
+
 async def send_update() -> None:
-    if (not Notification.is_producer_started):
+    if not Notification.is_producer_started:
         await Notification.start_producer()
 
     db = sqlite3.connect("lectures_test.db")
@@ -194,6 +195,7 @@ async def send_update() -> None:
         message += "\n".join(formatted_updates)
 
         await Notification(tg_id, message).send_notification()
+
 
 def main() -> None:
     asyncio.run(send_update())

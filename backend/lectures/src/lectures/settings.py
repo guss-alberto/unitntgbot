@@ -8,4 +8,5 @@ class Settings(BaseSettings):
     DB_PATH: str = Field(default=":memory:")
     EXAMS_SVC_URL: str = Field(default=...)
 
+
 settings = Settings()
