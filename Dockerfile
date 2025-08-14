@@ -31,6 +31,7 @@ WORKDIR /app
 # Install system dependencies, libcairo2 is installed only if the package is 'maps'
 ARG PACKAGE
 RUN apt-get update \
+    && apt-get install -y --no-install-recommends dumb-init tzdata \
     && apt-get install -y --no-install-recommends dumb-init \
     && if [ "${PACKAGE:-}" = "maps" ]; then \
         apt-get install -y --no-install-recommends libcairo2; \
@@ -42,6 +43,9 @@ COPY --from=builder /app /app
 
 # Place executables in the environment at the front of the path
 ENV PATH="/app/.venv/bin:$PATH"
+
+# Set timezone to Rome so the time gets formatted correctly
+ENV TZ=Europe/Rome
 
 # https://github.com/Yelp/dumb-init
 ENTRYPOINT ["/usr/bin/dumb-init", "--"]

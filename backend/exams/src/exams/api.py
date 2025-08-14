@@ -7,6 +7,7 @@ from exams.database import (
     add_courses_for_user,
     create_table,
     get_exams_for_user,
+    update_db,
 )
 from exams.database import search_exams as search_exams_db
 from exams.settings import settings

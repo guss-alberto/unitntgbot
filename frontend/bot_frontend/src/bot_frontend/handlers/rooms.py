@@ -125,20 +125,9 @@ async def _rooms_status(
                 callback_data=f"rooms:m:name:{building_id}",
             ),
         ],
-        [
-            InlineKeyboardButton(
-                "🗺️ View Free Rooms Location",
-                callback_data=f"rooms:m:{'time' if sort_time else 'name'}:{building_id}:map",
-            ),
-        ],
     ]  # TODO: Add more options such as filter for free, occupied or all rooms.
-    reply_markup = InlineKeyboardMarkup(keyboard)
 
     match response.status_code:
-        case 404:
-            return "University Department not found. Somehow...", None, None
-        case 500:
-            return "Internal Server Error", None, None
         case 200:
             data = response.json()
 
@@ -156,10 +145,14 @@ async def _rooms_status(
             rooms_formatted = [room.format() for room in rooms]
             msg += "\n".join(rooms_formatted)
 
+            free_rooms = [f"{building_id}/{room.name}" for room in rooms if room.is_free]
+
+            if not free_rooms:
+                msg += "\n\nNo free rooms available"
+
             images = None
             if with_images:
                 images = []
-                free_rooms = [f"{building_id}/{room.name}" for room in rooms if room.is_free]
 
                 # Get the map for the free rooms
                 async with httpx.AsyncClient() as client:
@@ -185,9 +178,25 @@ async def _rooms_status(
                         image_data = images_part.get_payload(decode=True)
                         images.append(image_data)
 
-            return msg, reply_markup, images
+            # The map button should only show for buildings which have maps
+            # and only if the message doesn't have maps already
+            # also if no free rooms are available the button should not appear
+            if not images and len(free_rooms) > 0 and building_id in ["E0503", "E0301"]:
+                keyboard += (
+                    [
+                        InlineKeyboardButton(
+                            "🗺️ View Free Rooms Location",
+                            callback_data=f"rooms:m:{'time' if sort_time else 'name'}:{building_id}:map",
+                        ),
+                    ],
+                )
 
-    return "", None, None
+            return msg, InlineKeyboardMarkup(keyboard), images
+
+        case 404:
+            return "University Department not found. Somehow...", None, None
+        case _:
+            return "Internal Server Error", None, None
 
 
 async def rooms_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:

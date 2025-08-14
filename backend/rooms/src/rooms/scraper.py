@@ -1,6 +1,7 @@
 import time
 from functools import wraps
 
+import numpy as np
 import pandas as pd
 import requests
 from telegram.helpers import escape_markdown
@@ -53,6 +54,10 @@ def get_rooms(building_id: str) -> tuple[pd.DataFrame, pd.DataFrame | None, int]
         timeout=10,
     )
 
+    # DEBUG
+    with open("rooms.json", "w") as f:
+        f.write(response.text)
+
     data = response.json()
 
     # If a building_id is invalid, the response will contain an empty array for the "all_rooms" key
@@ -70,11 +75,22 @@ def get_rooms(building_id: str) -> tuple[pd.DataFrame, pd.DataFrame | None, int]
     if not data["events"]:
         return df_rooms, None, now_unix
 
-    df_events = pd.DataFrame(data["events"])[
-        ["CodiceAula", "timestamp_from", "timestamp_to", "utenti", "nome", "Annullato"]
-    ].sort_values("timestamp_from")
+    df_events = (
+        pd.DataFrame(data["events"])
+        .reindex(
+            columns=["CodiceAula", "timestamp_from", "timestamp_to", "utenti", "nome", "name", "Annullato"],
+            fill_value="",
+        )
+        .sort_values("timestamp_from")
+    )
 
-    df_events["nome"] = df_events["nome"].map(escape_markdown)
+    df_events["name"] = np.where(
+        df_events["name"].fillna("").astype(bool),  # Check if 'name' exists
+        df_events["name"],
+        df_events["nome"],  # Use 'nome' in italiano otherwise
+    )
+
+    df_events["name"] = df_events["name"].map(escape_markdown)
     df_events["utenti"] = df_events["utenti"].map(escape_markdown)
 
     return df_rooms, df_events, now_unix
