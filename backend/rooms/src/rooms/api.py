@@ -10,7 +10,7 @@ from .process_rooms import process_building, process_room
 app = Flask(__name__)
 
 
-@app.route("/rooms/<string:building_id>")
+@app.get("/rooms/<string:building_id>")
 def get_rooms(building_id: str) -> tuple[Response, int]:
     result = scraper_get_rooms(building_id)
 
@@ -26,7 +26,7 @@ def get_rooms(building_id: str) -> tuple[Response, int]:
     ), 200
 
 
-@app.route("/rooms/<string:building_id>/room")
+@app.get("/rooms/<string:building_id>/room")
 def get_room(building_id: str) -> tuple[Response, int]:
     room_name = request.args.get("room_query")
     # print(room_name)

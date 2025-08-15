@@ -38,9 +38,9 @@ def main() -> NoReturn:
         "12:00",
         "12:30",
     ]:
-        NOTIFY_LECTURES_URL = f"{settings.LECTURES_SVC_URL}/notify/{hour}"
+        NOTIFY_LECTURES_URL = f"{settings.LECTURES_SVC_URL}/notify/?time={hour}"
         schedule.every().day.at(hour, "Europe/Rome").do(lambda: requests.post(NOTIFY_LECTURES_URL, timeout=30))
-        NOTIFY_CANTEEN_URL = f"{settings.CANTEEN_SVC_URL}/notify/{hour}"
+        NOTIFY_CANTEEN_URL = f"{settings.CANTEEN_SVC_URL}/notify/?time={hour}"
         schedule.every().day.at(hour, "Europe/Rome").do(lambda: requests.post(NOTIFY_CANTEEN_URL, timeout=30))
 
     while True:

@@ -90,9 +90,12 @@ async def setup_callback_handler(update: Update, _: ContextTypes.DEFAULT_TYPE) -
                 "Select the notifications you want to set up",
                 reply_markup=NOTIFICATIONS_REPLY_MARKUP,
             )
+            return ConversationHandler.END
         case _:
             await query.edit_message_text(text="Invalid option selected")
             return ConversationHandler.END
+
+    return ConversationHandler.END
 
 
 async def set_unitrentoapp_token(update: Update, _: CallbackContext) -> int:
@@ -113,7 +116,7 @@ async def set_unitrentoapp_token(update: Update, _: CallbackContext) -> int:
     async with httpx.AsyncClient() as client:
         response = await client.post(
             f"{settings.LECTURES_SVC_URL}/lectures/{tg_id}",
-            params={"token": token},
+            json={"token": token},
             timeout=30,
         )
 
@@ -223,15 +226,20 @@ async def set_notifications(update: Update, _: CallbackContext) -> int:
         "12:30",
     ]:
         row.append(InlineKeyboardButton(hour, callback_data=f"setup:notifications:{notification_type}:{hour}"))
-        if len(row) == 2:
+
+        # Make 2 per line
+        if len(row) > 1:
             keyboard.append(row)
             row = []
 
     await query.edit_message_text(
         f"Select the time for {notification_type} notifications",
         reply_markup=InlineKeyboardMarkup(
-            keyboard
-            + [[InlineKeyboardButton("❌ Go Back", callback_data=f"setup:notifications:{notification_type}:back")]]
+            [
+                *keyboard,
+                [InlineKeyboardButton("🔕 Disable", callback_data=f"setup:notifications:{notification_type}:disable")],
+                [InlineKeyboardButton("❌ Go Back", callback_data=f"setup:notifications:{notification_type}:back")],
+            ],
         ),
     )
 
@@ -270,14 +278,15 @@ async def set_notification_time(update: Update, _: CallbackContext) -> int:
 
     async with httpx.AsyncClient() as client:
         response = await client.post(
-            f"{url}/{tg_id}/notification/{time}",
+            f"{url}/{tg_id}/notification/",
+            json={"time": time},
             timeout=30,
         )
 
         match response.status_code:
             case 200:
                 data = response.json()
-                await query.edit_message_text(f"Notification set successfully for {notification_type} at {time}")
+                await query.edit_message_text(data.get("message"))
             case _:
                 await query.edit_message_text("An unknown error occurred while setting notifications.")
 

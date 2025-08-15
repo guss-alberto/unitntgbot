@@ -13,7 +13,7 @@ if __name__ == "__main__":
     raw_response += response.raw.read()  # Body
 
     msg = email.message_from_bytes(raw_response)
-    print(msg.is_multipart())
+    # print(msg.is_multipart())
 
     for index, part in enumerate(msg.get_payload()):
         # Get the image bytes

@@ -34,9 +34,13 @@ def update() -> tuple[Response, int]:
     return Response(), 200
 
 
-@app.post("/notify/<string:time>")
-def notify(time: str) -> tuple[Response, int]:
+@app.post("/notify/")
+def notify() -> tuple[Response, int]:
     """Endpoint to notify users about lectures at a specific time."""
+    time = request.args.get("time")
+    if not time or not re.match(r"^\d\d:\d\d$", time):
+        return jsonify({"message": "'time' parameter not present in query or malformed"}), 400
+
     db = _get_db()
     n_users = notify_users_time(db, time)
 
@@ -54,10 +58,15 @@ def _close_connection(exception) -> None:
 # Aggiungere le lezioni associate al token al DB, e associa l'utente alle lezioni per notificarlo, e cancella tutte le iscrizioni precedenti
 @app.post("/lectures/<string:tg_id>")
 def add_lectures(tg_id: str) -> tuple[Response, int]:
-    token = request.args.get("token")
+    json = request.get_json()
+
+    if not json:
+        return jsonify({"message": "Please provide a json body"}), 400
+
+    token = json.get("token")
 
     if not token:
-        return jsonify({"message": "Please provide a token in query params as 'token'"}), 400
+        return jsonify({"message": "Please provide a token in json body as 'token'"}), 400
 
     db = _get_db()
 
@@ -113,16 +122,27 @@ def get_lectures(tg_id: str) -> tuple[Response, int]:
     return jsonify({"lectures": lectures}), 200
 
 
-@app.post("/<string:tg_id>/notification/<string:time>")
-def set_notification(tg_id: str, time: str) -> tuple[Response, int]:
+@app.post("/<string:tg_id>/notification/")
+def set_notification(tg_id: str) -> tuple[Response, int]:
     db = _get_db()
+
+    json = request.get_json()
+
+    if not json and not json.get("time"):
+        return jsonify({"message": 'No json in body, expected "time" parameter'}), 400
+
+    time = json.get("time")
+
+    if time == "disable":
+        set_notification_time(db, tg_id, None)
+        return jsonify({"message": "Lecture notifications disabled successfully"}), 200
 
     if not re.match(r"^\d\d:\d\d$", time):
         return jsonify({"message": "Invalid time format, expected HH:MM"}), 400
 
     set_notification_time(db, tg_id, time)
 
-    return jsonify({"message": "Notification time set successfully"}), 200
+    return jsonify({"message": f"Lecture notifications set successfully at {time}"}), 200
 
 
 def main() -> None:
