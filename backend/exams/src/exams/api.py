@@ -41,7 +41,7 @@ def page_parser(res: list[UniversityExam], page: int) -> dict:
     offset = (page - 1) * ITEMS_PER_PAGE
 
     return {
-        "exams": res[offset : offset + ITEMS_PER_PAGE],
+        "exams": [e._asdict() for e in res[offset : offset + ITEMS_PER_PAGE]],
         "n_items": n_items,
         "n_pages": n_pages,
         "page": page,
@@ -55,7 +55,7 @@ def update() -> tuple[Response, int]:
 
 
 # TODO: add pages system
-@app.route("/exams/search")
+@app.get("/exams/search")
 def get_exams() -> tuple[Response, int]:
     query = request.args.get("query")
     page = int(request.args.get("page", "0"))
@@ -67,7 +67,7 @@ def get_exams() -> tuple[Response, int]:
     exams = search_exams_db(db, query)
 
     if not exams:
-        return jsonify({"message": "No exam found with given query", "exams": exams}), 404
+        return jsonify({"message": "No exam found with given query", "exams": []}), 404
 
     return jsonify(page_parser(exams, page)), 200
 

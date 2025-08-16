@@ -29,7 +29,7 @@ def process_results(response, callback) -> tuple[str, InlineKeyboardMarkup | Non
     match response.status_code:
         case 200:
             data = response.json()
-            exams = [UniversityExam(*exam) for exam in data["exams"]]
+            exams = [UniversityExam(**exam) for exam in data["exams"]]
             exams_formatted = "\n\n".join([exam.format() for exam in exams])
 
             markup = None
@@ -58,7 +58,7 @@ async def exams_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
         tg_id = update.message.chat_id
         callback = f"u:{tg_id}"
         async with httpx.AsyncClient() as client:
-            response = await client.get(f"{settings.EXAMS_SVC_URL}/exams/user/{tg_id}", timeout=30)
+            response = await client.get(f"{settings.EXAMS_SVC_URL}/exams/user/{tg_id}/", timeout=30)
     else:
         query = " ".join(context.args)
         callback = f"q:{query}"

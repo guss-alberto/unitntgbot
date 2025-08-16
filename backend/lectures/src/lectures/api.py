@@ -97,7 +97,7 @@ def get_next_lecture(tg_id: str) -> tuple[Response, int]:
     # Checking for the any lecture is the same, just check if the first one is today
     is_today = datetime.fromisoformat(next_lectures[0].start).date() == date.date()
 
-    return jsonify({"lectures": next_lectures, "is_today": is_today}), 200
+    return jsonify({"lectures": [lec._asdict() for lec in next_lectures], "is_today": is_today}), 200
 
 
 # Prendi dal DB le lezioni associate all'utente per la data specificata, oppure per oggi se la data non è specificata
@@ -119,7 +119,7 @@ def get_lectures(tg_id: str) -> tuple[Response, int]:
     if lectures is None:
         return jsonify({"message": "User not found"}), 404
 
-    return jsonify({"lectures": lectures}), 200
+    return jsonify({"lectures": [lec._asdict() for lec in lectures]}), 200
 
 
 @app.post("/<string:tg_id>/notification/")

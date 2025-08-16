@@ -22,7 +22,7 @@ def get_rooms(building_id: str) -> tuple[Response, int]:
     rooms = process_building(result, date)
 
     return jsonify(
-        {"building_name": BUILDING_ID_TO_NAME[building_id], "time": date.strftime("%H:%M"), "rooms": rooms},
+        {"building_name": BUILDING_ID_TO_NAME[building_id], "time": date.strftime("%H:%M"), "rooms": [r._asdict() for r in rooms]},
     ), 200
 
 
@@ -54,7 +54,7 @@ def get_room(building_id: str) -> tuple[Response, int]:
             "room_code": room_code,
             "capacity": capacity,
             "time": date.strftime("%H:%M"),
-            "room_data": room_data,
+            "room_data": [r._asdict() for r in room_data],
         },
     ), 200
 

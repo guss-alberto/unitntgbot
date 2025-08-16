@@ -96,7 +96,7 @@ async def _room_events(building_id: str, room: str) -> tuple[str, str, InlineKey
             capacity = f"_({data['capacity']} seats)_" if data["capacity"] else ""
             msg = f"*Room {data['room_name']} - {data['building_name']}* {capacity} at {data['time']}\n\n"
 
-            rooms_formatted = [Event(*room).format() for room in data["room_data"]]
+            rooms_formatted = [Event(**room).format() for room in data["room_data"]]
             msg += "\n".join(rooms_formatted)
             msg += " all day"
             return msg, data["room_code"], reply_markup
@@ -133,7 +133,7 @@ async def _rooms_status(
 
             msg = f"*Rooms for {data['building_name']}* at {data['time']}\n\n"
 
-            rooms = [Room(*room) for room in data["rooms"]]
+            rooms = [Room(**room) for room in data["rooms"]]
 
             rooms.sort(key=lambda r: r.name)
             if sort_time:
