@@ -72,7 +72,7 @@ def develop(port: int) -> None:
     app.run(port=port, debug=True)
 
 
-@app.get("/<routeId>/<sequence>")
+@app.get("/<string:routeId>/<string:sequence>")
 def getRoutes(routeId: str, sequence: str) -> tuple[Response, int]:
     # Direction 1 is towards Piazza Dante
     path = f"/gtlservice/trips_new?limit={int(sequence) + 1}&routeId={routeId}&type=U&directionId=1"

@@ -9,6 +9,7 @@ from lectures.database import (
     create_tables,
     get_lectures_for_user,
     get_next_lectures_for_user,
+    get_last_lecture_users,
     import_for_user,
     notify_users_time,
     set_notification_time,
@@ -45,6 +46,19 @@ def notify() -> tuple[Response, int]:
     n_users = notify_users_time(db, time)
 
     return jsonify({"message": f"Notifications sent to {n_users} users"}), 200
+
+
+@app.post("/last/")
+def last() -> tuple[Response, int]:
+    """Endpoint to get the list of users who will have their last lecture at a specific time."""
+    time = request.args.get("time")
+    if not time or not re.match(r"^\d\d:\d\d$", time):
+        return jsonify({"message": "'time' parameter not present in query or malformed"}), 400
+
+    db = _get_db()
+    users = get_last_lecture_users(db, time)
+
+    return jsonify({"users": users}), 200
 
 
 @app.teardown_appcontext
