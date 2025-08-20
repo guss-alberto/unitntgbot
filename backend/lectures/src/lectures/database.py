@@ -116,17 +116,17 @@ def create_tables(db: sqlite3.Connection) -> None:
     db.commit()
 
 
-def get_lectures_for_user(db: sqlite3.Connection, user_id: str, date: datetime) -> list[UniversityLecture] | None:
+def get_lectures_for_user(db: sqlite3.Connection, user_id: str, date: datetime) -> list[UniversityLecture]:
     cur = db.cursor()
 
     # If the user doesn't have any courses selected, return None instead of empty list
     cur.execute("SELECT 1 from Users WHERE id = ? LIMIT 1;", (user_id,))
     if not cur.fetchall():
-        return None
+        return []
 
     cur.execute(
         """\
-        SELECT Lectures.* FROM Lectures
+        SELECT Lectures.id, Lectures.course_id, Lectures.event_name, Lectures.lecturer, Lectures.start, Lectures.end, Lectures.room, Lectures.is_cancelled FROM Lectures
             JOIN Users ON Users.course_id = Lectures.course_id
             WHERE DATE(lectures.start) = DATE(?) AND Users.id = ?
             ORDER BY lectures.start;
@@ -144,7 +144,7 @@ def get_next_lectures_for_user(db: sqlite3.Connection, user_id: str, date: datet
     cur = db.cursor()
     cur.execute(  # gets all concurrent lectures
         """\
-        SELECT Lectures.* FROM Lectures
+        SELECT Lectures.id, Lectures.course_id, Lectures.event_name, Lectures.lecturer, Lectures.start, Lectures.end, Lectures.room, Lectures.is_cancelled FROM Lectures
             JOIN Users ON Users.course_id = Lectures.course_id
             WHERE Lectures.start = (
                 SELECT Lectures.start FROM Lectures
@@ -261,15 +261,15 @@ def notify_users_time(db: sqlite3.Connection, time: str) -> int:
         SELECT id FROM Notifications
         WHERE time = ?;
         """,
-        (time),
+        (time,),
     )
 
-    parsed_time = datetime.strptime(time, "%H:%M:%S").time()
+    parsed_time = datetime.strptime(time, "%H:%M").time()
     curr_time: datetime = datetime.combine(dtdate.today(), parsed_time)
 
     notified_users = 0
-    for user_id in cur.fetchall():
-        lectures: list[UniversityLecture] = get_next_lectures_for_user(db, user_id, curr_time)
+    for (user_id,) in cur.fetchall():
+        lectures: list[UniversityLecture] = get_lectures_for_user(db, user_id, curr_time)
 
         if not lectures:
             continue
@@ -301,14 +301,14 @@ def get_last_lecture_users(db: sqlite3.Connection, time: str | None) -> list[str
                 MAX(l.end) AS last_end
             FROM Users u
             JOIN Lectures l ON u.course_id = l.course_id
-            WHERE date(l.start) = date('now')
+            WHERE DATE(l.start) = DATE(?)
               AND l.is_cancelled = 0
             GROUP BY u.id, u.course_id
         )
         SELECT user_id
         FROM LastLectures
-        WHERE time(last_end) = time(?);
+        WHERE TIME(last_end) = TIME(?);
         """,
-        (time,),
+        (datetime.today().strftime("%Y-%m-%d"), time),
     )
     return [row[0] for row in cur.fetchall()]

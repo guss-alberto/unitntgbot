@@ -70,6 +70,8 @@ def main() -> NoReturn:
         "19:30",
         "20:00",
         "20:30",
+        "21:00",
+        "21:30",
     ]:
         LAST_LECTURE_URL = f"{settings.LECTURES_SVC_URL}/last"
         def notify_last_lecture(hour: str) -> None:

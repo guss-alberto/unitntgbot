@@ -52,7 +52,7 @@ class Notification(BaseModel):
             await bot.send_message(
                 chat_id=self.chat_id,
                 text=self.message,
-                parse_mode=ParseMode.MARKDOWN_V2,
+                # parse_mode=ParseMode.MARKDOWN_V2,
             )
         except Exception as e:
             _LOGGER.error(f"Failed to send message to chat {self.chat_id}: {e}")

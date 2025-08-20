@@ -64,16 +64,8 @@ HEADERS = {
 app = Flask(__name__)
 
 
-def main() -> None:
-    app.run("0.0.0.0")
-
-
-def develop(port: int) -> None:
-    app.run(port=port, debug=True)
-
-
 @app.get("/<string:routeId>/<string:sequence>")
-def getRoutes(routeId: str, sequence: str) -> tuple[Response, int]:
+def get_routes(routeId: str, sequence: str) -> tuple[Response, int]:
     # Direction 1 is towards Piazza Dante
     path = f"/gtlservice/trips_new?limit={int(sequence) + 1}&routeId={routeId}&type=U&directionId=1"
 
@@ -99,6 +91,7 @@ def getRoutes(routeId: str, sequence: str) -> tuple[Response, int]:
         "delay": data.get("delay"),
         "lastUpdate": data.get("lastEventRecivedAt"),  # Misspelled in API
         "currentStopIndex": stop_index,
+        "totalRoutesCount": data.get("totaleCorseInLista"),
         "stops": [
             {
                 "arrivalTime": stop_time["arrivalTime"][:-3],  # Remove seconds, it's always 00 anyways
@@ -106,7 +99,14 @@ def getRoutes(routeId: str, sequence: str) -> tuple[Response, int]:
             }
             for stop_time in data.get("stopTimes", [])
         ],
-        "totalRoutesCount": data.get("totaleCorseInLista"),
     }
 
     return jsonify(data), 200
+
+
+def main() -> None:
+    app.run("0.0.0.0")
+
+
+def develop(port: int) -> None:
+    app.run(port=port, debug=True)

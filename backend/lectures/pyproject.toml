@@ -18,7 +18,6 @@ notification_dispatcher = { workspace = true }
 [project.scripts]
 lectures = "lectures.api:main"
 lectures-develop = "lectures.api:develop"
-lectures-test = "lectures.test:main"
 
 [build-system]
 requires = ["hatchling"]

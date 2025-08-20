@@ -1,6 +1,6 @@
 import re
 import sqlite3
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import requests
 from flask import Flask, Response, g, jsonify, request
@@ -58,7 +58,12 @@ def last() -> tuple[Response, int]:
     db = _get_db()
     users = get_last_lecture_users(db, time)
 
-    return jsonify({"users": users}), 200
+    response = requests.post(
+        f"{settings.TT_SVC_URL}/400/1", json={"users": users, "time": time}, timeout=30)
+    
+    # TODO: Send notifications to users
+    
+    return Response(), 200
 
 
 @app.teardown_appcontext
@@ -68,7 +73,7 @@ def _close_connection(exception) -> None:
         db.close()
 
 
-# POST /lectures/tgid?unitrentoapp_link=""
+# POST /lectures/tgid"
 # Aggiungere le lezioni associate al token al DB, e associa l'utente alle lezioni per notificarlo, e cancella tutte le iscrizioni precedenti
 @app.post("/lectures/<string:tg_id>")
 def add_lectures(tg_id: str) -> tuple[Response, int]:
@@ -110,7 +115,7 @@ def get_next_lecture(tg_id: str) -> tuple[Response, int]:
 
     # Checking for the any lecture is the same, just check if the first one is today
     is_today = datetime.fromisoformat(next_lectures[0].start).date() == date.date()
-
+    
     return jsonify({"lectures": [lec._asdict() for lec in next_lectures], "is_today": is_today}), 200
 
 
