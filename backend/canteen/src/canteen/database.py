@@ -69,8 +69,9 @@ def notify_users_time(db: sqlite3.Connection, time: str) -> int:
     if menu == "NOT AVAILABLE":
         return 0
 
+    n = Notification()
     for user_id in users:
-        asyncio.run(Notification(user_id, menu).send_notification())
+        asyncio.run(n.send_notification(user_id, menu))
 
     return len(users)
 

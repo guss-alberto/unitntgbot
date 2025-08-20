@@ -64,6 +64,7 @@ HEADERS = {
 app = Flask(__name__)
 
 
+
 @app.get("/<string:routeId>/<string:sequence>")
 def get_routes(routeId: str, sequence: str) -> tuple[Response, int]:
     # Direction 1 is towards Piazza Dante

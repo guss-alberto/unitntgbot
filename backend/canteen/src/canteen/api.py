@@ -38,8 +38,6 @@ def notify() -> tuple[Response, int]:
     return jsonify({"message": f"Notifications sent to {n_users} users"}), 200
 
 
-
-
 @app.post("/update/")
 def update() -> tuple[Response, int]:
     update_db(_get_db(), datetime.today())
