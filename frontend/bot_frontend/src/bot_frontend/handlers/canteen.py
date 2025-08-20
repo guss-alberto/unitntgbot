@@ -27,7 +27,7 @@ def format_output(date: date, msg: str, *, is_dinner: bool = False) -> tuple[str
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
 
-    message = f"*{'Dinner' if is_dinner else 'Lunch'} menu for {date.strftime('%A, %B %d, %Y')}*:\n\n"
+    message = f"<b>{'Dinner' if is_dinner else 'Lunch'} menu for {date.strftime('%A, %B %d, %Y')}</b>:\n\n"
     if msg:
         message += msg
     else:
@@ -53,7 +53,7 @@ async def canteen_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     data = response.json()
 
     message, markup = format_output(datetime.fromisoformat(data["date"]).date(), data["menu"])
-    await update.message.reply_markdown_v2(message, reply_markup=markup)
+    await update.message.reply_html(message, reply_markup=markup)
 
 
 async def canteen_callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -82,4 +82,4 @@ async def canteen_callback_handler(update: Update, context: ContextTypes.DEFAULT
         data["menu"],
         is_dinner=menu_type == "dinner",
     )
-    await query.edit_message_text(message, reply_markup=markup, parse_mode=ParseMode.MARKDOWN_V2)
+    await query.edit_message_text(message, reply_markup=markup, parse_mode=ParseMode.HTML)

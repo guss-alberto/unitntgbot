@@ -32,8 +32,8 @@ def generate_reply_markup(route: dict, sequence: int) -> InlineKeyboardMarkup:
 
 
 def format_route(route: dict, sequence: int) -> str:
-    markdown = f"*Trip {sequence + 1} of {route['totalRoutesCount']}*:\n"
-    markdown += "\n"
+    html = f"<b>Trip {sequence + 1} of {route['totalRoutesCount']}</b>:\n"
+    html += "\n"
     current_hour = datetime.now().strftime("%H:%M")
     is_next = False
     current_stop_index = route["currentStopIndex"]
@@ -44,29 +44,29 @@ def format_route(route: dict, sequence: int) -> str:
 
         if current_stop_index is None:
             if not is_next and current_hour <= arrival_time:
-                markdown += f"❓ *{arrival_time} - {stop_name}*\n"
+                html += f"❓ <b>{arrival_time} - {stop_name}</b>\n"
                 is_next = True
             else:
-                markdown += f"⚪ {arrival_time} - {stop_name}\n"
+                html += f"⚪ {arrival_time} - {stop_name}\n"
         elif idx == current_stop_index:
-            markdown += f"🚌 *{arrival_time} - {stop_name}*\n"
+            html += f"🚌 <b>{arrival_time} - {stop_name}</b>\n"
         elif idx < current_stop_index:
-            markdown += f"🟡 {arrival_time} - {stop_name}\n"
+            html += f"🟡 {arrival_time} - {stop_name}\n"
         else:
-            markdown += f"🟢 {arrival_time} - {stop_name}\n"
+            html += f"🟢 {arrival_time} - {stop_name}\n"
 
-    markdown += "\n"
+    html += "\n"
     if route["delay"] is not None:
         delay = int(route["delay"])
         if delay == 0:
-            markdown += "*Bus is on time*\n"
+            html += "<b>Bus is on time</b>\n"
         elif delay < 0:
-            markdown += f"*{-delay} minute{'s' if delay != -1 else ''} early*\n"
+            html += f"<b>{-delay} minute{'s' if delay != -1 else ''} early</b>\n"
         else:
-            markdown += f"*{delay} minute{'s' if delay != 1 else ''} late*\n"
+            html += f"<b>{delay} minute{'s' if delay != 1 else ''} late</b>\n"
 
         if delay > 37:
-            markdown += random.choice(
+            html += random.choice(
                 [
                     "Is this bus operated by Trenitalia?\n",
                     "Good luck\n",
@@ -80,13 +80,13 @@ def format_route(route: dict, sequence: int) -> str:
             )
 
         current_stop = route["stops"][route["currentStopIndex"]]["stopName"]
-        markdown += f"Currently at _{current_stop}_\n"
-        markdown += f"_Last updated {datetime.fromisoformat(route['lastUpdate']).astimezone(ZoneInfo('Europe/Rome')).strftime('%H:%M')}_"
+        html += f"Currently at <i>{current_stop}</i>\n"
+        html += f"<i>Last updated {datetime.fromisoformat(route['lastUpdate']).astimezone(ZoneInfo('Europe/Rome')).strftime('%H:%M')}</i>"
     else:
-        markdown += "Real time data is not available at the moment"
-        if "❓" in markdown:
-            markdown += "\n\n❓ indicates where the bus should be right now"
-    return markdown
+        html += "Real time data is not available at the moment"
+        if "❓" in html:
+            html += "\n\n❓ indicates where the bus should be right now"
+    return html
 
 
 async def tt_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -105,9 +105,9 @@ async def tt_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
 
         match response.status_code:
             case 200:
-                markdown = format_route(route, sequence)
+                html = format_route(route, sequence)
                 reply_markup = generate_reply_markup(route, sequence)
-                await update.message.reply_markdown(markdown, reply_markup=reply_markup)
+                await update.message.reply_html(html, reply_markup=reply_markup)
             case _:
                 reply_markup = generate_reply_markup(route, sequence)
                 await update.message.reply_text(
@@ -136,9 +136,9 @@ async def tt_callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE
 
         match response.status_code:
             case 200:
-                markdown = format_route(route, sequence)
+                html = format_route(route, sequence)
                 reply_markup = generate_reply_markup(route, sequence)
-                await query.edit_message_text(markdown, parse_mode=ParseMode.MARKDOWN, reply_markup=reply_markup)
+                await query.edit_message_text(html, parse_mode=ParseMode.HTML, reply_markup=reply_markup)
             case _:
                 reply_markup = generate_reply_markup(route, sequence)
                 await query.edit_message_text(

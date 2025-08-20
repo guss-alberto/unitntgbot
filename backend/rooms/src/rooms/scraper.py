@@ -4,7 +4,6 @@ from functools import wraps
 import numpy as np
 import pandas as pd
 import requests
-from telegram.helpers import escape_markdown
 
 from rooms.rooms_mapping import ROOM_ID_TO_NAME
 
@@ -89,8 +88,5 @@ def get_rooms(building_id: str) -> tuple[pd.DataFrame, pd.DataFrame | None, int]
         df_events["name"],
         df_events["nome"],  # Use 'nome' in italiano otherwise
     )
-
-    df_events["name"] = df_events["name"].map(escape_markdown)
-    df_events["utenti"] = df_events["utenti"].map(escape_markdown)
 
     return df_rooms, df_events, now_unix

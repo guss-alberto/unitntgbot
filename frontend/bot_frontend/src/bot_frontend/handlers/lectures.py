@@ -23,7 +23,7 @@ def format_output(date: date, lectures: list) -> tuple[str, InlineKeyboardMarkup
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
 
-    message = f"*Lectures for {date.strftime('%A, %Y-%m-%d')}*\n\n"
+    message = f"<b>Lectures for {date.strftime('%A, %Y-%m-%d')}</b>\n\n"
     if lectures:
         lectures = [UniversityLecture(**lec).format() for lec in lectures]
         message += "\n\n".join(lectures)
@@ -55,12 +55,12 @@ async def get_lectures_handler(update: Update, context: ContextTypes.DEFAULT_TYP
             await update.message.reply_text(data["message"])
             return
         case 404:
-            await update.message.reply_markdown(
+            await update.message.reply_html(
                 "No coursed added to your account yet.\n"
                 "\n"
-                "Use the command `/setup` first.\n"
+                "Use the command /setup first.\n"
                 "\n"
-                "The link can be found in the top right corner of the '*Favourites*' tab in the '*Classes Timetable*' section in UniTrentoApp.",
+                "The link can be found in the top right corner of the '<b>Favourites</b>' tab in the '<b>Classes Timetable</b>' section in UniTrentoApp.",
             )
             return
         case 200:
@@ -68,7 +68,7 @@ async def get_lectures_handler(update: Update, context: ContextTypes.DEFAULT_TYP
             date = datetime.fromisoformat(date_arg).date() if date_arg else datetime.now().date()
 
             message, reply_markup = format_output(date, data["lectures"])
-            await update.message.reply_markdown(message, reply_markup=reply_markup)
+            await update.message.reply_html(message, reply_markup=reply_markup)
             return
         case 500:
             await update.message.reply_text("Internal Server Error")
@@ -104,7 +104,7 @@ async def get_lectures_callback_handler(update: Update, _: ContextTypes.DEFAULT_
             return
         case 200:
             message, reply_markup = format_output(date, data["lectures"])
-            await query.edit_message_text(message, parse_mode=ParseMode.MARKDOWN, reply_markup=reply_markup)
+            await query.edit_message_text(message, parse_mode=ParseMode.HTML, reply_markup=reply_markup)
             return
         case _:
             await query.edit_message_text("An unknown error occured")

@@ -5,7 +5,6 @@ import sys
 from datetime import datetime
 
 import requests
-from telegram.helpers import escape_markdown
 
 from lectures.rooms_mapping import BUILDING_ID_TO_NAME, ROOM_ID_TO_NAME
 from lectures.settings import settings
@@ -77,11 +76,11 @@ def get_courses_from_easyacademy(courses: set[str], date: datetime) -> list[Univ
         lecture = UniversityLecture(
             couse_id,
             course_id,
-            escape_markdown(event_name),
-            escape_markdown(lecturer),
+            event_name,
+            lecturer,
             start,
             end,
-            escape_markdown(room),
+            room,
             is_cancelled,
         )
 

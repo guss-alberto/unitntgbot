@@ -28,15 +28,15 @@ class UniversityExam(NamedTuple):
         date = datetime_split[0]
         time = datetime_split[1] if len(datetime_split) > 1 else None
 
-        first_line = f"🗓 *{date}*"
+        first_line = f"🗓 <b>{date}</b>"
         if time:
-            first_line += f" - {self._get_clock_emoji()} *{time}*"
+            first_line += f" - {self._get_clock_emoji()} <b>{time}</b>"
         if self.partition:
             first_line += f" - {self.partition}"
 
         return (
             first_line + "\n"
-            f"📝 *{self.exam_id}* - *{self.name}*\n"
-            f"{'🧑‍🏫' if random.randint(0, 69) else '🤓'} *{self.professors}*\n"
-            f"🔗 [Link]({self.link})"
+            f"📝 <b>{self.exam_id}</b> - <b>{self.name}</b>\n"
+            f"{'🧑‍🏫' if random.randint(0, 69) else '🤓'} <b>{self.professors}</b>\n"
+            f'🔗 <a href="{self.link}">Link</a>'
         )

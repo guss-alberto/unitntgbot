@@ -10,15 +10,15 @@ class Room(NamedTuple):
     time: int  # The unix timestamp when the room changes from free to busy or viceversa
 
     def format(self) -> str:
-        capacity = f"_({self.capacity})_" if self.capacity else ""
+        capacity = f"<i>({self.capacity})</i>" if self.capacity else ""
 
         time = datetime.fromtimestamp(self.time).strftime("%H:%M")
 
         if self.is_free:
-            return f"✅*{self.name}*{capacity} Free {f'until {time}' if self.time else 'all day'}"
+            return f"✅<b>{self.name}</b>{capacity} Free {f'until {time}' if self.time else 'all day'}"
 
         # Replace with ⭕️?
-        return f"🔴*{self.name}*{capacity} Busy until {time}, Now:\n{self.event}"
+        return f"🔴<b>{self.name}</b>{capacity} Busy until {time}, Now:\n{self.event}"
 
 
 class Event(NamedTuple):

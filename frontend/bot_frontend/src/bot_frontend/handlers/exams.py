@@ -34,11 +34,11 @@ def process_results(response, callback) -> tuple[str, InlineKeyboardMarkup | Non
 
             markup = None
 
-            message = f"*{data['n_items']} exams found*\n\n{exams_formatted}"
+            message = f"<b>{data['n_items']} exams found</b>\n\n{exams_formatted}"
 
             if len(exams) < data["n_items"]:
                 markup = get_keyboard(callback, data["page"], data["n_pages"])
-                message += f"\n\n _Page {data['page']} of {data['n_pages']}_"
+                message += f"\n\n <i>Page {data['page']} of {data['n_pages']}</i>"
 
             return message, markup
         case 400 | 404:
@@ -66,7 +66,7 @@ async def exams_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
             response = await client.get(f"{settings.EXAMS_SVC_URL}/exams/search", params={"query": query}, timeout=30)
 
         msg, markup = process_results(response, callback)
-        await update.message.reply_markdown(msg, reply_markup=markup, disable_web_page_preview=True)
+        await update.message.reply_html(msg, reply_markup=markup, disable_web_page_preview=True)
 
 
 async def exams_callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -99,6 +99,6 @@ async def exams_callback_handler(update: Update, context: ContextTypes.DEFAULT_T
     await query.edit_message_text(
         msg,
         reply_markup=markup,
-        parse_mode=ParseMode.MARKDOWN,
+        parse_mode=ParseMode.HTML,
         disable_web_page_preview=True,
     )

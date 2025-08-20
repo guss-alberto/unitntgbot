@@ -72,7 +72,9 @@ async def _room_events(building_id: str, room: str) -> tuple[str, str, InlineKey
     async with httpx.AsyncClient() as client:
         response = await client.get(
             f"{settings.ROOMS_SVC_URL}/rooms/{building_id}/room",
-            params={"room_query": room},
+            params={
+                "room_query": room
+            },
             timeout=30,
         )
 
@@ -93,8 +95,8 @@ async def _room_events(building_id: str, room: str) -> tuple[str, str, InlineKey
             return "Internal Server Error", "", None
         case 200:
             data = response.json()
-            capacity = f"_({data['capacity']} seats)_" if data["capacity"] else ""
-            msg = f"*Room {data['room_name']} - {data['building_name']}* {capacity} at {data['time']}\n\n"
+            capacity = f"<i>({data['capacity']} seats)</i>" if data["capacity"] else ""
+            msg = f"<b>Room {data['room_name']} - {data['building_name']}</b> {capacity} at {data['time']}\n\n"
 
             rooms_formatted = [Event(**room).format() for room in data["room_data"]]
             msg += "\n".join(rooms_formatted)
@@ -121,7 +123,7 @@ async def _rooms_status(
                 callback_data=f"rooms:m:time:{building_id}",
             ),
             InlineKeyboardButton(
-                f"{'' if sort_time else '✅'}  Sort by Name",
+                f"{' ' if sort_time else '✅'}  Sort by Name",
                 callback_data=f"rooms:m:name:{building_id}",
             ),
         ],
@@ -131,7 +133,7 @@ async def _rooms_status(
         case 200:
             data = response.json()
 
-            msg = f"*Rooms for {data['building_name']}* at {data['time']}\n\n"
+            msg = f"<b>Rooms for {data['building_name']}</b> at {data['time']}\n\n"
 
             rooms = [Room(**room) for room in data["rooms"]]
 
@@ -158,7 +160,9 @@ async def _rooms_status(
                 async with httpx.AsyncClient() as client:
                     map_response = await client.get(
                         f"{settings.MAPS_SVC_URL}/maps/multi",
-                        params={"rooms": ",".join(free_rooms)},
+                        params={
+                            "rooms": ",".join(free_rooms)
+                        },
                         timeout=30,
                     )
 
@@ -205,7 +209,7 @@ async def rooms_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
 
     args = context.args
     if not args or args[0] not in NAME_TO_BUILDING_ID:
-        await update.message.reply_markdown("Please provide a valid department name.")
+        await update.message.reply_html("Please provide a valid department name.")
         # TODO: Add default department name, it has to be stored in the database.
         return
 
@@ -216,10 +220,10 @@ async def rooms_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
     # Otherwise reply with the status of all rooms
     if room_name:
         msg, room_code, markup = await _room_events(building_id, room_name)
-        await update.message.reply_markdown(msg, reply_markup=markup)
+        await update.message.reply_html(msg, reply_markup=markup)
     else:
         msg, markup, images = await _rooms_status(building_id)
-        await update.message.reply_markdown(msg, reply_markup=markup)
+        await update.message.reply_html(msg, reply_markup=markup)
 
 
 async def rooms_callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -252,7 +256,7 @@ async def rooms_callback_handler(update: Update, context: ContextTypes.DEFAULT_T
         try:
             # Telegram will raise an error if the message is not modified
             # which is the case when the user clicks on the button to show the map immediately after fetching the rooms status
-            await query.edit_message_text(msg, parse_mode=ParseMode.MARKDOWN, reply_markup=markup)
+            await query.edit_message_text(msg, parse_mode=ParseMode.HTML, reply_markup=markup)
         except BadRequest as e:
             if "Message is not modified" not in e.message:
                 raise

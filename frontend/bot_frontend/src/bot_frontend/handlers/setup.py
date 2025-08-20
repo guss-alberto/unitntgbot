@@ -63,12 +63,12 @@ async def setup_callback_handler(update: Update, _: ContextTypes.DEFAULT_TYPE) -
     match query.data:
         case "setup:lecture":
             await query.edit_message_text(
-                "Write your *UniTrentoApp* lectures link: \\(Type `/cancel` to cancel\\)"
+                "Write your <b>UniTrentoApp</b> lectures link: (Type <code>/cancel</code> to cancel)"
                 "\n"
-                "Your link can be found in the top right corner of the '*Favourites*' tab in the '*Classes Timetable*' section in your app\\.\n"
+                "Your link can be found in the top right corner of the '<b>Favourites</b>' tab in the '<b>Classes Timetable</b>' section in your app.\n"
                 "\n"
-                "_Note that this removes all courses you are currently following on this Telegram Bot\\._",
-                parse_mode=ParseMode.MARKDOWN_V2,
+                "<i>Note that this removes all courses you are currently following on this Telegram Bot.</i>",
+                parse_mode=ParseMode.HTML,
             )
             return 0
         case "setup:department":
