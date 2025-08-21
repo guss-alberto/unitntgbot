@@ -10,6 +10,7 @@ dependencies = [
     "pydantic-settings>=2.7.1",
     "requests>=2.32.3",
     "notification_dispatcher",
+    "lxml>=6.0.0",
 ]
 
 [tool.uv.sources]
@@ -18,6 +19,7 @@ notification_dispatcher = { workspace = true }
 [project.scripts]
 canteen = "canteen.api:main"
 canteen-develop = "canteen.api:develop"
+canteen-scraper = "canteen.scraper:main"
 
 [build-system]
 requires = ["hatchling"]

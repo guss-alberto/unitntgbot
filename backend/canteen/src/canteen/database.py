@@ -56,7 +56,7 @@ def notify_users_time(db: sqlite3.Connection, time: str) -> int:
         SELECT id FROM Notifications
         WHERE time = ?;
         """,
-        (time),
+        (time,),
     )
 
     users = cur.fetchall()
@@ -69,8 +69,8 @@ def notify_users_time(db: sqlite3.Connection, time: str) -> int:
     if menu == "NOT AVAILABLE":
         return 0
 
-    for user_id in users:
-        send_notification(user_id, menu)
+    for (user_id,) in users:
+        send_notification(int(user_id), menu)
 
     return len(users)
 

@@ -90,6 +90,8 @@ services:
     build:
       args:
         PACKAGE: canteen
+    ports:
+      - 5001:5000
     depends_on:
       kafka:
         condition: service_healthy

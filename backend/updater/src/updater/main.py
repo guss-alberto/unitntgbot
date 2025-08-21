@@ -74,12 +74,7 @@ def main() -> NoReturn:
         "21:30",
     ]:
         LAST_LECTURE_URL = f"{settings.LECTURES_SVC_URL}/last"
-        def notify_last_lecture(hour: str) -> None:
-            response = requests.post(LAST_LECTURE_URL, timeout=30, params={"time": hour})
-            users = response.json().get("users", [])
-            # TODO: Do something with the users, like sending a notification
-
-        schedule.every().day.at(hour, "Europe/Rome").do(notify_last_lecture, hour)        
+        schedule.every().day.at(hour, "Europe/Rome").do(lambda hour: requests.post(LAST_LECTURE_URL, timeout=30, params={"time": hour}))        
 
     while True:
         schedule.run_pending()
