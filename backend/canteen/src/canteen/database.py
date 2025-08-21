@@ -1,8 +1,8 @@
-import asyncio
 import sqlite3
-from datetime import date as dtdate, datetime
+from datetime import date as dtdate
+from datetime import datetime
 
-from notification_dispatcher.notification import Notification
+from notification_dispatcher.notification import send_notification
 
 from canteen.scraper import get_week_meals
 from canteen.settings import settings
@@ -37,7 +37,7 @@ def update_db(db: sqlite3.Connection, date: datetime) -> None:
     db.commit()
 
 
-def get_menu(db: sqlite3.Connection, date: dtdate, *, dinner: bool = False) -> str:  # TODO return None when 404
+def get_menu(db: sqlite3.Connection, date: dtdate, *, dinner: bool = False) -> str:  # TODO: return None when 404
     cur = db.cursor()
     cur.execute("SELECT menu FROM Menu WHERE date == ? AND is_dinner == ? LIMIT 1", (date.strftime("%Y-%m-%d"), dinner))
     menu = cur.fetchone()
@@ -69,9 +69,8 @@ def notify_users_time(db: sqlite3.Connection, time: str) -> int:
     if menu == "NOT AVAILABLE":
         return 0
 
-    n = Notification()
     for user_id in users:
-        asyncio.run(n.send_notification(user_id, menu))
+        send_notification(user_id, menu)
 
     return len(users)
 

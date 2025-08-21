@@ -1,14 +1,13 @@
-import asyncio
 import sqlite3
 from collections import defaultdict
-from datetime import datetime, timedelta, date as dtdate
+from datetime import date as dtdate
+from datetime import datetime, timedelta
 
-from notification_dispatcher.notification import Notification
+from notification_dispatcher.notification import send_notification
 
 from lectures.LectureUpdate import LectureUpdate
 from lectures.scraper import get_courses_from_easyacademy, import_from_ical
 from lectures.UniversityLecture import UniversityLecture
-
 
 tracked_courses: set[str] = set()
 
@@ -200,7 +199,6 @@ def update_db(db: sqlite3.Connection, date: datetime, weeks: int = 1) -> None:
 
     lectures: list[UniversityLecture] = get_tracked_courses(tracked_courses, date, weeks)
 
-
     # logger.info("Found %s", len(lectures))
     db.execute("DELETE FROM Changes;")
     db.executemany(
@@ -243,7 +241,6 @@ def update_db(db: sqlite3.Connection, date: datetime, weeks: int = 1) -> None:
         user_changes[tg_id].append(u)
 
     # create a single gouped notification for all the updates
-    n = Notification()
     for tg_id, updates in user_changes.items():
         formatted_updates = [LectureUpdate(*u).format() for u in updates]
 
@@ -251,7 +248,7 @@ def update_db(db: sqlite3.Connection, date: datetime, weeks: int = 1) -> None:
         message += f"{len(updates)} lectures have changed\n\n"
         message += "\n".join(formatted_updates)
 
-        asyncio.run(n.send_notification(tg_id, message))
+        send_notification(tg_id, message)
 
 
 def notify_users_time(db: sqlite3.Connection, time: str) -> int:
@@ -268,7 +265,6 @@ def notify_users_time(db: sqlite3.Connection, time: str) -> int:
     curr_time: datetime = datetime.combine(dtdate.today(), parsed_time)
 
     notified_users = 0
-    n = Notification()
     for (user_id,) in cur.fetchall():
         lectures: list[UniversityLecture] = get_lectures_for_user(db, user_id, curr_time)
 
@@ -280,7 +276,7 @@ def notify_users_time(db: sqlite3.Connection, time: str) -> int:
         formatted_lectures: list[str] = [lec.format() for lec in lectures]
         message += "\n\n".join(formatted_lectures)
 
-        asyncio.run(n.send_notification(user_id, message))
+        send_notification(user_id, message)
 
     return notified_users
 
@@ -291,12 +287,12 @@ def set_notification_time(db: sqlite3.Connection, tg_id: str, time: str | None) 
 
 
 # Gets the users who have had the last lecture at a specific time (time is the end time of the last lecture)
-def get_last_lecture_users(db: sqlite3.Connection, time: str | None) -> list[str]:
+def get_last_lecture_users(db: sqlite3.Connection, time: str | None) -> list[int]:
     cur = db.cursor()
     cur.execute(
         """\
         WITH LastLectures AS (
-            SELECT 
+            SELECT
                 u.id AS user_id,
                 u.course_id,
                 MAX(l.end) AS last_end
@@ -312,4 +308,4 @@ def get_last_lecture_users(db: sqlite3.Connection, time: str | None) -> list[str
         """,
         (datetime.today().strftime("%Y-%m-%d"), time),
     )
-    return [row[0] for row in cur.fetchall()]
+    return [int(row[0]) for row in cur.fetchall()]

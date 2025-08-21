@@ -8,14 +8,13 @@ from zoneinfo import ZoneInfo
 
 import requests
 from flask import Flask, Response, g, jsonify, request
-
-from notification_dispatcher.notification import Notification
+from notification_dispatcher.notification import send_notification
 
 from lectures.database import (
     create_tables,
+    get_last_lecture_users,
     get_lectures_for_user,
     get_next_lectures_for_user,
-    get_last_lecture_users,
     import_for_user,
     notify_users_time,
     set_notification_time,
@@ -105,7 +104,7 @@ def last() -> tuple[Response, int]:
         else:
             html += f"<b>{delay} minute{'s' if delay != 1 else ''} late</b>\n"
 
-        if delay > 37:
+        if delay > 37:  # very magical number
             html += random.choice(
                 [
                     "Is this bus operated by Trenitalia?\n",
@@ -124,13 +123,11 @@ def last() -> tuple[Response, int]:
         html += f"<i>Last updated {datetime.fromisoformat(route['lastUpdate']).astimezone(ZoneInfo('Europe/Rome')).strftime('%H:%M')}</i>"
     else:
         html += "Real time data is not available at the moment"
-    
+
     # TODO: Send notifications to users
-    notification = Notification()
-    for user in users:
-        chat_id = user[0]
-        asyncio.run(notification.send_notification(chat_id=chat_id, message=html))
-    
+    for chat_id in users:
+        send_notification(chat_id=chat_id, message=html)
+
     return Response(), 200
 
 
@@ -183,7 +180,7 @@ def get_next_lecture(tg_id: str) -> tuple[Response, int]:
 
     # Checking for the any lecture is the same, just check if the first one is today
     is_today = datetime.fromisoformat(next_lectures[0].start).date() == date.date()
-    
+
     return jsonify({"lectures": [lec._asdict() for lec in next_lectures], "is_today": is_today}), 200
 
 
