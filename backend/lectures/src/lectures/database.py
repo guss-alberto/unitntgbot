@@ -21,6 +21,14 @@ def get_tracked_courses(courses: set[str], date: datetime, weeks: int = 4) -> li
     return lectures
 
 
+def sync_tracked_courses(db: sqlite3.Connection) -> None:
+    global tracked_courses
+    cur = db.cursor()
+    cur.execute("SELECT DISTINCT course_id FROM Users;")
+    tracked_courses = set(cur.fetchall())
+    cur.close()
+
+
 def create_tables(db: sqlite3.Connection) -> None:
     db.execute(
         """\
@@ -112,6 +120,8 @@ def create_tables(db: sqlite3.Connection) -> None:
     )
     db.commit()
 
+    sync_tracked_courses(db)
+
 
 def get_lectures_for_user(db: sqlite3.Connection, user_id: str, date: datetime) -> list[UniversityLecture]:
     cur = db.cursor()
@@ -174,7 +184,7 @@ def import_for_user(db: sqlite3.Connection, user_id: str, token: str) -> set[str
         [(user_id, course) for course in courses],
     )
 
-    # if some lectures are not currently being tracked, add them silently without notifying users
+    # if some lectures are not currently being tracked, add only untracked lectures without notifying users
     if not courses.issubset(tracked_courses):
         lectures = get_tracked_courses(courses - tracked_courses, datetime.now())
         db.executemany(
@@ -191,11 +201,9 @@ def import_for_user(db: sqlite3.Connection, user_id: str, token: str) -> set[str
 
 # This function has to be run every week or with even more frequency to keep the database up to date
 def update_db(db: sqlite3.Connection, date: datetime, weeks: int = 1) -> None:
-    global tracked_courses
-    cur = db.cursor()
+    sync_tracked_courses(db)
 
-    cur.execute("SELECT DISTINCT course_id FROM Users;")
-    tracked_courses = set(cur.fetchall())
+    cur = db.cursor()
 
     lectures: list[UniversityLecture] = get_tracked_courses(tracked_courses, date, weeks)
 

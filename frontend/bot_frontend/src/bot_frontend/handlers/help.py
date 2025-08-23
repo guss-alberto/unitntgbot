@@ -3,16 +3,16 @@ from telegram.ext import ContextTypes
 
 HELP_MESSAGE = (
     "<b>Commands:</b>\n"
-    "- /setup - Show the setup menu\n"
-    "- /help - Show this message\n"
-    "- /menu &lt;arg&gt; - Show the restaurant menu. Arg can be \"lunch\" or \"dinner\". Defaults to lunch.\n"
-    '"- /menu: dinner - Show the restaurant menu for dinner (only at Tommaso Gar)\n'
-    "- /rooms - Show the available rooms\n"
-    "- /map &lt;site&gt; &lt;room&gt; - Show where the room is located\n"
-    "- /tt - Show the Trentino Trasporti but trips\n"
-    "- /lectures - Show the lecture\n"
-    "- /exams - Show the exams\n"
-    "- /help - Show the help message"
+    "- <code>/setup</code> - Show the setup menu\n"
+    "- <code>/help</code> - Show this message\n"
+    "- <code>/menu</code> - Show the canteen lunch menu"
+    "- <code>/dinner</code>: dinner - Show the restaurant menu for dinner (only at Tommaso Gar)\n'"
+    "- <code>/rooms</code> - Show the available rooms\n"
+    "- <code>/map &lt;site&gt; &lt;room&gt</code> - Show where the room is located\n"
+    "- <code>/tt</code> - Show the Trentino Trasporti but trips\n"
+    "- <code>/lectures</code> - Show the lectures for today\n"
+    "- <code>/exams</code> - Show the exams\n"
+    "- <code>/help</code> - Show the help message"
 )
 
 

@@ -38,8 +38,6 @@ def format_output(date: date, msg: str, *, is_dinner: bool = False) -> tuple[str
 
 
 async def canteen_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    args = context.args  # TODO: Fix it to work with args
-
     if not update.message:
         return
 
@@ -53,6 +51,22 @@ async def canteen_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     data = response.json()
 
     message, markup = format_output(datetime.fromisoformat(data["date"]).date(), data["menu"])
+    await update.message.reply_html(message, reply_markup=markup)
+
+async def dinner_canteen_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    if not update.message:
+        return
+
+    async with httpx.AsyncClient() as client:
+        response = await client.get(f"{settings.CANTEEN_SVC_URL}/menu/dinner/", timeout=30)
+
+    if response.status_code != 200:  # noqa: PLR2004
+        await update.message.reply_text("Internal Server Error")
+        return
+
+    data = response.json()
+
+    message, markup = format_output(datetime.fromisoformat(data["date"]).date(), data["menu"], is_dinner=True)
     await update.message.reply_html(message, reply_markup=markup)
 
 

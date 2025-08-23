@@ -9,7 +9,7 @@ from telegram.ext import (
     filters,
 )
 
-from bot_frontend.handlers.canteen import canteen_callback_handler, canteen_handler
+from bot_frontend.handlers.canteen import canteen_callback_handler, canteen_handler, dinner_canteen_handler
 from bot_frontend.handlers.exams import exams_callback_handler, exams_handler
 from bot_frontend.handlers.help import help_handler
 from bot_frontend.handlers.lectures import get_lectures_callback_handler, get_lectures_handler
@@ -19,9 +19,9 @@ from bot_frontend.handlers.setup import (
     cancel,
     refresh_lectures,
     set_default_department,
-    set_unitrentoapp_token,
-    set_notifications,
     set_notification_time,
+    set_notifications,
+    set_unitrentoapp_token,
     setup_callback_handler,
     setup_handler,
 )
@@ -64,6 +64,7 @@ def main() -> None:
     app.add_handler(CommandHandler("lectures", get_lectures_handler))
     app.add_handler(CommandHandler("map", map_handler))
     app.add_handler(CommandHandler("menu", canteen_handler))
+    app.add_handler(CommandHandler("dinner", dinner_canteen_handler))
     app.add_handler(CommandHandler("rooms", rooms_handler))
     app.add_handler(CommandHandler("locuspocus", rooms_handler))
     app.add_handler(CommandHandler("tt", tt_handler))
