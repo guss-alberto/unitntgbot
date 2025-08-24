@@ -11,7 +11,7 @@ from telegram.ext import (
 
 from bot_frontend.handlers.canteen import canteen_callback_handler, canteen_handler, dinner_canteen_handler
 from bot_frontend.handlers.exams import exams_callback_handler, exams_handler
-from bot_frontend.handlers.help import help_handler
+from bot_frontend.handlers.help import departments_handler, help_handler, start_handler
 from bot_frontend.handlers.lectures import get_lectures_callback_handler, get_lectures_handler
 from bot_frontend.handlers.map import map_handler
 from bot_frontend.handlers.rooms import rooms_callback_handler, rooms_handler
@@ -25,7 +25,6 @@ from bot_frontend.handlers.setup import (
     setup_callback_handler,
     setup_handler,
 )
-from bot_frontend.handlers.start import start_handler
 from bot_frontend.handlers.tt import tt_callback_handler, tt_handler
 from bot_frontend.settings import settings
 
@@ -44,9 +43,11 @@ async def set_commands(app: Application) -> None:
             telegram.BotCommand(command="rooms", description="Show the available rooms"),
             telegram.BotCommand(command="map", description="Show the map of the university"),
             telegram.BotCommand(command="menu", description="Show the canteen menu"),
+            telegram.BotCommand(command="dinner", description="Show the canteen dinner menu"),
             telegram.BotCommand(command="tt", description="Show the Trentino Trasporti bus trips"),
             telegram.BotCommand(command="lectures", description="Show the lectures"),
             telegram.BotCommand(command="exams", description="Show the exams"),
+            telegram.BotCommand(command="departments", description="Show the department names and aliases for /rooms"),
             telegram.BotCommand(command="help", description="Show the help message"),
         ],
     )
@@ -59,6 +60,7 @@ def main() -> None:
 
     # Add the handlers for the different commands
     app.add_handler(CommandHandler("start", start_handler))
+    app.add_handler(CommandHandler("departments", departments_handler))
     app.add_handler(CommandHandler("exams", exams_handler))
     app.add_handler(CommandHandler("help", help_handler))
     app.add_handler(CommandHandler("lectures", get_lectures_handler))

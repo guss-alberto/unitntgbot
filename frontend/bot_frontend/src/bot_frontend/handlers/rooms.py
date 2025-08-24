@@ -34,6 +34,7 @@ NAME_TO_BUILDING_ID = {
     "bernardo": "E0502",
     "clesio": "E0502",
     # E0503
+    "polo-fabio-ferrari": "E0503",
     "povo": "E0503",
     "pov": "E0503",
     "rotta": "E0503",
@@ -72,9 +73,7 @@ async def _room_events(building_id: str, room: str) -> tuple[str, str, InlineKey
     async with httpx.AsyncClient() as client:
         response = await client.get(
             f"{settings.ROOMS_SVC_URL}/rooms/{building_id}/room",
-            params={
-                "room_query": room
-            },
+            params={"room_query": room},
             timeout=30,
         )
 
@@ -160,9 +159,7 @@ async def _rooms_status(
                 async with httpx.AsyncClient() as client:
                     map_response = await client.get(
                         f"{settings.MAPS_SVC_URL}/maps/multi",
-                        params={
-                            "rooms": ",".join(free_rooms)
-                        },
+                        params={"rooms": ",".join(free_rooms)},
                         timeout=30,
                     )
 
@@ -177,7 +174,7 @@ async def _rooms_status(
                     # This method is used to parse multipart/mixed responses
                     # The response is a multipart response with multiple images
                     images_message = email.message_from_bytes(raw_response)
-                    for index, images_part in enumerate(images_message.get_payload()):
+                    for images_part in images_message.get_payload():
                         # Get the image bytes
                         image_data = images_part.get_payload(decode=True)
                         images.append(image_data)
