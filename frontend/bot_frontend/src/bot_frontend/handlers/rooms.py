@@ -206,7 +206,7 @@ async def rooms_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
 
     args = context.args
     if not args or args[0] not in NAME_TO_BUILDING_ID:
-        await update.message.reply_html("Please provide a valid department name.")
+        await update.message.reply_html("Please provide a valid department name.\nUse /departments to list valid ids")
         # TODO: Add default department name, it has to be stored in the database.
         return
 

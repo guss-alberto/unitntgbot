@@ -308,12 +308,14 @@ def get_last_lecture_users(db: sqlite3.Connection, time: str | None) -> list[int
             JOIN Lectures l ON u.course_id = l.course_id
             WHERE DATE(l.start) = DATE(?)
               AND l.is_cancelled = 0
+              AND l.room LIKE 'Povo%'
             GROUP BY u.id, u.course_id
         )
         SELECT user_id
         FROM LastLectures
-        WHERE TIME(last_end) = TIME(?);
+        WHERE TIME(last_end) > TIME(?)
+          AND TIME(last_end) < TIME(?, '-20 minutes');
         """,
-        (datetime.today().strftime("%Y-%m-%d"), time),
+        (datetime.today().strftime("%Y-%m-%d"), time, time),
     )
     return [int(row[0]) for row in cur.fetchall()]

@@ -269,7 +269,7 @@
      stroke-width="5"
      id="polygon16" />
   <polygon
-     id="est"
+     id="East PC lab"
      points="410,240 460,240 460,260 475,260 480,265 480,295 475,300 460,300 460,320 410,320"
      fill="none"
      stroke="#000"
@@ -302,7 +302,7 @@
      stroke-width="5"
      id="polygon18" />
   <polygon
-     id="ovest"
+     id="West PC lab"
      points="340,240 390,240 390,260 390,320 340,320 340,300 325,300 320,295 320,265 325,260 340,260"
      fill="none"
      stroke="#000"

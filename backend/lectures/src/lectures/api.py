@@ -53,7 +53,7 @@ def notify() -> tuple[Response, int]:
     return jsonify({"message": f"Notifications sent to {n_users} users"}), 200
 
 
-@app.post("/last/")
+@app.post("/bus_notify/")
 def last() -> tuple[Response, int]:
     """Endpoint to get the list of users who will have their last lecture at a specific time."""
     time = request.args.get("time")

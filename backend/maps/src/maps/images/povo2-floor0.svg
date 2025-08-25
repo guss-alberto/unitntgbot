@@ -37,7 +37,7 @@
   <polygon points="205,240 235,240 235,270 205,270" fill="none" stroke="#000" stroke-width="5" />
   <polygon points="565,240 595,240 595,270 565,270" fill="none" stroke="#000" stroke-width="5" />
 
-  <polygon id="B106" points="610,240 690,240 690,320 610,320" fill="none" stroke="#000" stroke-width="5" />
+  <polygon id="B106 PC" points="610,240 690,240 690,320 610,320" fill="none" stroke="#000" stroke-width="5" />
   <text x="660" y="280" fill="#fff" text-anchor="middle" dominant-baseline="central">B106</text>
   <use href="#pc" x="627.5" y="280" fill="#fff" transform="translate(-9, -8)" />
   <polygon id="B108" points="610,320 690,320 690,360 610,360" fill="none" stroke="#000" stroke-width="5" />

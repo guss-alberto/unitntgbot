@@ -2,10 +2,9 @@ from datetime import datetime
 
 from flask import Flask, Response, jsonify, request
 
+from rooms.process_rooms import process_building, process_room
 from rooms.rooms_mapping import BUILDING_ID_TO_NAME
 from rooms.scraper import get_rooms as scraper_get_rooms
-
-from .process_rooms import process_building, process_room
 
 app = Flask(__name__)
 

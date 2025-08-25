@@ -40,7 +40,7 @@
   <text x="0" y="0" fill="#fff" dominant-baseline="central" text-anchor="middle" transform="translate(615,380) rotate(90)">1C</text>
   <polygon id="1B" points="630,345 680,345 680,400 695,415 695,435 680,450 680,500 630,500" fill="none" stroke="#000" stroke-width="5" />
   <text x="655" y="422.5" fill="#fff" dominant-baseline="central" text-anchor="middle">1C</text>
-  <polygon id="1A" points="455,435 630,435 630,480 455,480" fill="none" stroke="#000" stroke-width="5" />
+  <polygon id="1A PC" points="455,435 630,435 630,480 455,480" fill="none" stroke="#000" stroke-width="5" />
   <text x="542.5" y="457.5" fill="#fff" dominant-baseline="central" text-anchor="middle">1A</text>
   <polygon id="1H" points="425,435 455,435 455,500 410,500 410,450" fill="none" stroke="#000" stroke-width="5" />
   <text x="432.5" y="467.5" fill="#fff" dominant-baseline="central" text-anchor="middle">1H</text>

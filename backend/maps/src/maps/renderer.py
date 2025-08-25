@@ -40,7 +40,7 @@ def render_map(building_name: str, floor: int, room_ids: set[str]) -> bytes | No
 
     # Edge case for T1A and T1B rooms in mesiano - floor 0
     # If any of those 2 rooms appear then make T1 hidden, and make T1A and T1B visible
-    if building_name == "mesiano" and floor == 0 and ("T1A" in room_ids or "T1B" in room_ids):
+    if building_name == "mesiano" and floor == 0 and ("T1/A" in room_ids or "T1/B" in room_ids):
         for element in root.findall(".//*[@id]", namespace):
             if element.get("id") == "T1":
                 element.set("visibility", "hidden")
@@ -51,9 +51,7 @@ def render_map(building_name: str, floor: int, room_ids: set[str]) -> bytes | No
     modified_svg = ET.tostring(root, encoding="utf-8")
 
     # Convert modified SVG to PNG
-    png_data = cairosvg.svg2png(bytestring=modified_svg)
-
-    return png_data
+    return cairosvg.svg2png(bytestring=modified_svg)
 
 
 def get_building_name_and_floor(building_id: str, room_id: str) -> tuple[str, int] | None:
