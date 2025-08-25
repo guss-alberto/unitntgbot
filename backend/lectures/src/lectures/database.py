@@ -314,7 +314,7 @@ def get_last_lecture_users(db: sqlite3.Connection, time: str | None) -> list[int
         SELECT user_id
         FROM LastLectures
         WHERE TIME(last_end) > TIME(?)
-          AND TIME(last_end) < TIME(?, '-20 minutes');
+          AND TIME(last_end) < TIME(?, '+20 minutes');
         """,
         (datetime.today().strftime("%Y-%m-%d"), time, time),
     )
