@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+    tags:
+      - "v*.*.*"
 
 env:
   REGISTRY: ghcr.io
@@ -35,20 +37,29 @@ jobs:
           docker buildx bake --print > docker-bake.json
 
       - name: Rewrite image targets to ghcr
-        id: bakepatch
         run: |
-          jq --arg registry "$REGISTRY" --arg image_base_name "$IMAGE_BASE_NAME" '
+          SHORT_SHA=$(echo "${GITHUB_SHA}" | cut -c1-7)
+
+          EXTRA_TAGS="latest ${SHORT_SHA}"
+          if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
+            VERSION="${GITHUB_REF#refs/tags/}"
+            EXTRA_TAGS="$EXTRA_TAGS ${VERSION}"
+          fi
+
+          jq --arg registry "$REGISTRY" \
+            --arg image_base_name "$IMAGE_BASE_NAME" \
+            --argjson extra_tags "$(jq -n --arg tags "$EXTRA_TAGS" '$tags | split(" ")')" '
             .target |= with_entries(
-              .value += {
-                "tags": [
-                  "\($registry)/\($image_base_name)\(.value.args.PACKAGE):latest"
-                ]
-              }
+              .value |= (
+                .args.PACKAGE as $pkg
+                | . + {
+                    "tags": ($extra_tags | map("\($registry)/\($image_base_name)\($pkg):" + .))
+                  }
+              )
             )
           ' docker-bake.json > docker-bake-ghcr.json
 
       - name: Build and push
-        id: docker_build
         uses: docker/bake-action@v6
         with:
           source: .
