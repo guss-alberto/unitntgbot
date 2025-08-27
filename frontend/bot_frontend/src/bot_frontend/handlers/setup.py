@@ -10,6 +10,7 @@ from telegram.constants import ParseMode
 from telegram.ext import CallbackContext, ContextTypes, ConversationHandler
 
 from bot_frontend.settings import settings
+from bot_frontend.utils import edit_message_text_without_changes
 
 DB = sqlite3.connect(settings.DB_PATH)
 DB.execute(
@@ -62,7 +63,8 @@ async def setup_callback_handler(update: Update, _: ContextTypes.DEFAULT_TYPE) -
 
     match query.data:
         case "setup:lecture":
-            await query.edit_message_text(
+            await edit_message_text_without_changes(
+                query,
                 "Write your <b>UniTrentoApp</b> lectures link: (Type <code>/cancel</code> to cancel)"
                 "\n"
                 "Your link can be found in the top right corner of the '<b>Favourites</b>' tab in the '<b>Classes Timetable</b>' section in your app.\n"
@@ -80,19 +82,20 @@ async def setup_callback_handler(update: Update, _: ContextTypes.DEFAULT_TYPE) -
             keyboard.append([InlineKeyboardButton("❌ Go Back", callback_data="setup:department:back")])
             reply_markup = InlineKeyboardMarkup(keyboard)
 
-            await query.edit_message_text("Select your default department", reply_markup=reply_markup)
+            await edit_message_text_without_changes(query, "Select your default department", reply_markup=reply_markup)
             return ConversationHandler.END
         case "setup:refresh_lectures":
             # handled directly, shouldn't ever reach this point
             pass
         case "setup:notifications":
-            await query.edit_message_text(
+            await edit_message_text_without_changes(
+                query,
                 "Select the notifications you want to set up",
                 reply_markup=NOTIFICATIONS_REPLY_MARKUP,
             )
             return ConversationHandler.END
         case _:
-            await query.edit_message_text(text="Invalid option selected")
+            await edit_message_text_without_changes(query, text="Invalid option selected")
             return ConversationHandler.END
 
     return ConversationHandler.END
@@ -183,9 +186,9 @@ async def refresh_lectures(update: Update, _: CallbackContext) -> int:
     match response.status_code:
         case 200:
             data = response.json()
-            await query.edit_message_text(f"{data['number']} courses refreshed successfully!")
+            await edit_message_text_without_changes(query, f"{data['number']} courses refreshed successfully!")
         case _:
-            await query.edit_message_text("An unknown error occurred while refreshing lectures.")
+            await edit_message_text_without_changes(query, "An unknown error occurred while refreshing lectures.")
 
     return ConversationHandler.END
 
@@ -232,7 +235,8 @@ async def set_notifications(update: Update, _: CallbackContext) -> int:
             keyboard.append(row)
             row = []
 
-    await query.edit_message_text(
+    await edit_message_text_without_changes(
+        query,
         f"Select the time for {notification_type} notifications",
         reply_markup=InlineKeyboardMarkup(
             [
@@ -259,7 +263,8 @@ async def set_notification_time(update: Update, _: CallbackContext) -> int:
     await query.answer()
 
     if re.match(r"^setup:notifications:.*:back$", data):
-        await query.edit_message_text(
+        await edit_message_text_without_changes(
+            query,
             "Select the notifications you want to set up",
             reply_markup=NOTIFICATIONS_REPLY_MARKUP,
         )
@@ -286,9 +291,9 @@ async def set_notification_time(update: Update, _: CallbackContext) -> int:
         match response.status_code:
             case 200:
                 data = response.json()
-                await query.edit_message_text(data.get("message"))
+                await edit_message_text_without_changes(query, data.get("message"))
             case _:
-                await query.edit_message_text("An unknown error occurred while setting notifications.")
+                await edit_message_text_without_changes(query, "An unknown error occurred while setting notifications.")
 
     return ConversationHandler.END
 

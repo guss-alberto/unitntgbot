@@ -13,6 +13,7 @@ from telegram.error import BadRequest
 from telegram.ext import ContextTypes
 
 from bot_frontend.settings import settings
+from bot_frontend.utils import edit_message_text_without_changes
 
 NAME_TO_BUILDING_ID = {
     # E0504
@@ -250,13 +251,7 @@ async def rooms_callback_handler(update: Update, context: ContextTypes.DEFAULT_T
 
         msg, markup, images = await _rooms_status(building_id, sort_time=sort_type == "time", with_images=with_images)
 
-        try:
-            # Telegram will raise an error if the message is not modified
-            # which is the case when the user clicks on the button to show the map immediately after fetching the rooms status
-            await query.edit_message_text(msg, parse_mode=ParseMode.HTML, reply_markup=markup)
-        except BadRequest as e:
-            if "Message is not modified" not in e.message:
-                raise
+        await edit_message_text_without_changes(update, msg, parse_mode=ParseMode.HTML, reply_markup=markup)
 
         if images:
             media = [InputMediaPhoto(io.BytesIO(img)) for img in images]

@@ -10,6 +10,7 @@ from telegram.constants import ParseMode
 from telegram.ext import ContextTypes
 
 from bot_frontend.settings import settings
+from bot_frontend.utils import edit_message_text_without_changes
 
 
 def format_output(date: date, msg: str, *, is_dinner: bool = False) -> tuple[str, InlineKeyboardMarkup]:
@@ -53,6 +54,7 @@ async def canteen_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     message, markup = format_output(datetime.fromisoformat(data["date"]).date(), data["menu"])
     await update.message.reply_html(message, reply_markup=markup)
 
+
 async def dinner_canteen_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if not update.message:
         return
@@ -86,7 +88,7 @@ async def canteen_callback_handler(update: Update, context: ContextTypes.DEFAULT
         response = await client.get(f"{settings.CANTEEN_SVC_URL}/menu/{menu_type}/?date={date}", timeout=30)
 
     if response.status_code != 200:  # noqa: PLR2004
-        await query.edit_message_text("Internal Server Error")
+        await edit_message_text_without_changes(query, "Internal Server Error")
         return
 
     data = response.json()
@@ -96,4 +98,4 @@ async def canteen_callback_handler(update: Update, context: ContextTypes.DEFAULT
         data["menu"],
         is_dinner=menu_type == "dinner",
     )
-    await query.edit_message_text(message, reply_markup=markup, parse_mode=ParseMode.HTML)
+    await edit_message_text_without_changes(query, message, reply_markup=markup, parse_mode=ParseMode.HTML)

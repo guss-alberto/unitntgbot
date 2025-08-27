@@ -7,6 +7,7 @@ from telegram.constants import ParseMode
 from telegram.ext import ContextTypes
 
 from bot_frontend.settings import settings
+from bot_frontend.utils import edit_message_text_without_changes
 
 
 def format_output(date: date, lectures: list) -> tuple[str, InlineKeyboardMarkup]:
@@ -100,11 +101,16 @@ async def get_lectures_callback_handler(update: Update, _: ContextTypes.DEFAULT_
 
     match response.status_code:
         case 400:
-            await query.edit_message_text(data["message"])
+            await edit_message_text_without_changes(query, data["message"])
             return
         case 200:
             message, reply_markup = format_output(date, data["lectures"])
-            await query.edit_message_text(message, parse_mode=ParseMode.HTML, reply_markup=reply_markup)
+            await edit_message_text_without_changes(
+                query,
+                message,
+                parse_mode=ParseMode.HTML,
+                reply_markup=reply_markup,
+            )
             return
         case _:
-            await query.edit_message_text("An unknown error occured")
+            await edit_message_text_without_changes(query, "An unknown error occured")

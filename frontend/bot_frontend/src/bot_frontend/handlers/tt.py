@@ -9,6 +9,7 @@ from telegram.constants import ParseMode
 from telegram.ext import ContextTypes
 
 from bot_frontend.settings import settings
+from bot_frontend.utils import edit_message_text_without_changes
 
 
 def generate_reply_markup(route: dict, sequence: int) -> InlineKeyboardMarkup:
@@ -138,10 +139,13 @@ async def tt_callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE
             case 200:
                 html = format_route(route, sequence)
                 reply_markup = generate_reply_markup(route, sequence)
-                await query.edit_message_text(html, parse_mode=ParseMode.HTML, reply_markup=reply_markup)
+                await edit_message_text_without_changes(
+                    query, html, parse_mode=ParseMode.HTML, reply_markup=reply_markup
+                )
             case _:
                 reply_markup = generate_reply_markup(route, sequence)
-                await query.edit_message_text(
+                await edit_message_text_without_changes(
+                    query,
                     "An unknown error occurred while fetching the bus route.",
                     reply_markup=reply_markup,
                 )

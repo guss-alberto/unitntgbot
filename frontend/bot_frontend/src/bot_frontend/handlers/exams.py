@@ -5,6 +5,7 @@ from telegram.constants import ParseMode
 from telegram.ext import ContextTypes
 
 from bot_frontend.settings import settings
+from bot_frontend.utils import edit_message_text_without_changes
 
 
 def get_keyboard(callback: str, page: int, n_pages: int) -> InlineKeyboardMarkup:
@@ -96,7 +97,8 @@ async def exams_callback_handler(update: Update, context: ContextTypes.DEFAULT_T
             )
 
     msg, markup = process_results(response, callback)
-    await query.edit_message_text(
+    await edit_message_text_without_changes(
+        query,
         msg,
         reply_markup=markup,
         parse_mode=ParseMode.HTML,
