@@ -33,6 +33,7 @@ LOGGER = logging.getLogger(__name__)
 #         self.stops.clear()
 #         self.trips.clear()
 
+
 def _timed_memoize(duration: int):
     def decorator(func):
         cache: dict[str, dict] = defaultdict(dict)
@@ -51,7 +52,7 @@ def _timed_memoize(duration: int):
             try:
                 cache[route_id]["value"] = func(*args, **kwargs)
             except Exception as e:
-                LOGGER.error("Error while fetching data from Trentino Trasporti: %s", e) 
+                LOGGER.error("Error while fetching data from Trentino Trasporti: %s", e)
 
             cache[route_id]["timestamp"] = current_time
             return cache[route_id]["value"]
@@ -65,20 +66,21 @@ def _timed_memoize(duration: int):
 def get_route(route_id: str) -> list:
     path = f"/gtlservice/trips_new"
     # Limit has to be set to some number and cannot be left out
-    response = requests.get(BASE_URL + path,
-            params={
-                "limit": 1000,
-                "routeId": route_id,
-                "type": "U",
-                "directionId": 1,
-            },
-            auth=(USERNAME, PASSWORD),
-            timeout=15,
-            headers=HEADERS,
-        )
+    response = requests.get(
+        BASE_URL + path,
+        params={
+            "limit": 1000,
+            "routeId": route_id,
+            "type": "U",
+            "directionId": 1,
+        },
+        auth=(USERNAME, PASSWORD),
+        timeout=15,
+        headers=HEADERS,
+    )
     data = response.json()
     now = datetime.now().strftime("%H:%M:%S")
-    data = filter(lambda x: x["stopTimes"][0]["arrivalTime"] > now, data)
+    data = filter(lambda x: x["stopTimes"][-1]["arrivalTime"] > now, data)
     return list(data)
 
 
@@ -87,28 +89,28 @@ app = Flask(__name__)
 
 @app.get("/<string:route_id>/<string:sequence>")
 def get_routes(route_id: str, sequence: str) -> tuple[Response, int]:
-    data = get_route(route_id)
+    route_data = get_route(route_id)
 
-    if len(data) == 0:
+    if len(route_data) == 0:
         return make_response(""), 204
 
-    data = data[int(sequence)]
+    selected_trip = route_data[int(sequence)]
 
-    stop_index = data.get("lastSequenceDetection")
+    stop_index = selected_trip.get("lastSequenceDetection")
     stop_index = stop_index - 1 if stop_index != 0 else None
 
     # Filter out useless fields and change stopId to stopName
     data = {
-        "delay": data.get("delay"),
-        "lastUpdate": data.get("lastEventRecivedAt"),  # Misspelled in API
+        "delay": selected_trip.get("delay"),
+        "lastUpdate": selected_trip.get("lastEventRecivedAt"),  # Misspelled in API
         "currentStopIndex": stop_index,
-        "totalRoutesCount": data.get("totaleCorseInLista"),
+        "totalRoutesCount": len(route_data),
         "stops": [
             {
                 "arrivalTime": stop_time["arrivalTime"][:-3],  # Remove seconds, it's always 00 anyways
                 "stopName": STOP_ID_TO_NAME.get(stop_time["stopId"], "?Unknown Stop?"),
             }
-            for stop_time in data.get("stopTimes", [])
+            for stop_time in selected_trip.get("stopTimes", [])
         ],
     }
 
