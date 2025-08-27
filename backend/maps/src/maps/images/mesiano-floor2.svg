@@ -30,11 +30,6 @@
      inkscape:current-layer="svg23" />
   <style
      id="style1">
-    @font-face {
-      font-family: 'JetBrains Mono';
-      src: url('JetBrainsMono.ttf');
-    }
-
     text {
       font-family: 'JetBrains Mono', monospace;
       font-size: 16pt;

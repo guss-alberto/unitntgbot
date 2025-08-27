@@ -32,12 +32,13 @@ WORKDIR /app
 ARG PACKAGE
 RUN apt-get update \
     && apt-get install -y --no-install-recommends dumb-init tzdata \
-    && apt-get install -y --no-install-recommends dumb-init \
     && if [ "${PACKAGE:-}" = "maps" ]; then \
         apt-get install -y --no-install-recommends libcairo2; \
     fi \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
+    
+COPY backend/maps/src/maps/fonts/ /usr/local/share/fonts/
 
 COPY --from=builder /app /app
 

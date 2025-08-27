@@ -13,13 +13,13 @@ from bot_frontend.settings import settings
 from bot_frontend.utils import edit_message_text_without_changes
 
 DB = sqlite3.connect(settings.DB_PATH)
-DB.execute(
-    """\
-    CREATE TABLE IF NOT EXISTS DefaultDepartments (
-        id TEXT PRIMARY KEY,
-        department_id TEXT NOT NULL
-    );""",
-)
+#DB.execute(
+#    """\
+#    CREATE TABLE IF NOT EXISTS DefaultDepartments (
+#        id TEXT PRIMARY KEY,
+#        department_id TEXT NOT NULL
+#    );""",
+#)
 DB.execute(
     """\
     CREATE TABLE IF NOT EXISTS LectureTokens (
@@ -34,7 +34,7 @@ MAIN_MENU_REPLY_MARKUP = InlineKeyboardMarkup(
     [
         [InlineKeyboardButton("🗓️ Link UniTrentoApp account", callback_data="setup:lecture")],
         [InlineKeyboardButton("🔄 Refresh Lectures", callback_data="setup:refresh_lectures")],
-        [InlineKeyboardButton("🏫 Set Default Department", callback_data="setup:department")],
+        # [InlineKeyboardButton("🏫 Set Default Department", callback_data="setup:department")],
         [InlineKeyboardButton("🔔 Notifications", callback_data="setup:notifications")],
     ],
 )
@@ -67,23 +67,23 @@ async def setup_callback_handler(update: Update, _: ContextTypes.DEFAULT_TYPE) -
                 query,
                 "Write your <b>UniTrentoApp</b> lectures link: (Type <code>/cancel</code> to cancel)"
                 "\n"
-                "Your link can be found in the top right corner of the '<b>Favourites</b>' tab in the '<b>Classes Timetable</b>' section in your app.\n"
+                "Your link can be found in 📤 the top right corner of the '<b>Favourites</b>' tab in the '<b>Classes Timetable</b>' section in your app.\n"
                 "\n"
                 "<i>Note that this removes all courses you are currently following on this Telegram Bot.</i>",
                 parse_mode=ParseMode.HTML,
             )
             return 0
-        case "setup:department":
-            keyboard = []
-            for department_id, department_name in BUILDING_ID_TO_NAME.items():
-                keyboard.append(
-                    [InlineKeyboardButton(department_name, callback_data=f"setup:department:{department_id}")],
-                )
-            keyboard.append([InlineKeyboardButton("❌ Go Back", callback_data="setup:department:back")])
-            reply_markup = InlineKeyboardMarkup(keyboard)
+        # case "setup:department":
+        #     keyboard = []
+        #     for department_id, department_name in BUILDING_ID_TO_NAME.items():
+        #         keyboard.append(
+        #             [InlineKeyboardButton(department_name, callback_data=f"setup:department:{department_id}")],
+        #         )
+        #     keyboard.append([InlineKeyboardButton("❌ Go Back", callback_data="setup:department:back")])
+        #     reply_markup = InlineKeyboardMarkup(keyboard)
 
-            await edit_message_text_without_changes(query, "Select your default department", reply_markup=reply_markup)
-            return ConversationHandler.END
+        #     await edit_message_text_without_changes(query, "Select your default department", reply_markup=reply_markup)
+        #     return ConversationHandler.END
         case "setup:refresh_lectures":
             # handled directly, shouldn't ever reach this point
             pass

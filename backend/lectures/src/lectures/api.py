@@ -126,7 +126,6 @@ def last() -> tuple[Response, int]:
     else:
         html += "Real time data is not available at the moment"
 
-    # TODO: Send notifications to users
     for chat_id in users:
         send_notification(chat_id=chat_id, message=html)
 

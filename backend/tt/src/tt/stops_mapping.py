@@ -2443,7 +2443,7 @@ STOP_ID_TO_NAME = {
     60: "Gardolo D.Milani Piscina",
     61: "Gardolo Don Milani 8 Marzo",
     62: "Gardolo S.Anna Carpenedi",
-    2820: "Povo Pant�",
+    2820: "Povo Pantè",
     63: "Gardolo S.Anna Carpenedi",
     64: "Gardolo Svincolo Ss.12",
     230: "Sopramonte Bivio Baselga",

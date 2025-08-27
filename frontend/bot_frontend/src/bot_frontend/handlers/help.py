@@ -56,17 +56,14 @@ DEPARTMENT_CODES = (
 HELP_MESSAGE = (
     "<b>Commands:</b>\n"
     "- /setup - Show the setup menu\n"
-    "- /help - Show this message\n"
     "- /menu - Show the canteen lunch menu\n"
     "- /dinner - Show the dinner menu (only at Tommaso Gar)\n"
-    "- /rooms - Show the available rooms in the default department\n"
     "- /rooms <code>&lt;site&gt;</code> - Show the available rooms in the specified department\n"
     "- /rooms <code>&lt;site&gt; &lt;room&gt</code> - Shows all events for that particular room\n"
     "- /departments - Shows the list of department codes and aliases for the /rooms command\n"
-    # "- /map <code>&lt;site&gt; &lt;room&gt</code> - Show where the room is located\n"
     "- /tt - Show the Trentino Trasporti but trips\n"
     "- /lectures - Show the lectures for today\n"
-    "- /exams - Show the exams\n"
+    "- /exams <code>&lt;query&gt;- Search all exam call in Esse3\n"
     "- /help - Show this message\n\n"
 ) + SOURCE_INFO
 

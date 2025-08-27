@@ -13,17 +13,23 @@ from bot_frontend.utils import edit_message_text_without_changes
 
 
 def generate_reply_markup(route: dict, sequence: int) -> InlineKeyboardMarkup:
-    keyboard = [[]]
+    keyboard = [[],[]]
 
     if len(route) != 0 and sequence - 1 >= 0:
         keyboard[0].append(InlineKeyboardButton("⬅️", callback_data=f"tt:{sequence - 1}"))
-
-    keyboard[0].append(InlineKeyboardButton("🔄", callback_data=f"tt:{sequence}"))
+    else:
+        keyboard[0].append(InlineKeyboardButton(" ", callback_data=f"tt:{sequence}"))
 
     totalRoutesCount = route.get("totalRoutesCount", 0)
     if len(route) != 0 and sequence + 1 < totalRoutesCount:
         keyboard[0].append(InlineKeyboardButton("➡️", callback_data=f"tt:{sequence + 1}"))
+    else:
+        keyboard[0].append(InlineKeyboardButton(" ", callback_data=f"tt:{sequence}"))
 
+    if sequence != 0:
+        keyboard[1].append(InlineKeyboardButton("⏪", callback_data=f"tt:0"))
+    
+    keyboard[1].append(InlineKeyboardButton("🔄", callback_data=f"tt:{sequence}"));
     reply_markup = InlineKeyboardMarkup(keyboard)
 
     if sequence != 0:

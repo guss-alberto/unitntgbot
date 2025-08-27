@@ -3,7 +3,7 @@ import sqlite3
 from exams.scraper import get_university_exams, get_university_faculties
 from exams.UniversityExam import UniversityExam
 
-MAX_PER_PAGE = 10
+ITEMS_PER_PAGE = 5
 
 
 def create_table(db: sqlite3.Connection) -> None:
@@ -47,11 +47,11 @@ def update_db(db: sqlite3.Connection) -> None:
     db.commit()
 
 
-def search_exams(db: sqlite3.Connection, query: str) -> list[UniversityExam]:
+def search_exams(db: sqlite3.Connection, query: str, page: int = 1) -> tuple[list[UniversityExam], int]:
     cur = db.cursor()
     cur.execute(
         """\
-        SELECT DISTINCT * FROM Exams WHERE
+        SELECT COUNT(*) FROM Exams WHERE
         DATE(date) >= DATE(CURRENT_TIMESTAMP) AND
         (
             name LIKE '%' || ? || '%'
@@ -61,17 +61,37 @@ def search_exams(db: sqlite3.Connection, query: str) -> list[UniversityExam]:
         ORDER BY date;""",
         (query, query, query),
     )
-    exams = cur.fetchall()
-    cur.close()
-
-    return [UniversityExam(*exam) for exam in exams]
-
-
-def get_exams_for_user(db: sqlite3.Connection, tg_id: str) -> list[UniversityExam]:
-    cur = db.cursor()
+    
+    (total_count,) = cur.fetchone()
+    
+    offset = (page - 1) * ITEMS_PER_PAGE
+    
     cur.execute(
         """\
-        SELECT Exams.* FROM Exams
+        SELECT DISTINCT * FROM Exams WHERE
+        DATE(date) >= DATE(CURRENT_TIMESTAMP) AND
+        (
+            name LIKE '%' || ? || '%'
+            OR professors LIKE '%' || ? || '%'
+            OR id = ?
+        )
+        ORDER BY date
+        LIMIT ? OFFSET ?;""",
+        (query, query, query, ITEMS_PER_PAGE, offset),
+    )
+    
+    exams = [UniversityExam(*exam) for exam in cur]
+    cur.close()
+
+    return exams, total_count
+
+
+def get_exams_for_user(db: sqlite3.Connection, tg_id: str, page: int = 1) -> tuple[list[UniversityExam], int]:
+    cur = db.cursor()
+    
+    cur.execute(
+        """\
+        SELECT COUNT(*) FROM Exams
             JOIN Users ON Users.course_id = Exams.id
             WHERE Users.id = ?
             AND DATE(Exams.date) >= DATE(CURRENT_TIMESTAMP)
@@ -79,10 +99,26 @@ def get_exams_for_user(db: sqlite3.Connection, tg_id: str) -> list[UniversityExa
         """,
         (tg_id,),
     )
-    exams = cur.fetchall()
+    
+    (total_count,) = cur.fetchone()
+    
+    offset = (page - 1) * ITEMS_PER_PAGE
+    
+    cur.execute(
+        """\
+        SELECT Exams.* FROM Exams
+            JOIN Users ON Users.course_id = Exams.id
+            WHERE Users.id = ?
+            AND DATE(Exams.date) >= DATE(CURRENT_TIMESTAMP)
+            ORDER BY Exams.date
+            LIMIT ? OFFSET ?;
+        """,
+        (tg_id, ITEMS_PER_PAGE, offset),
+    )
+    exams = [UniversityExam(*exam) for exam in cur]
     cur.close()
 
-    return [UniversityExam(*exam) for exam in exams]
+    return exams, total_count
 
 
 def add_courses_for_user(db: sqlite3.Connection, tg_id: str, courses: list[str]) -> None:

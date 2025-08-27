@@ -69,6 +69,7 @@ NAME_TO_BUILDING_ID = {
     "soi": "SOI",
 }
 
+BUILDINGS_WITH_MAPS = ["E0503", "E0301"]
 
 async def _room_events(building_id: str, room: str) -> tuple[str, str, InlineKeyboardMarkup | None]:
     async with httpx.AsyncClient() as client:
@@ -77,16 +78,9 @@ async def _room_events(building_id: str, room: str) -> tuple[str, str, InlineKey
             params={"room_query": room},
             timeout=30,
         )
+    
 
-    keyboard = [
-        [
-            InlineKeyboardButton(
-                "🗺️ View Room Location",
-                callback_data=f"rooms:s:{building_id}:{room}",
-            ),
-        ],
-    ]  # TODO: Add more options such as filter for free, occupied or all rooms.
-    reply_markup = InlineKeyboardMarkup(keyboard)
+    
 
     match response.status_code:
         case 404:
@@ -101,6 +95,18 @@ async def _room_events(building_id: str, room: str) -> tuple[str, str, InlineKey
             rooms_formatted = [Event(**room).format() for room in data["room_data"]]
             msg += "\n".join(rooms_formatted)
             msg += " all day"
+            
+            
+            keyboard = [
+                [
+                    InlineKeyboardButton(
+                        "🗺️ View Room Location",
+                        callback_data=f"rooms:s:{building_id}:{data["room_code"]}",
+                    ),
+                ],
+            ]  
+            reply_markup = InlineKeyboardMarkup(keyboard) if building_id in BUILDINGS_WITH_MAPS else None
+            
             return msg, data["room_code"], reply_markup
 
     return "", "", None
@@ -183,7 +189,7 @@ async def _rooms_status(
             # The map button should only show for buildings which have maps
             # and only if the message doesn't have maps already
             # also if no free rooms are available the button should not appear
-            if not images and len(free_rooms) > 0 and building_id in ["E0503", "E0301"]:
+            if not images and len(free_rooms) > 0 and building_id in BUILDINGS_WITH_MAPS:
                 keyboard += (
                     [
                         InlineKeyboardButton(
@@ -207,8 +213,11 @@ async def rooms_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
 
     args = context.args
     if not args or args[0] not in NAME_TO_BUILDING_ID:
-        await update.message.reply_html("Please provide a valid department name.\nUse /departments to list valid ids")
-        # TODO: Add default department name, it has to be stored in the database.
+        await update.message.reply_html("Please provide a valid department name.\nUse /departments to list valid ids\n\n"
+                                        "Usage:\n"
+                                        "- /rooms <code>&lt;site&gt;</code> - Show the available rooms in the specified department\n"
+                                        "- /rooms <code>&lt;site&gt; &lt;room&gt</code> - Shows all events for that particular room\n"
+                                        )
         return
 
     building_id = NAME_TO_BUILDING_ID[args[0].lower()]
@@ -236,6 +245,8 @@ async def rooms_callback_handler(update: Update, context: ContextTypes.DEFAULT_T
     if rooms_args[1] == "s":
         building_id = rooms_args[2]
         room_code = rooms_args[3]
+        
+        await query.edit_message_reply_markup(InlineKeyboardMarkup([]))
 
         async with httpx.AsyncClient() as client:
             response = await client.get(f"{settings.MAPS_SVC_URL}/maps/{building_id}/{room_code}", timeout=30)
@@ -251,7 +262,7 @@ async def rooms_callback_handler(update: Update, context: ContextTypes.DEFAULT_T
 
         msg, markup, images = await _rooms_status(building_id, sort_time=sort_type == "time", with_images=with_images)
 
-        await edit_message_text_without_changes(update, msg, parse_mode=ParseMode.HTML, reply_markup=markup)
+        await edit_message_text_without_changes(query, msg, parse_mode=ParseMode.HTML, reply_markup=markup)
 
         if images:
             media = [InputMediaPhoto(io.BytesIO(img)) for img in images]

@@ -56,10 +56,12 @@ async def exams_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
         return
 
     if not context.args:
-        tg_id = update.message.chat_id
-        callback = f"u:{tg_id}"
-        async with httpx.AsyncClient() as client:
-            response = await client.get(f"{settings.EXAMS_SVC_URL}/exams/user/{tg_id}/", timeout=30)
+        await update.message.reply_html("Please provide a search query\n\nUsage:\n/exams <code>&lt;query&gt;")
+        return
+        #tg_id = update.message.chat_id
+        #callback = f"u:{tg_id}"
+        #async with httpx.AsyncClient() as client:
+        #    response = await client.get(f"{settings.EXAMS_SVC_URL}/exams/user/{tg_id}/", timeout=30)
     else:
         query = " ".join(context.args)
         callback = f"q:{query}"

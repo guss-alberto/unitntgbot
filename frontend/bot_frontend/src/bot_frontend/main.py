@@ -13,12 +13,11 @@ from bot_frontend.handlers.canteen import canteen_callback_handler, canteen_hand
 from bot_frontend.handlers.exams import exams_callback_handler, exams_handler
 from bot_frontend.handlers.help import departments_handler, help_handler, start_handler
 from bot_frontend.handlers.lectures import get_lectures_callback_handler, get_lectures_handler
-from bot_frontend.handlers.map import map_handler
 from bot_frontend.handlers.rooms import rooms_callback_handler, rooms_handler
 from bot_frontend.handlers.setup import (
     cancel,
     refresh_lectures,
-    set_default_department,
+    # set_default_department,
     set_notification_time,
     set_notifications,
     set_unitrentoapp_token,
@@ -41,7 +40,6 @@ async def set_commands(app: Application) -> None:
         [
             telegram.BotCommand(command="setup", description="Setup the bot"),
             telegram.BotCommand(command="rooms", description="Show the available rooms"),
-            telegram.BotCommand(command="map", description="Show the map of the university"),
             telegram.BotCommand(command="menu", description="Show the canteen menu"),
             telegram.BotCommand(command="dinner", description="Show the canteen dinner menu"),
             telegram.BotCommand(command="tt", description="Show the Trentino Trasporti bus trips"),
@@ -64,7 +62,6 @@ def main() -> None:
     app.add_handler(CommandHandler("exams", exams_handler))
     app.add_handler(CommandHandler("help", help_handler))
     app.add_handler(CommandHandler("lectures", get_lectures_handler))
-    app.add_handler(CommandHandler("map", map_handler))
     app.add_handler(CommandHandler("menu", canteen_handler))
     app.add_handler(CommandHandler("dinner", dinner_canteen_handler))
     app.add_handler(CommandHandler("rooms", rooms_handler))
@@ -76,7 +73,7 @@ def main() -> None:
     add_lectures = ConversationHandler(
         entry_points=[
             CommandHandler("setup", setup_handler),
-            CallbackQueryHandler(set_default_department, pattern=r"^setup:department:.*$"),
+            # CallbackQueryHandler(set_default_department, pattern=r"^setup:department:.*$"),
             CallbackQueryHandler(refresh_lectures, pattern=r"^setup:refresh_lectures$"),
             CallbackQueryHandler(set_notification_time, pattern=r"^setup:notifications:.*:.*$"),
             CallbackQueryHandler(set_notifications, pattern=r"^setup:notifications:.*$"),

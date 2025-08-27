@@ -9,7 +9,11 @@ dependencies = [
     "pydantic-settings>=2.7.1",
     "requests>=2.32.3",
     "pyquery>=2.0.1",
+    "lectures",
 ]
+
+[tool.uv.sources]
+lectures = { workspace = true }
 
 [project.scripts]
 exams = "exams.api:main"
