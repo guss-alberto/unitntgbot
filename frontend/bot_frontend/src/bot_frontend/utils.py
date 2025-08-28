@@ -23,7 +23,8 @@ async def edit_message_text_without_changes(
     api_kwargs: JSONDict | None = None,
 ) -> Message | bool:
     """
-    Telegram will raise an error if the message is not modified
+    Telegram will raise an error if the message is not modified.
+
     Shortcut for::
 
         await query.edit_message_text(*args, **kwargs)
@@ -42,7 +43,6 @@ async def edit_message_text_without_changes(
         :exc:`TypeError` if :attr:`message` is not accessible.
 
     """
-
     try:
         return await query.edit_message_text(
             text=text,
@@ -61,4 +61,4 @@ async def edit_message_text_without_changes(
         if "Message is not modified" not in e.message:
             raise
 
-    return False
+    return await query.answer()

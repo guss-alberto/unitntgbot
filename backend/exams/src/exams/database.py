@@ -61,11 +61,11 @@ def search_exams(db: sqlite3.Connection, query: str, page: int = 1) -> tuple[lis
         ORDER BY date;""",
         (query, query, query),
     )
-    
+
     (total_count,) = cur.fetchone()
-    
+
     offset = (page - 1) * ITEMS_PER_PAGE
-    
+
     cur.execute(
         """\
         SELECT DISTINCT * FROM Exams WHERE
@@ -79,7 +79,7 @@ def search_exams(db: sqlite3.Connection, query: str, page: int = 1) -> tuple[lis
         LIMIT ? OFFSET ?;""",
         (query, query, query, ITEMS_PER_PAGE, offset),
     )
-    
+
     exams = [UniversityExam(*exam) for exam in cur]
     cur.close()
 
@@ -88,7 +88,7 @@ def search_exams(db: sqlite3.Connection, query: str, page: int = 1) -> tuple[lis
 
 def get_exams_for_user(db: sqlite3.Connection, tg_id: str, page: int = 1) -> tuple[list[UniversityExam], int]:
     cur = db.cursor()
-    
+
     cur.execute(
         """\
         SELECT COUNT(*) FROM Exams
@@ -99,11 +99,11 @@ def get_exams_for_user(db: sqlite3.Connection, tg_id: str, page: int = 1) -> tup
         """,
         (tg_id,),
     )
-    
+
     (total_count,) = cur.fetchone()
-    
+
     offset = (page - 1) * ITEMS_PER_PAGE
-    
+
     cur.execute(
         """\
         SELECT Exams.* FROM Exams

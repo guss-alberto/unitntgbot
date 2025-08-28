@@ -58,7 +58,7 @@ def get_exams() -> tuple[Response, int]:
 
     query = query.upper()
     db = _get_db()
-    exams, total_count = search_exams_db(db, query)
+    exams, total_count = search_exams_db(db, query, page)
 
     if not exams:
         return jsonify({"message": "No exam found with given query", "exams": []}), 404
@@ -70,7 +70,7 @@ def get_exams() -> tuple[Response, int]:
 def get_exam(tg_id: str) -> tuple[Response, int]:
     db = _get_db()
     page = int(request.args.get("page", "0"))
-    exams, total_count = get_exams_for_user(db, tg_id)
+    exams, total_count = get_exams_for_user(db, tg_id, page)
 
     if not exams:
         return jsonify({"message": "No exams found for user"}), 404

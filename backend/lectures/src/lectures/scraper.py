@@ -1,13 +1,10 @@
 import logging
 import re
-import sqlite3
-import sys
 from datetime import datetime
 
 import requests
 
 from lectures.rooms_mapping import BUILDING_ID_TO_NAME, ROOM_ID_TO_NAME
-from lectures.settings import settings
 from lectures.UniversityLecture import UniversityLecture
 
 

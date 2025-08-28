@@ -4,6 +4,7 @@ from telegram.ext import (
     Application,
     CallbackQueryHandler,
     CommandHandler,
+    ContextTypes,
     ConversationHandler,
     MessageHandler,
     filters,
@@ -51,6 +52,13 @@ async def set_commands(app: Application) -> None:
     )
 
 
+async def empty_callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if not update or not update.callback_query:
+        return
+
+    await update.callback_query.answer()
+
+
 def main() -> None:
     app = Application.builder().token(settings.TELEGRAM_BOT_TOKEN).post_init(set_commands).build()
 
@@ -95,5 +103,7 @@ def main() -> None:
     app.add_handler(CallbackQueryHandler(exams_callback_handler, pattern=r"^exams:"))
     app.add_handler(CallbackQueryHandler(get_lectures_callback_handler, pattern=r"^lect:"))
     app.add_handler(CallbackQueryHandler(tt_callback_handler, pattern=r"^tt:"))
+    app.add_handler(CallbackQueryHandler(empty_callback_handler))
 
     app.run_polling(allowed_updates=Update.ALL_TYPES)
+

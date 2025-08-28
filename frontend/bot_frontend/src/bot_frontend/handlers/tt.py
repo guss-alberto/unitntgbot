@@ -146,7 +146,7 @@ async def tt_callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE
                 html = format_route(route, sequence)
                 reply_markup = generate_reply_markup(route, sequence)
                 await edit_message_text_without_changes(
-                    query, html, parse_mode=ParseMode.HTML, reply_markup=reply_markup
+                    query, html, parse_mode=ParseMode.HTML, reply_markup=reply_markup,
                 )
             case _:
                 reply_markup = generate_reply_markup(route, sequence)

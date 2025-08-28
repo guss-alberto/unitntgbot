@@ -56,7 +56,7 @@ async def exams_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
         return
 
     if not context.args:
-        await update.message.reply_html("Please provide a search query\n\nUsage:\n/exams <code>&lt;query&gt;")
+        await update.message.reply_html("Please provide a search query\n\nUsage:\n/exams <code>&lt;query&gt;</code>")
         return
         #tg_id = update.message.chat_id
         #callback = f"u:{tg_id}"
