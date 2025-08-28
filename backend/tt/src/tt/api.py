@@ -1,12 +1,12 @@
 import logging
-from datetime import datetime
 import time
-from functools import wraps
 from collections import defaultdict
+from datetime import datetime
+from functools import wraps
 
 import requests
 from flask import Flask, Response, jsonify, make_response
-from requests import RequestException
+from .gtfs_fallback import gtfs_get_route
 
 from tt.stops_mapping import STOP_ID_TO_NAME
 
@@ -21,20 +21,12 @@ HEADERS = {
 
 LOGGER = logging.getLogger(__name__)
 
-# TODO: Use cache if requests are very close to each other
-# class TTCache:
-#     def __init__(self) -> None:
-#         self.routes = {}
-#         self.stops = {}
-#         self.trips = {}
 
-#     def clear(self) -> None:
-#         self.routes.clear()
-#         self.stops.clear()
-#         self.trips.clear()
+# if we fail for more than 30 minutes, fallback
+FALLBACK_DELAY = 30 * 60
 
 
-def _timed_memoize(duration: int):
+def _timed_memoize(duration: int, fallback):
     def decorator(func):
         cache: dict[str, dict] = defaultdict(dict)
 
@@ -51,8 +43,15 @@ def _timed_memoize(duration: int):
             # Otherwise update the cache
             try:
                 cache[route_id]["value"] = func(*args, **kwargs)
+                cache[route_id]["last_success"] = current_time
             except Exception as e:
                 LOGGER.error("Error while fetching data from Trentino Trasporti: %s", e)
+                if (
+                    route_id not in cache
+                    or "last_success" not in cache[route_id]
+                    or current_time - cache[route_id]["last_success"] > FALLBACK_DELAY
+                ):
+                    cache[route_id]["value"] = fallback(*args, **kwargs)
 
             cache[route_id]["timestamp"] = current_time
             return cache[route_id]["value"]
@@ -62,9 +61,9 @@ def _timed_memoize(duration: int):
     return decorator
 
 
-@_timed_memoize(32)  # Cache lasts for 30 seconds
-def get_route(route_id: str) -> list:
-    path = f"/gtlservice/trips_new"
+@_timed_memoize(32, gtfs_get_route)  # Cache lasts for 30 seconds
+def get_route(route_id: str, direction_id: int) -> list:
+    path = "/gtlservice/trips_new"
     # Limit has to be set to some number and cannot be left out
     response = requests.get(
         BASE_URL + path,
@@ -72,7 +71,7 @@ def get_route(route_id: str) -> list:
             "limit": 1000,
             "routeId": route_id,
             "type": "U",
-            "directionId": 1,
+            "directionId": direction_id,
         },
         auth=(USERNAME, PASSWORD),
         timeout=15,
@@ -89,7 +88,7 @@ app = Flask(__name__)
 
 @app.get("/<string:route_id>/<string:sequence>")
 def get_routes(route_id: str, sequence: str) -> tuple[Response, int]:
-    route_data = get_route(route_id)
+    route_data = get_route(route_id, 1)
 
     if len(route_data) == 0:
         return make_response(""), 204
