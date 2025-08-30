@@ -1,18 +1,11 @@
-import asyncio
-import json
-import random
 import re
 import sqlite3
 from datetime import datetime
-from zoneinfo import ZoneInfo
 
-import requests
 from flask import Flask, Response, g, jsonify, request
-from notification_dispatcher.notification import send_notification
 
 from lectures.database import (
     create_tables,
-    get_last_lecture_users,
     get_lectures_for_user,
     get_next_lectures_for_user,
     import_for_user,
@@ -53,85 +46,6 @@ def notify() -> tuple[Response, int]:
     return jsonify({"message": f"Notifications sent to {n_users} users"}), 200
 
 
-@app.post("/bus_notify/")
-def last() -> tuple[Response, int]:
-    """Endpoint to get the list of users who will have their last lecture at a specific time."""
-    time = request.args.get("time")
-    if not time:
-        time = datetime.now().strftime("%H:%M")
-    elif not re.match(r"^\d\d:\d\d$", time):
-        return jsonify({"message": "'time' parameter in query malformed"}), 400
-
-    db = _get_db()
-    users = get_last_lecture_users(db, time)
-
-    response = requests.get(f"{settings.TT_SVC_URL}/400/0", timeout=30)
-    try:
-        route = response.json()
-    except json.JSONDecodeError:
-        route = {}
-
-    #print(route)
-
-    # TODO: Make formatting more elegant
-    html = ""
-    current_hour = datetime.now().strftime("%H:%M")
-    is_next = False
-    current_stop_index = route["currentStopIndex"]
-    stops = route.get("stops", [])
-    for idx, stop in enumerate(stops):
-        arrival_time = stop["arrivalTime"]
-        stop_name = stop["stopName"]
-
-        if current_stop_index is None:
-            if not is_next and current_hour <= arrival_time:
-                html += f"❓ <b>{arrival_time} - {stop_name}</b>\n"
-                is_next = True
-            else:
-                html += f"⚪ {arrival_time} - {stop_name}\n"
-        elif idx == current_stop_index:
-            html += f"🚌 <b>{arrival_time} - {stop_name}</b>\n"
-        elif idx < current_stop_index:
-            html += f"🟡 {arrival_time} - {stop_name}\n"
-        else:
-            html += f"🟢 {arrival_time} - {stop_name}\n"
-
-    html += "\n"
-    if route["delay"] is not None:
-        delay = int(route["delay"])
-        if delay == 0:
-            html += "<b>Bus is on time</b>\n"
-        elif delay < 0:
-            html += f"<b>{-delay} minute{'s' if delay != -1 else ''} early</b>\n"
-        else:
-            html += f"<b>{delay} minute{'s' if delay != 1 else ''} late</b>\n"
-
-        if delay > 37:  # very magical number
-            html += random.choice(
-                [
-                    "Is this bus operated by Trenitalia?\n",
-                    "Good luck\n",
-                    "Are we sure it's not on time for the next one\n",
-                    "Someone's getting fired (probably not)\n",
-                    "At this point, just walk\n",
-                    "Is it even moving?\n",
-                    "Have you checked they aren't on strike today?\n",
-                    "The wheels on the bus go round and round...\n",
-                ],
-            )
-
-        current_stop = route["stops"][route["currentStopIndex"]]["stopName"]
-        html += f"Currently at <i>{current_stop}</i>\n"
-        html += f"<i>Last updated {datetime.fromisoformat(route['lastUpdate']).astimezone(ZoneInfo('Europe/Rome')).strftime('%H:%M')}</i>"
-    else:
-        html += "Real time data is not available at the moment"
-
-    for chat_id in users:
-        send_notification(chat_id=chat_id, message=html)
-
-    return Response(), 200
-
-
 @app.teardown_appcontext
 def _close_connection(exception) -> None:
     db = getattr(g, "_database", None)
@@ -139,9 +53,9 @@ def _close_connection(exception) -> None:
         db.close()
 
 
-# POST /lectures/tgid"
+# POST /courses/tgid"
 # Aggiungere le lezioni associate al token al DB, e associa l'utente alle lezioni per notificarlo, e cancella tutte le iscrizioni precedenti
-@app.post("/lectures/<string:tg_id>")
+@app.post("/courses/<string:tg_id>")
 def add_lectures(tg_id: str) -> tuple[Response, int]:
     json = request.get_json()
 
@@ -156,13 +70,6 @@ def add_lectures(tg_id: str) -> tuple[Response, int]:
     db = _get_db()
 
     courses = import_for_user(db, tg_id, token)
-
-    # Add the courses to the db of the exams service
-    requests.post(
-        f"{settings.EXAMS_SVC_URL}/exams/user/{tg_id}",
-        json={"courses": [UniversityLecture.extract_course_id(course) for course in courses]},
-        timeout=30,
-    )
 
     return jsonify({"message": "Added lectures successfully", "number": len(courses)}), 200
 

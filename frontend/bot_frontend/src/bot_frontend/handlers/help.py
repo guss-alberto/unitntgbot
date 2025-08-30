@@ -59,11 +59,11 @@ HELP_MESSAGE = (
     "- /menu - Show the canteen lunch menu\n"
     "- /dinner - Show the dinner menu (only at Tommaso Gar)\n"
     "- /rooms <code>&lt;site&gt;</code> - Show the available rooms in the specified department\n"
-    "- /rooms <code>&lt;site&gt; &lt;room&gt</code> - Shows all events for that particular room\n"
+    "- /rooms <code>&lt;site&gt; &lt;room&gt;</code> - Shows all events for that particular room\n"
     "- /departments - Shows the list of department codes and aliases for the /rooms command\n"
     "- /tt - Show the Trentino Trasporti but trips\n"
     "- /lectures - Show the lectures for today\n"
-    "- /exams <code>&lt;query&gt;- Search all exam call in Esse3\n"
+    "- /exams <code>&lt;query&gt;</code> - Search all exam call in Esse3\n"
     "- /help - Show this message\n\n"
 ) + SOURCE_INFO
 
@@ -82,6 +82,16 @@ async def start_handler(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
     if update.message:
         await update.message.reply_html(START_MESSAGE)
 
+
 async def departments_handler(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
     if update.message:
         await update.message.reply_html(DEPARTMENT_CODES)
+
+
+async def default_handler(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
+    if not update.message:
+        return
+
+    await update.message.reply_text(
+        "I didn't understand that command.\n\nPlease use /help to see the available commands.",
+    )

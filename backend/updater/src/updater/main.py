@@ -49,10 +49,6 @@ def main() -> NoReturn:
             lambda hour=hour: requests.post(NOTIFY_CANTEEN_URL, timeout=30, params={"time": hour}),
         )
 
-    # Notify users that will have their last lecture at a specific time
-    schedule.every().hour.at(":15").do(lambda: requests.post(BUS_NOTIFICATION_URL, timeout=30))
-    schedule.every().hour.at(":45").do(lambda: requests.post(BUS_NOTIFICATION_URL, timeout=30))
-
     while True:
         schedule.run_pending()
         time.sleep(60)

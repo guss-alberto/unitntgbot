@@ -31,7 +31,7 @@ def process_results(response, callback) -> tuple[str, InlineKeyboardMarkup | Non
         case 200:
             data = response.json()
             exams = [UniversityExam(**exam) for exam in data["exams"]]
-            exams_formatted = "\n\n".join([exam.format() for exam in exams])
+            exams_formatted = "\n".join([exam.format() for exam in exams])
 
             markup = None
 

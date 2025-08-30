@@ -292,30 +292,3 @@ def notify_users_time(db: sqlite3.Connection, time: str) -> int:
 def set_notification_time(db: sqlite3.Connection, tg_id: str, time: str | None) -> None:
     db.execute("INSERT OR REPLACE INTO Notifications VALUES (?, ?);", (tg_id, time))
     db.commit()
-
-
-# Gets the users who have had the last lecture at a specific time (time is the end time of the last lecture)
-def get_last_lecture_users(db: sqlite3.Connection, time: str | None) -> list[int]:
-    cur = db.cursor()
-    cur.execute(
-        """\
-        WITH LastLectures AS (
-            SELECT
-                u.id AS user_id,
-                u.course_id,
-                MAX(l.end) AS last_end
-            FROM Users u
-            JOIN Lectures l ON u.course_id = l.course_id
-            WHERE DATE(l.start) = DATE(?)
-              AND l.is_cancelled = 0
-              AND l.room LIKE 'Povo%'
-            GROUP BY u.id, u.course_id
-        )
-        SELECT user_id
-        FROM LastLectures
-        WHERE TIME(last_end) > TIME(?)
-          AND TIME(last_end) < TIME(?, '+20 minutes');
-        """,
-        (datetime.today().strftime("%Y-%m-%d"), time, time),
-    )
-    return [int(row[0]) for row in cur.fetchall()]

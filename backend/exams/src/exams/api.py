@@ -4,9 +4,7 @@ from math import ceil
 from flask import Flask, Response, g, jsonify, request
 
 from exams.database import (
-    add_courses_for_user,
     create_table,
-    get_exams_for_user,
     update_db,
 )
 from exams.database import search_exams as search_exams_db, ITEMS_PER_PAGE
@@ -60,36 +58,10 @@ def get_exams() -> tuple[Response, int]:
     db = _get_db()
     exams, total_count = search_exams_db(db, query, page)
 
-    if not exams:
+    if not total_count:
         return jsonify({"message": "No exam found with given query", "exams": []}), 404
 
     return jsonify(page_parser(exams, total_count, page)), 200
-
-
-@app.get("/exams/user/<string:tg_id>/")
-def get_exam(tg_id: str) -> tuple[Response, int]:
-    db = _get_db()
-    page = int(request.args.get("page", "0"))
-    exams, total_count = get_exams_for_user(db, tg_id, page)
-
-    if not exams:
-        return jsonify({"message": "No exams found for user"}), 404
-
-    return jsonify(page_parser(exams, total_count, page)), 200
-
-
-@app.post("/exams/user/<string:tg_id>/")
-def add_exam(tg_id: str) -> tuple[Response, int]:
-    if not request.json or not request.json.get("courses"):
-        return jsonify({"message": "Request body is missing or wrong"}), 400
-
-    courses = request.json.get("courses")
-
-    db = _get_db()
-    add_courses_for_user(db, tg_id, courses)
-
-    return jsonify({"message": "Added exams successfully", "count": len(courses)}), 200
-
 
 def main() -> None:
     app.run("0.0.0.0")  # noqa: S104

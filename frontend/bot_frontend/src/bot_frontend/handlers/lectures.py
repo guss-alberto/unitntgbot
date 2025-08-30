@@ -114,3 +114,37 @@ async def get_lectures_callback_handler(update: Update, _: ContextTypes.DEFAULT_
             return
         case _:
             await edit_message_text_without_changes(query, "An unknown error occured")
+
+
+async def get_courses_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    if not update.message:
+        return
+
+    tg_id = update.message.chat_id
+
+
+    async with httpx.AsyncClient() as client:
+        response = await client.get(
+            f"{settings.LECTURES_SVC_URL}/courses/{tg_id}",
+            timeout=30,
+        )
+
+    match response.status_code:
+        case 200:
+            data = response.json()
+            await update.message.reply_html(f"You follow " + str(data["count"]) + " courses:\n" + "\n".join(data["courses"]))
+            return
+        case 404:
+            await update.message.reply_html(
+                "No coursed added to your account yet.\n"
+                "\n"
+                "Use the command /setup first.\n"
+                "\n"
+                "The link can be found in the top right corner of the '<b>Favourites</b>' tab in the '<b>Classes Timetable</b>' section in UniTrentoApp.",
+            )
+            return
+        case 500:
+            await update.message.reply_text("Internal Server Error")
+            return
+        case _:
+            await update.message.reply_text("An unknown error occured")
