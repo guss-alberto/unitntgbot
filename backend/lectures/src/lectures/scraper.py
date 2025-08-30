@@ -74,7 +74,7 @@ def get_courses_from_easyacademy(courses: set[str], date: datetime) -> list[Univ
             couse_id,
             course_id,
             event_name,
-            lecturer,
+            lecturer.title(),
             start,
             end,
             room,
