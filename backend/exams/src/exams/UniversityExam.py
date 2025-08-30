@@ -29,10 +29,11 @@ class UniversityExam(NamedTuple):
         if time:
             first_line += f" - {self._get_clock_emoji()} <b>{time}</b>"
         if self.partition:
-            first_line += f" - {self.partition}"    
+            first_line += f" - {self.partition}"   
 
         return (
             first_line + "\n"
             f'{get_book(self.exam_id)} <a href="{self.link}"><b>{self.exam_id}</b> - <b>{self.name}</b></a>\n'
             f"{'🧑‍🏫' if random.randint(0, 100) else '🤓'} <b>{self.professors}</b>\n"
+            f"<i>{'🗣️ Oral' if self.is_oral else '✍️ Written'}{' | 📄 Midterm' if self.is_partial else ''}</i>\n"
         )
