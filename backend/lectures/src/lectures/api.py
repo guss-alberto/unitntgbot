@@ -3,7 +3,7 @@ import json
 import random
 import re
 import sqlite3
-from datetime import datetime
+from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 
 import requests
@@ -11,6 +11,7 @@ from flask import Flask, Response, g, jsonify, request
 from notification_dispatcher.notification import send_notification
 
 from lectures.database import (
+    OFFSET_DAYS,
     create_tables,
     get_last_lecture_users,
     get_lectures_for_user,
@@ -19,11 +20,13 @@ from lectures.database import (
     notify_users_time,
     set_notification_time,
     update_db,
+    get_followed_courses_for_user,
 )
 from lectures.settings import settings
 from lectures.UniversityLecture import UniversityLecture
 
 app = Flask(__name__)
+
 
 
 def _get_db() -> sqlite3.Connection:
@@ -36,7 +39,7 @@ def _get_db() -> sqlite3.Connection:
 
 @app.post("/update/")
 def update() -> tuple[Response, int]:
-    update_db(_get_db(), datetime.today(), 10)
+    update_db(_get_db(), datetime.today() + timedelta(days = OFFSET_DAYS), 10)
     return Response(), 200
 
 
@@ -139,9 +142,9 @@ def _close_connection(exception) -> None:
         db.close()
 
 
-# POST /lectures/tgid"
+# POST /courses/tgid"
 # Aggiungere le lezioni associate al token al DB, e associa l'utente alle lezioni per notificarlo, e cancella tutte le iscrizioni precedenti
-@app.post("/lectures/<string:tg_id>")
+@app.post("/courses/<string:tg_id>")
 def add_lectures(tg_id: str) -> tuple[Response, int]:
     json = request.get_json()
 
@@ -158,19 +161,39 @@ def add_lectures(tg_id: str) -> tuple[Response, int]:
     courses = import_for_user(db, tg_id, token)
 
     # Add the courses to the db of the exams service
+
+    requests.delete(
+        f"{settings.EXAMS_SVC_URL}/exams/user/{tg_id}",
+        timeout=30
+    )
+
     requests.post(
         f"{settings.EXAMS_SVC_URL}/exams/user/{tg_id}",
         json={"courses": [UniversityLecture.extract_course_id(course) for course in courses]},
         timeout=30,
     )
+    
 
     return jsonify({"message": "Added lectures successfully", "number": len(courses)}), 200
+
+@app.get("/courses/<string:tg_id>")
+def get_courses(tg_id: str) -> tuple[Response, int]:
+    courses = get_followed_courses_for_user(_get_db(), tg_id)
+    if not courses:
+        return jsonify({
+            "message": "User not found in database",
+        }), 404
+
+    return jsonify({
+            "count": len(courses),
+            "courses": courses
+        }), 200
 
 
 # Ti dice la prossima lezione in programma per l'utente
 @app.get("/lectures/<string:tg_id>/next")
 def get_next_lecture(tg_id: str) -> tuple[Response, int]:
-    date = datetime.now()
+    date = datetime.now() + timedelta(days=OFFSET_DAYS)
 
     db = _get_db()
 
@@ -191,7 +214,7 @@ def get_lectures(tg_id: str) -> tuple[Response, int]:
     date = request.args.get("date")
 
     if not date:
-        date = datetime.now()
+        date = datetime.now() + timedelta(days=OFFSET_DAYS)
     else:
         try:
             date = datetime.fromisoformat(date)

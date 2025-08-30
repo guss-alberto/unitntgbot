@@ -9,7 +9,10 @@ from lectures.LectureUpdate import LectureUpdate
 from lectures.scraper import get_courses_from_easyacademy, import_from_ical
 from lectures.UniversityLecture import UniversityLecture
 
+
 tracked_courses: set[str] = set()
+
+OFFSET_DAYS = 30 * 2  # how many days in the future to fetch lectures for
 
 
 def get_tracked_courses(courses: set[str], date: datetime, weeks: int = 4) -> list[UniversityLecture]:
@@ -123,6 +126,17 @@ def create_tables(db: sqlite3.Connection) -> None:
     sync_tracked_courses(db)
 
 
+def get_followed_courses_for_user(db: sqlite3.Connection, user_id: str) -> list[str]:
+    cur = db.cursor()
+    cur.execute("SELECT course_id from Users WHERE id = ?;", (user_id,))
+
+    res = [i[0] for i in cur]
+    cur.close()
+    
+    return res
+
+
+
 def get_lectures_for_user(db: sqlite3.Connection, user_id: str, date: datetime) -> list[UniversityLecture]:
     cur = db.cursor()
 
@@ -186,7 +200,7 @@ def import_for_user(db: sqlite3.Connection, user_id: str, token: str) -> set[str
 
     # if some lectures are not currently being tracked, add only untracked lectures without notifying users
     if not courses.issubset(tracked_courses):
-        lectures = get_tracked_courses(courses - tracked_courses, datetime.now())
+        lectures = get_tracked_courses(courses - tracked_courses, datetime.now() + timedelta(days=OFFSET_DAYS), 4)
         db.executemany(
             """\
             INSERT OR REPLACE INTO Lectures (id, course_id, event_name, lecturer, start, end, room, is_cancelled)
@@ -270,7 +284,7 @@ def notify_users_time(db: sqlite3.Connection, time: str) -> int:
     )
 
     parsed_time = datetime.strptime(time, "%H:%M").time()
-    curr_time: datetime = datetime.combine(dtdate.today(), parsed_time)
+    curr_time: datetime = datetime.combine(dtdate.today() + timedelta(days=OFFSET_DAYS), parsed_time)
 
     notified_users = 0
     for (user_id,) in cur.fetchall():
@@ -316,6 +330,6 @@ def get_last_lecture_users(db: sqlite3.Connection, time: str | None) -> list[int
         WHERE TIME(last_end) > TIME(?)
           AND TIME(last_end) < TIME(?, '+20 minutes');
         """,
-        (datetime.today().strftime("%Y-%m-%d"), time, time),
+        ((datetime.today() + timedelta(days=OFFSET_DAYS)).strftime("%Y-%m-%d"), time, time),
     )
     return [int(row[0]) for row in cur.fetchall()]

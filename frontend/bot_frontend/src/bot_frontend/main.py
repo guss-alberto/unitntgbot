@@ -12,8 +12,8 @@ from telegram.ext import (
 
 from bot_frontend.handlers.canteen import canteen_callback_handler, canteen_handler, dinner_canteen_handler
 from bot_frontend.handlers.exams import exams_callback_handler, exams_handler
-from bot_frontend.handlers.help import departments_handler, help_handler, start_handler
-from bot_frontend.handlers.lectures import get_lectures_callback_handler, get_lectures_handler
+from bot_frontend.handlers.help import departments_handler, help_handler, start_handler, default_handler
+from bot_frontend.handlers.lectures import get_lectures_callback_handler, get_lectures_handler, get_courses_handler
 from bot_frontend.handlers.rooms import rooms_callback_handler, rooms_handler
 from bot_frontend.handlers.setup import (
     cancel,
@@ -76,6 +76,7 @@ def main() -> None:
     app.add_handler(CommandHandler("locuspocus", rooms_handler))
     app.add_handler(CommandHandler("tt", tt_handler))
     app.add_handler(CommandHandler("povotrento", tt_handler))
+    app.add_handler(CommandHandler("courses", get_courses_handler))
 
     # Handlers to for the UnitrentoApp setup process
     add_lectures = ConversationHandler(
@@ -104,6 +105,8 @@ def main() -> None:
     app.add_handler(CallbackQueryHandler(get_lectures_callback_handler, pattern=r"^lect:"))
     app.add_handler(CallbackQueryHandler(tt_callback_handler, pattern=r"^tt:"))
     app.add_handler(CallbackQueryHandler(empty_callback_handler))
+    
+    app.add_handler(MessageHandler(filters.ALL, default_handler))
 
     app.run_polling(allowed_updates=Update.ALL_TYPES)
 

@@ -31,7 +31,7 @@ def process_results(response, callback) -> tuple[str, InlineKeyboardMarkup | Non
         case 200:
             data = response.json()
             exams = [UniversityExam(**exam) for exam in data["exams"]]
-            exams_formatted = "\n\n".join([exam.format() for exam in exams])
+            exams_formatted = "\n".join([exam.format() for exam in exams])
 
             markup = None
 
@@ -56,20 +56,18 @@ async def exams_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
         return
 
     if not context.args:
-        await update.message.reply_html("Please provide a search query\n\nUsage:\n/exams <code>&lt;query&gt;</code>")
-        return
-        #tg_id = update.message.chat_id
-        #callback = f"u:{tg_id}"
-        #async with httpx.AsyncClient() as client:
-        #    response = await client.get(f"{settings.EXAMS_SVC_URL}/exams/user/{tg_id}/", timeout=30)
+        tg_id = update.message.chat_id
+        callback = f"u:{tg_id}"
+        async with httpx.AsyncClient() as client:
+            response = await client.get(f"{settings.EXAMS_SVC_URL}/exams/user/{tg_id}/", timeout=30)
     else:
         query = " ".join(context.args)
         callback = f"q:{query}"
         async with httpx.AsyncClient() as client:
             response = await client.get(f"{settings.EXAMS_SVC_URL}/exams/search", params={"query": query}, timeout=30)
 
-        msg, markup = process_results(response, callback)
-        await update.message.reply_html(msg, reply_markup=markup, disable_web_page_preview=True)
+    msg, markup = process_results(response, callback)
+    await update.message.reply_html(msg, reply_markup=markup, disable_web_page_preview=True)
 
 
 async def exams_callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:

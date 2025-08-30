@@ -108,7 +108,8 @@ async def set_unitrentoapp_token(update: Update, _: CallbackContext) -> int:
     unitrentoapp_link = update.message.text
     tg_id = update.message.chat_id
 
-    regex_full = r"(https:\/\/webapi\.unitn\.it\/unitrentoapp\/profile\/me\/calendar\/)?([A-F0-9]{64})"
+    unitrentoapp_base_url = re.escape("https://webapi.unitn.it/unitrentoapp/profile/me/calendar/")
+    regex_full = rf"({unitrentoapp_base_url})?([A-F0-9]{{64}})"
     result = re.search(regex_full, unitrentoapp_link)
     if result:
         token = result.group(2)
@@ -118,7 +119,7 @@ async def set_unitrentoapp_token(update: Update, _: CallbackContext) -> int:
 
     async with httpx.AsyncClient() as client:
         response = await client.post(
-            f"{settings.LECTURES_SVC_URL}/lectures/{tg_id}",
+            f"{settings.LECTURES_SVC_URL}/courses/{tg_id}",
             json={"token": token},
             timeout=30,
         )
@@ -130,7 +131,7 @@ async def set_unitrentoapp_token(update: Update, _: CallbackContext) -> int:
             DB.execute("INSERT OR REPLACE INTO LectureTokens VALUES (?,?);", (tg_id, token))
             DB.commit()
         case _:
-            await update.message.reply_text("An unknown error occurred while adding lectures.")
+            await update.message.reply_text("An unknown error occurred while adding courses.")
 
     return ConversationHandler.END
 
@@ -178,7 +179,7 @@ async def refresh_lectures(update: Update, _: CallbackContext) -> int:
 
     async with httpx.AsyncClient() as client:
         response = await client.post(
-            f"{settings.LECTURES_SVC_URL}/lectures/{tg_id}",
+            f"{settings.LECTURES_SVC_URL}/courses/{tg_id}",
             params={"token": token},
             timeout=30,
         )
@@ -188,7 +189,7 @@ async def refresh_lectures(update: Update, _: CallbackContext) -> int:
             data = response.json()
             await edit_message_text_without_changes(query, f"{data['number']} courses refreshed successfully!")
         case _:
-            await edit_message_text_without_changes(query, "An unknown error occurred while refreshing lectures.")
+            await edit_message_text_without_changes(query, "An unknown error occurred while refreshing courses.")
 
     return ConversationHandler.END
 

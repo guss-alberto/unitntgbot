@@ -8,6 +8,7 @@ from exams.database import (
     create_table,
     get_exams_for_user,
     update_db,
+    delete_courses_for_user,
 )
 from exams.database import search_exams as search_exams_db, ITEMS_PER_PAGE
 from exams.settings import settings
@@ -89,6 +90,14 @@ def add_exam(tg_id: str) -> tuple[Response, int]:
     add_courses_for_user(db, tg_id, courses)
 
     return jsonify({"message": "Added exams successfully", "count": len(courses)}), 200
+
+
+@app.delete("/exams/user/<string:tg_id>/")
+def delete_exams(tg_id: str) -> tuple[Response, int]:
+    delete_courses_for_user(_get_db(), tg_id)
+    return jsonify({"message": "Courses deleted successfully"}), 200
+
+
 
 
 def main() -> None:

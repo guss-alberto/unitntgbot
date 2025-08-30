@@ -124,3 +124,7 @@ def get_exams_for_user(db: sqlite3.Connection, tg_id: str, page: int = 1) -> tup
 def add_courses_for_user(db: sqlite3.Connection, tg_id: str, courses: list[str]) -> None:
     db.executemany("INSERT OR IGNORE INTO Users VALUES (?, ?);", [(tg_id, course) for course in courses])
     db.commit()
+
+def delete_courses_for_user(db: sqlite3.Connection, tg_id: str) -> None:
+    db.execute("DELETE FROM Users WHERE id = ?;", (tg_id,))
+    db.commit()
