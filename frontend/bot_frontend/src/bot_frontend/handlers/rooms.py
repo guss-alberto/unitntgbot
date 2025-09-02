@@ -208,7 +208,7 @@ async def rooms_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
         return
 
     args = context.args
-    if not args or args[0] not in NAME_TO_BUILDING_ID:
+    if not args or args[0].lower() not in NAME_TO_BUILDING_ID:
         await update.message.reply_html(
             "Please provide a valid department name.\nUse /departments to list valid ids\n\n"
             "Usage:\n"
