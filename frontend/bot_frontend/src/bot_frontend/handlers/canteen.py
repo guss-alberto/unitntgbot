@@ -38,7 +38,7 @@ def format_output(date: date, msg: str, *, is_dinner: bool = False) -> tuple[str
     return message, reply_markup
 
 
-async def canteen_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+async def canteen_handler(update: Update, _context: ContextTypes.DEFAULT_TYPE) -> None:
     if not update.message:
         return
 
@@ -55,7 +55,7 @@ async def canteen_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     await update.message.reply_html(message, reply_markup=markup)
 
 
-async def dinner_canteen_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+async def dinner_canteen_handler(update: Update, _context: ContextTypes.DEFAULT_TYPE) -> None:
     if not update.message:
         return
 

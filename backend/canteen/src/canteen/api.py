@@ -19,7 +19,7 @@ def _get_db() -> sqlite3.Connection:
 
 
 @app.teardown_appcontext
-def _close_connection(exception):
+def _close_connection(exception) -> None:
     db = getattr(g, "_database", None)
     if db is not None:
         db.close()

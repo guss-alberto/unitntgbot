@@ -1,11 +1,15 @@
-import os
+import logging
+import sys
 import xml.etree.ElementTree as ET
+from pathlib import Path
 
 import cairosvg
 
+logger = logging.getLogger(__name__)
+
 # Get the path of the images directory, which is the "images" directory in the same directory as this file
-CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
-IMAGES_DIR = os.path.join(CURRENT_DIR, "images")
+CURRENT_DIR = Path(__file__).resolve().parent
+IMAGES_DIR = CURRENT_DIR / "images"
 
 
 def render_map(building_name: str, floor: int, room_ids: set[str]) -> bytes | None:
@@ -21,12 +25,12 @@ def render_map(building_name: str, floor: int, room_ids: set[str]) -> bytes | No
         bytes: The rendered image in png format.
 
     """
-    filepath = os.path.join(IMAGES_DIR, f"{building_name}-floor{floor}.svg")
+    filepath = IMAGES_DIR / f"{building_name}-floor{floor}.svg"
 
-    if filepath is None:
+    if not filepath.exists():
         return None
 
-    with open(filepath, encoding="utf-8") as f:
+    with filepath.open(encoding="utf-8") as f:
         svg_content = f.read()
 
     # Load SVG file
@@ -107,9 +111,9 @@ if __name__ == "__main__":
     png = render_map("povo1", 1, {"A201"})
 
     if png is None:
-        print("An error occurred while rendering the image.")
-        exit(1)
+        logger.error("An error occurred while rendering the image.")
+        sys.exit(1)
 
     # Save the image
-    with open("images/povo1-floor0.png", "wb") as f:
+    with Path("images/povo1-floor0.png").open("wb") as f:
         f.write(png)

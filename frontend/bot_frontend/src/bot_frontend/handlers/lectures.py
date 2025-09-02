@@ -116,7 +116,7 @@ async def get_lectures_callback_handler(update: Update, _: ContextTypes.DEFAULT_
             await edit_message_text_without_changes(query, "An unknown error occurred")
 
 
-async def get_courses_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+async def get_courses_handler(update: Update, _context: ContextTypes.DEFAULT_TYPE) -> None:
     if not update.message:
         return
 

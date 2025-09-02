@@ -53,7 +53,7 @@ async def set_commands(app: Application) -> None:
     )
 
 
-async def empty_callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def empty_callback_handler(update: Update, _context: ContextTypes.DEFAULT_TYPE) -> None:
     if not update or not update.callback_query:
         return
 

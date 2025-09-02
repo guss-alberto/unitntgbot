@@ -32,7 +32,6 @@ def get_rooms(building_id: str) -> tuple[Response, int]:
 @app.get("/rooms/<string:building_id>/room")
 def get_room(building_id: str) -> tuple[Response, int]:
     room_name = request.args.get("room_query")
-    # print(room_name)
     if not room_name:
         return jsonify({"message": "Room name not provided in `room_query` param"}), 400
 

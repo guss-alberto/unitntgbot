@@ -20,8 +20,8 @@ def generate_reply_markup(route: dict, sequence: int) -> InlineKeyboardMarkup:
     else:
         keyboard[0].append(InlineKeyboardButton(" ", callback_data=f"tt:{sequence}"))
 
-    totalRoutesCount = route.get("totalRoutesCount", 0)
-    if len(route) != 0 and sequence + 1 < totalRoutesCount:
+    total_routes_count = route.get("totalRoutesCount", 0)
+    if len(route) != 0 and sequence + 1 < total_routes_count:
         keyboard[0].append(InlineKeyboardButton("➡️", callback_data=f"tt:{sequence + 1}"))
     else:
         keyboard[0].append(InlineKeyboardButton(" ", callback_data=f"tt:{sequence}"))
@@ -72,7 +72,8 @@ def format_route(route: dict, sequence: int) -> str:
         else:
             html += f"<b>{delay} minute{'s' if delay != 1 else ''} late</b>\n"
 
-        if delay > 37:
+        really_too_much_delay = 37
+        if delay > really_too_much_delay:
             html += random.choice(
                 [
                     "Is this bus operated by Trenitalia?\n",
@@ -96,7 +97,7 @@ def format_route(route: dict, sequence: int) -> str:
     return html
 
 
-async def tt_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+async def tt_handler(update: Update, _context: ContextTypes.DEFAULT_TYPE) -> None:
     if not update.message:
         return
 
@@ -124,7 +125,7 @@ async def tt_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
                 return
 
 
-async def tt_callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+async def tt_callback_handler(update: Update, _context: ContextTypes.DEFAULT_TYPE) -> None:
     query = update.callback_query
 
     if not query or not query.data or not query.message:

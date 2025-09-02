@@ -1,8 +1,11 @@
+import logging
 from datetime import datetime, timedelta
 from io import StringIO
 
 import pandas as pd
 import requests
+
+logger = logging.getLogger(__name__)
 
 API_URL = "https://opera4u.operaunitn.cloud/ajax_tools/get_week"
 # The server checks for these headers, so we need to include them or the request will not work
@@ -113,5 +116,5 @@ def get_week_meals(date: datetime) -> list[tuple[str, bool, str]]:
     return result
 
 
-def main():
-    print(get_week_meals(datetime.today()))
+def main() -> None:
+    logger.info("Weeks meals: %s", get_week_meals(datetime.today()))

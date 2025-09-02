@@ -166,7 +166,7 @@ async def _rooms_status(
                         timeout=30,
                     )
 
-                if map_response.status_code == 200:
+                if map_response.status_code == httpx.codes.OK:
                     # Retrieve the full raw response, including headers and body
                     raw_response = b"".join(
                         f"{key}: {value}\r\n".encode() for key, value in map_response.headers.items()
@@ -230,7 +230,7 @@ async def rooms_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
         await update.message.reply_html(msg, reply_markup=markup)
 
 
-async def rooms_callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+async def rooms_callback_handler(update: Update, _context: ContextTypes.DEFAULT_TYPE) -> None:
     query = update.callback_query
 
     if not query or not query.data or not query.message:
@@ -247,15 +247,16 @@ async def rooms_callback_handler(update: Update, context: ContextTypes.DEFAULT_T
 
         async with httpx.AsyncClient() as client:
             response = await client.get(f"{settings.MAPS_SVC_URL}/maps/{building_id}/{room_code}", timeout=30)
-        if response.status_code == 200 and room_code:  # noqa: PLR2004
+        if response.status_code == httpx.codes.OK and room_code:
             await query.message.chat.send_photo(photo=response.content, caption=f"Location of room {room_code}")
         else:
             await query.message.chat.send_message("Map not available for this room")
     # It was called from the rooms status
     elif rooms_args[1] == "m":
+        map_arg_idx = 4
         sort_type = rooms_args[2]
         building_id = rooms_args[3]
-        with_images = len(rooms_args) > 4 and rooms_args[4] == "map"
+        with_images = len(rooms_args) > map_arg_idx and rooms_args[map_arg_idx] == "map"
 
         msg, markup, images = await _rooms_status(building_id, sort_time=sort_type == "time", with_images=with_images)
 

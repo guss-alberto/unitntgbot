@@ -26,7 +26,7 @@ def get_keyboard(callback: str, page: int, n_pages: int) -> InlineKeyboardMarkup
     return InlineKeyboardMarkup([keyboard])
 
 
-def process_results(response, callback) -> tuple[str, InlineKeyboardMarkup | None]:
+def process_results(response: httpx.Response, callback: str) -> tuple[str, InlineKeyboardMarkup | None]:
     match response.status_code:
         case 200:
             data = response.json()
@@ -71,7 +71,7 @@ async def exams_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
     await update.message.reply_html(msg, reply_markup=markup, disable_web_page_preview=True)
 
 
-async def exams_callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+async def exams_callback_handler(update: Update, _context: ContextTypes.DEFAULT_TYPE) -> None:
     query = update.callback_query
 
     if not query or not query.data or not query.message:

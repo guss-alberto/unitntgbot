@@ -1,3 +1,4 @@
+import logging
 import sqlite3
 from datetime import date as dtdate
 from datetime import datetime
@@ -6,6 +7,8 @@ from notification_dispatcher.notification import send_notification
 
 from canteen.scraper import get_week_meals
 from canteen.settings import settings
+
+logger = logging.getLogger(__name__)
 
 MAX_OFFSET_DAYS = 7 * 8  # 8 weeks
 
@@ -84,4 +87,4 @@ if __name__ == "__main__":
     db = sqlite3.connect(settings.DB_PATH)
     create_table(db)
     update_db(db, datetime.today())
-    print(get_menu(db, datetime.today()))
+    logger.info("Menu for today: %s", get_menu(db, datetime.today()))
