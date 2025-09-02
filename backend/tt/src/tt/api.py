@@ -6,9 +6,10 @@ from functools import wraps
 
 import requests
 from flask import Flask, Response, jsonify, make_response
-from .gtfs_fallback import gtfs_get_route
 
 from tt.stops_mapping import STOP_ID_TO_NAME
+
+from .gtfs_fallback import gtfs_get_route
 
 BASE_URL = "https://app-tpl.tndigit.it"
 USERNAME = "mittmobile"

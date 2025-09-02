@@ -1,4 +1,3 @@
-import logging
 import re
 from datetime import datetime
 
@@ -55,7 +54,7 @@ def get_courses_from_easyacademy(courses: set[str], date: datetime) -> list[Univ
     )
     data = response.json()
 
-    for cella in data["celle"]:
+    for cella in data["celle"]:  # codespell:ignore celle
         couse_id: str = cella["id"]
         course_id: str = cella["codice_insegnamento"]
         event_name: str = cella["nome_insegnamento"]

@@ -2,7 +2,6 @@ from datetime import datetime, timedelta
 from io import StringIO
 
 import pandas as pd
-import numpy as np
 import requests
 
 API_URL = "https://opera4u.operaunitn.cloud/ajax_tools/get_week"
@@ -77,7 +76,7 @@ def get_week_meals(date: datetime) -> list[tuple[str, bool, str]]:
     lesto_list = lesto_df.T.dropna(axis=0, how="all").to_numpy()[1:]
 
     result: list[tuple[str, bool, str]] = []
-    
+
     day = date.date()
     # for every day monday-friday
     for lunch, lesto, dinner in zip(lunch_list, lesto_list, dinner_list, strict=False):
@@ -87,10 +86,10 @@ def get_week_meals(date: datetime) -> list[tuple[str, bool, str]]:
 
         for i, (label, emoji, fixed) in enumerate(zip(COURSE_LABELS, EMOJIS, FIXED_ITEMS, strict=True)):
             output += label
-            
+
             if pd.isna(lunch[i]):
                 continue
-            
+
             course_ = lunch[i].split("\\n")[1:] + fixed
             # There is no side dish in pasto ridotto
             ridotto = lesto[i] if len(lesto) > i else ""
@@ -101,10 +100,10 @@ def get_week_meals(date: datetime) -> list[tuple[str, bool, str]]:
         output = ""
         for i, (label, emoji, fixed) in enumerate(zip(COURSE_LABELS, EMOJIS, FIXED_ITEMS, strict=True)):
             output += label
-            
+
             if pd.isna(dinner[i]):
                 continue
-            
+
             course_ = dinner[i].split("\\n")[1:] + fixed
             output += menu_item_format(course_, emoji, "")
 

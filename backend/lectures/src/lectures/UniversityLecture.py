@@ -11,10 +11,12 @@ def get_book(name: str) -> str:
     emoji_id = abs(hash(name)) % len(_BOOK_EMOJI)
     return _BOOK_EMOJI[emoji_id]
 
+
 def get_clock(time: str) -> str:
     dtime = datetime.fromisoformat(time)
     hm = int((dtime.hour % 12) * 2 + dtime.minute / 30 + 0.5)
     return _CLOCK_EMOJI[hm]
+
 
 class UniversityLecture(NamedTuple):
     id: str
@@ -39,8 +41,8 @@ class UniversityLecture(NamedTuple):
 
     def _get_book_emoji(self) -> str:
         return get_book(self.course_id)
-    
-    def _get_clock_emoji(self)-> str:
+
+    def _get_clock_emoji(self) -> str:
         return get_clock(self.start)
 
     def format(self) -> str:

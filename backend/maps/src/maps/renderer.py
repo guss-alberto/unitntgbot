@@ -107,7 +107,7 @@ if __name__ == "__main__":
     png = render_map("povo1", 1, {"A201"})
 
     if png is None:
-        print("An error occured while rendering the image.")
+        print("An error occurred while rendering the image.")
         exit(1)
 
     # Save the image

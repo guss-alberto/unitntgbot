@@ -21,7 +21,7 @@ def get_map_single(building_id: str, room_id: str) -> tuple[Response, int]:
     building_name, floor = building_name_and_floor
     image = render_map(building_name, floor, {room_id})
     if image is None:
-        return jsonify({"message": "An unknown error occured"}), 500
+        return jsonify({"message": "An unknown error occurred"}), 500
 
     response = make_response(image)
     response.headers.set("Content-Type", "image/png")
@@ -74,7 +74,7 @@ def get_maps_multiple() -> tuple[Response, int]:
         images.append(image)
 
     if not images:
-        return jsonify({"message": "An unknown error occured"}), 500
+        return jsonify({"message": "An unknown error occurred"}), 500
 
     # Send the images back as a multipart response
     # Define the multipart boundary

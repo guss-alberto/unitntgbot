@@ -40,3 +40,6 @@ ignore = [
     "TD003",  # Missing issue link for this TODO
     "TRY400", # Use logging.exception() instead of logging.error() for logging exceptions
 ]
+
+[tool.codespell]
+skip = 'backend/tt/src/tt/gtfs/trips.txt,backend/tt/src/tt/stops_mapping.py'

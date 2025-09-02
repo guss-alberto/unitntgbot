@@ -9,7 +9,6 @@ import httpx
 from rooms.Room import Event, Room
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, InputMediaPhoto, Update
 from telegram.constants import ParseMode
-from telegram.error import BadRequest
 from telegram.ext import ContextTypes
 
 from bot_frontend.settings import settings
@@ -71,6 +70,7 @@ NAME_TO_BUILDING_ID = {
 
 BUILDINGS_WITH_MAPS = ["E0503", "E0301"]
 
+
 async def _room_events(building_id: str, room: str) -> tuple[str, str, InlineKeyboardMarkup | None]:
     async with httpx.AsyncClient() as client:
         response = await client.get(
@@ -78,9 +78,6 @@ async def _room_events(building_id: str, room: str) -> tuple[str, str, InlineKey
             params={"room_query": room},
             timeout=30,
         )
-    
-
-    
 
     match response.status_code:
         case 404:
@@ -95,18 +92,17 @@ async def _room_events(building_id: str, room: str) -> tuple[str, str, InlineKey
             rooms_formatted = [Event(**room).format() for room in data["room_data"]]
             msg += "\n".join(rooms_formatted)
             msg += " all day"
-            
-            
+
             keyboard = [
                 [
                     InlineKeyboardButton(
                         "🗺️ View Room Location",
-                        callback_data=f"rooms:s:{building_id}:{data["room_code"]}",
+                        callback_data=f"rooms:s:{building_id}:{data['room_code']}",
                     ),
                 ],
-            ]  
+            ]
             reply_markup = InlineKeyboardMarkup(keyboard) if building_id in BUILDINGS_WITH_MAPS else None
-            
+
             return msg, data["room_code"], reply_markup
 
     return "", "", None
@@ -213,11 +209,12 @@ async def rooms_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
 
     args = context.args
     if not args or args[0] not in NAME_TO_BUILDING_ID:
-        await update.message.reply_html("Please provide a valid department name.\nUse /departments to list valid ids\n\n"
-                                        "Usage:\n"
-                                        "- /rooms <code>&lt;site&gt;</code> - Show the available rooms in the specified department\n"
-                                        "- /rooms <code>&lt;site&gt; &lt;room&gt</code> - Shows all events for that particular room\n"
-                                        )
+        await update.message.reply_html(
+            "Please provide a valid department name.\nUse /departments to list valid ids\n\n"
+            "Usage:\n"
+            "- /rooms <code>&lt;site&gt;</code> - Show the available rooms in the specified department\n"
+            "- /rooms <code>&lt;site&gt; &lt;room&gt</code> - Shows all events for that particular room\n",
+        )
         return
 
     building_id = NAME_TO_BUILDING_ID[args[0].lower()]
@@ -245,7 +242,7 @@ async def rooms_callback_handler(update: Update, context: ContextTypes.DEFAULT_T
     if rooms_args[1] == "s":
         building_id = rooms_args[2]
         room_code = rooms_args[3]
-        
+
         await query.edit_message_reply_markup(InlineKeyboardMarkup([]))
 
         async with httpx.AsyncClient() as client:

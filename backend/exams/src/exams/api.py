@@ -4,10 +4,11 @@ from math import ceil
 from flask import Flask, Response, g, jsonify, request
 
 from exams.database import (
+    ITEMS_PER_PAGE,
     create_table,
     update_db,
 )
-from exams.database import search_exams as search_exams_db, ITEMS_PER_PAGE
+from exams.database import search_exams as search_exams_db
 from exams.settings import settings
 from exams.UniversityExam import UniversityExam
 
@@ -62,6 +63,7 @@ def get_exams() -> tuple[Response, int]:
         return jsonify({"message": "No exam found with given query", "exams": []}), 404
 
     return jsonify(page_parser(exams, total_count, page)), 200
+
 
 def main() -> None:
     app.run("0.0.0.0")  # noqa: S104

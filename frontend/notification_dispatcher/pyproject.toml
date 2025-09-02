@@ -17,3 +17,6 @@ notification_dispatcher = "notification_dispatcher.main:main"
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[tool.ruff]
+extend = "../../pyproject.toml"

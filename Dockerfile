@@ -37,7 +37,7 @@ RUN apt-get update \
     fi \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
-    
+
 COPY backend/maps/src/maps/fonts/ /usr/local/share/fonts/
 
 COPY --from=builder /app /app
@@ -52,7 +52,7 @@ ENV TZ=Europe/Rome
 ENTRYPOINT ["/usr/bin/dumb-init", "--"]
 
 # Swap user to non-root
-# USER nobody 
+# USER nobody
 
 ENV PACKAGE=${PACKAGE}
 CMD ["sh", "-c", "${PACKAGE}"]

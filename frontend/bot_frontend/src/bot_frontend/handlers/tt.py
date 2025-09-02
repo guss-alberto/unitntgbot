@@ -13,7 +13,7 @@ from bot_frontend.utils import edit_message_text_without_changes
 
 
 def generate_reply_markup(route: dict, sequence: int) -> InlineKeyboardMarkup:
-    keyboard = [[],[]]
+    keyboard = [[], []]
 
     if len(route) != 0 and sequence - 1 >= 0:
         keyboard[0].append(InlineKeyboardButton("⬅️", callback_data=f"tt:{sequence - 1}"))
@@ -27,9 +27,9 @@ def generate_reply_markup(route: dict, sequence: int) -> InlineKeyboardMarkup:
         keyboard[0].append(InlineKeyboardButton(" ", callback_data=f"tt:{sequence}"))
 
     if sequence != 0:
-        keyboard[1].append(InlineKeyboardButton("⏪", callback_data=f"tt:0"))
-    
-    keyboard[1].append(InlineKeyboardButton("🔄", callback_data=f"tt:{sequence}"));
+        keyboard[1].append(InlineKeyboardButton("⏪", callback_data="tt:0"))
+
+    keyboard[1].append(InlineKeyboardButton("🔄", callback_data=f"tt:{sequence}"))
     reply_markup = InlineKeyboardMarkup(keyboard)
 
     if sequence != 0:
@@ -146,7 +146,10 @@ async def tt_callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE
                 html = format_route(route, sequence)
                 reply_markup = generate_reply_markup(route, sequence)
                 await edit_message_text_without_changes(
-                    query, html, parse_mode=ParseMode.HTML, reply_markup=reply_markup,
+                    query,
+                    html,
+                    parse_mode=ParseMode.HTML,
+                    reply_markup=reply_markup,
                 )
             case _:
                 reply_markup = generate_reply_markup(route, sequence)

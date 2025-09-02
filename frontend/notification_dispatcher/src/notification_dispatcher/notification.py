@@ -20,6 +20,7 @@ def from_kafka_message(kafka_message: ConsumerRecord) -> tuple[int, str]:
     message_text = kafka_message.value.decode("utf-8")
     return chat_id, message_text
 
+
 def send_notification(chat_id: int, message: str) -> None:
     try:
         key = chat_id.to_bytes(8, "big")

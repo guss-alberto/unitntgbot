@@ -39,7 +39,7 @@ def update_db(db: sqlite3.Connection) -> None:
     )
 
     db.execute(
-        "DELETE FROM Exams WHERE DATE(date) < DATE('now');"
+        "DELETE FROM Exams WHERE DATE(date) < DATE('now');",
     )
     db.commit()
 
@@ -58,11 +58,11 @@ def search_exams(db: sqlite3.Connection, query: str, page: int = 1) -> tuple[lis
         ORDER BY date;""",
         (query, query, query),
     )
-    
+
     (total_count,) = cur.fetchone()
-    
+
     offset = (page - 1) * ITEMS_PER_PAGE
-    
+
     cur.execute(
         """\
         SELECT * FROM Exams WHERE
@@ -76,7 +76,7 @@ def search_exams(db: sqlite3.Connection, query: str, page: int = 1) -> tuple[lis
         LIMIT ? OFFSET ?;""",
         (query, query, query, ITEMS_PER_PAGE, offset),
     )
-    
+
     exams = [UniversityExam(*exam) for exam in cur]
     cur.close()
 

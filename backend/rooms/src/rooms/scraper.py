@@ -42,9 +42,9 @@ def get_rooms(building_id: str) -> tuple[pd.DataFrame, pd.DataFrame | None, int]
         building_id (str): The building code, for example "E0503" for Polo Ferrari.
 
     Returns:
-        df_rooms: A Pandas dataframe contianing all rooms with respective capacity in the selected building ID
+        df_rooms: A Pandas dataframe containing all rooms with respective capacity in the selected building ID
         df_events_current: A pd df containing all events currently ongoing in the building
-        df_events_future: A pd df cotaining all events that haven't started yet for today in the building, used for finding when a room is next gonna be free/busy
+        df_events_future: A pd df containing all events that haven't started yet for today in the building, used for finding when a room is next gonna be free/busy
 
     """
     response = requests.post(
@@ -77,7 +77,15 @@ def get_rooms(building_id: str) -> tuple[pd.DataFrame, pd.DataFrame | None, int]
     df_events = (
         pd.DataFrame(data["events"])
         .reindex(
-            columns=["CodiceAula", "timestamp_from", "timestamp_to", "utenti", "nome", "name", "Annullato"],
+            columns=[
+                "CodiceAula",
+                "timestamp_from",
+                "timestamp_to",
+                "utenti",
+                "nome",  # codespell:ignore nome
+                "name",
+                "Annullato",
+            ],
             fill_value="",
         )
         .sort_values("timestamp_from")
@@ -86,7 +94,7 @@ def get_rooms(building_id: str) -> tuple[pd.DataFrame, pd.DataFrame | None, int]
     df_events["name"] = np.where(
         df_events["name"].fillna("").astype(bool),  # Check if 'name' exists
         df_events["name"],
-        df_events["nome"],  # Use 'nome' in italiano otherwise
+        df_events["nome"],  # Use 'nome' in italian otherwise # codespell:ignore nome
     )
 
     return df_rooms, df_events, now_unix

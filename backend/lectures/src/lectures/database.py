@@ -248,7 +248,7 @@ def update_db(db: sqlite3.Connection, date: datetime, weeks: int = 1) -> None:
     for tg_id, *u in to_notify:
         user_changes[tg_id].append(u)
 
-    # create a single gouped notification for all the updates
+    # create a single grouped notification for all the updates
     for tg_id, updates in user_changes.items():
         formatted_updates = [LectureUpdate(*u).format() for u in updates]
 

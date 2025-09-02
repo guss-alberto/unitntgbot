@@ -22,3 +22,6 @@ exams-develop = "exams.api:develop"
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[tool.ruff]
+extend = "../../pyproject.toml"

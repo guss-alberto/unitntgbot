@@ -13,13 +13,13 @@ from bot_frontend.settings import settings
 from bot_frontend.utils import edit_message_text_without_changes
 
 DB = sqlite3.connect(settings.DB_PATH)
-#DB.execute(
+# DB.execute(
 #    """\
 #    CREATE TABLE IF NOT EXISTS DefaultDepartments (
 #        id TEXT PRIMARY KEY,
 #        department_id TEXT NOT NULL
 #    );""",
-#)
+# )
 DB.execute(
     """\
     CREATE TABLE IF NOT EXISTS LectureTokens (
@@ -126,7 +126,7 @@ async def set_unitrentoapp_token(update: Update, _: CallbackContext) -> int:
     match response.status_code:
         case 200:
             data = response.json()
-            await update.message.reply_text(f"{data['number']} courses addeed successfully!")
+            await update.message.reply_text(f"{data['number']} courses added successfully!")
             DB.execute("INSERT OR REPLACE INTO LectureTokens VALUES (?,?);", (tg_id, token))
             DB.commit()
         case _:

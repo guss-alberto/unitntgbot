@@ -14,7 +14,6 @@ from lectures.database import (
     update_db,
 )
 from lectures.settings import settings
-from lectures.UniversityLecture import UniversityLecture
 
 app = Flask(__name__)
 
@@ -53,10 +52,13 @@ def _close_connection(exception) -> None:
         db.close()
 
 
-# POST /courses/tgid"
-# Aggiungere le lezioni associate al token al DB, e associa l'utente alle lezioni per notificarlo, e cancella tutte le iscrizioni precedenti
 @app.post("/courses/<string:tg_id>")
 def add_lectures(tg_id: str) -> tuple[Response, int]:
+    """
+    Add the lectures associated with the token to the DB.
+
+    Associate the user to the lectures for notifications, and delete all previous subscriptions.
+    """
     json = request.get_json()
 
     if not json:

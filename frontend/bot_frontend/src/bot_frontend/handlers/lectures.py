@@ -75,7 +75,7 @@ async def get_lectures_handler(update: Update, context: ContextTypes.DEFAULT_TYP
             await update.message.reply_text("Internal Server Error")
             return
         case _:
-            await update.message.reply_text("An unknown error occured")
+            await update.message.reply_text("An unknown error occurred")
 
 
 async def get_lectures_callback_handler(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
@@ -113,7 +113,7 @@ async def get_lectures_callback_handler(update: Update, _: ContextTypes.DEFAULT_
             )
             return
         case _:
-            await edit_message_text_without_changes(query, "An unknown error occured")
+            await edit_message_text_without_changes(query, "An unknown error occurred")
 
 
 async def get_courses_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -121,7 +121,6 @@ async def get_courses_handler(update: Update, context: ContextTypes.DEFAULT_TYPE
         return
 
     tg_id = update.message.chat_id
-
 
     async with httpx.AsyncClient() as client:
         response = await client.get(
@@ -132,7 +131,9 @@ async def get_courses_handler(update: Update, context: ContextTypes.DEFAULT_TYPE
     match response.status_code:
         case 200:
             data = response.json()
-            await update.message.reply_html(f"You follow " + str(data["count"]) + " courses:\n" + "\n".join(data["courses"]))
+            await update.message.reply_html(
+                "You follow " + str(data["count"]) + " courses:\n" + "\n".join(data["courses"]),
+            )
             return
         case 404:
             await update.message.reply_html(
@@ -147,4 +148,4 @@ async def get_courses_handler(update: Update, context: ContextTypes.DEFAULT_TYPE
             await update.message.reply_text("Internal Server Error")
             return
         case _:
-            await update.message.reply_text("An unknown error occured")
+            await update.message.reply_text("An unknown error occurred")
