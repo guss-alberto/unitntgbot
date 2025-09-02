@@ -20,8 +20,15 @@ def create_table(db: sqlite3.Connection) -> None:
             link TEXT,
             professors TEXT,
             is_oral BOOLEAN,
-            is_partial BOOLEAN,
-            PRIMARY KEY (id, link)
+            is_partial BOOLEAN
+        );""",
+    )
+    db.execute(
+        """\
+        CREATE TABLE IF NOT EXISTS Users (
+           id TEXT NOT NULL,
+           course_id TEXT NOT NULL,
+           PRIMARY KEY (id, course_id)
         );""",
     )
     db.commit()
