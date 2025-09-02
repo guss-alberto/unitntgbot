@@ -170,7 +170,7 @@ async def refresh_lectures(update: Update, _: CallbackContext) -> int:
     await query.answer()
     tg_id = query.message.chat.id
 
-    token = DB.execute(("SELECT token FROM LectureTokens WHERE id = ?;"), (tg_id,)).fetchone()
+    (token,) = DB.execute(("SELECT token FROM LectureTokens WHERE id = ?;"), (tg_id,)).fetchone()
 
     if not token:
         await query.message.chat.send_message("You have not set your lectures token yet. Please do so first.")
@@ -179,7 +179,7 @@ async def refresh_lectures(update: Update, _: CallbackContext) -> int:
     async with httpx.AsyncClient() as client:
         response = await client.post(
             f"{settings.LECTURES_SVC_URL}/courses/{tg_id}",
-            params={"token": token},
+            json={"token": token},
             timeout=30,
         )
 

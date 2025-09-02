@@ -68,7 +68,7 @@ def notify_users_time(db: sqlite3.Connection, time: str) -> int:
     if not users:
         return 0
 
-    menu = get_menu(db, dtdate.today())
+    menu = "Lunch menu for today:\n\n" + get_menu(db, dtdate.today())
     if menu == "NOT AVAILABLE":
         return 0
 

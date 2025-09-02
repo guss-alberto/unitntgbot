@@ -18,7 +18,7 @@ class Room(NamedTuple):
             return f"✅<b>{self.name}</b>{capacity} Free {f'until {time}' if self.time else 'all day'}"
 
         # Replace with ⭕️?
-        return f"🔴<b>{self.name}</b>{capacity} Busy until {time}, Now:\n{self.event}"
+        return f"🔴<b>{self.name}</b>{capacity} Busy until {time}, Now:\n{self.event.title()}"
 
 
 class Event(NamedTuple):
@@ -32,4 +32,4 @@ class Event(NamedTuple):
         if self.is_free:
             return f"❇️ {time if self.time else 'Now'} - Free"
 
-        return f"🟥 {time} - {self.event}"
+        return f"🟥 {time} - {self.event.title()}"
