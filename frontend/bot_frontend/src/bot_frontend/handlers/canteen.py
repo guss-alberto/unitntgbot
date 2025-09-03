@@ -28,7 +28,7 @@ def format_output(date: date, msg: str, *, is_dinner: bool = False) -> tuple[str
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
 
-    message = f"<b>{'Dinner' if is_dinner else 'Lunch'} menu for {date.strftime('%A, %B %d, %Y')}</b>:\n\n"
+    message = f"<b>{'Dinner' if is_dinner else 'Lunch'} menu for {date.strftime('%A, %Y-%m-%d')}</b>:\n\n"
     if msg:
         message += msg
     else:

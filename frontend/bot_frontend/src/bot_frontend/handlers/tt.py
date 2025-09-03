@@ -14,28 +14,31 @@ from bot_frontend.utils import edit_message_text_without_changes
 
 def generate_reply_markup(route: dict, sequence: int) -> InlineKeyboardMarkup:
     keyboard = [[], []]
-
-    if len(route) != 0 and sequence - 1 >= 0:
-        keyboard[0].append(InlineKeyboardButton("⬅️", callback_data=f"tt:{sequence - 1}"))
-    else:
-        keyboard[0].append(InlineKeyboardButton(" ", callback_data=f"tt:{sequence}"))
-
     total_routes_count = route.get("totalRoutesCount", 0)
-    if len(route) != 0 and sequence + 1 < total_routes_count:
-        keyboard[0].append(InlineKeyboardButton("➡️", callback_data=f"tt:{sequence + 1}"))
+
+    if sequence > total_routes_count:
+        # if out of range, show the back button only which goes to the second-to-last option
+        keyboard[0].append(InlineKeyboardButton(" ", callback_data=" "))
+        keyboard[0].append(InlineKeyboardButton("⬅️", callback_data=f"tt:{max(total_routes_count - 2, 0)}"))
+
+        # TODO: this is awful, needs a rewrite
     else:
-        keyboard[0].append(InlineKeyboardButton(" ", callback_data=f"tt:{sequence}"))
+        if len(route) != 0 and sequence - 1 >= 0:
+            keyboard[0].append(InlineKeyboardButton("⬅️", callback_data=f"tt:{sequence - 1}"))
+        else:
+            keyboard[0].append(InlineKeyboardButton(" ", callback_data=" "))
+
+        if len(route) != 0 and sequence + 1 < total_routes_count:
+            keyboard[0].append(InlineKeyboardButton("➡️", callback_data=f"tt:{sequence + 1}"))
+        else:
+            keyboard[0].append(InlineKeyboardButton(" ", callback_data=" "))
 
     if sequence != 0:
         keyboard[1].append(InlineKeyboardButton("⏪", callback_data="tt:0"))
 
     keyboard[1].append(InlineKeyboardButton("🔄", callback_data=f"tt:{sequence}"))
-    reply_markup = InlineKeyboardMarkup(keyboard)
 
-    if sequence != 0:
-        keyboard.append([InlineKeyboardButton("Go back to first", callback_data="tt:0")])
-
-    return reply_markup
+    return InlineKeyboardMarkup(keyboard)
 
 
 def format_route(route: dict, sequence: int) -> str:
@@ -58,7 +61,7 @@ def format_route(route: dict, sequence: int) -> str:
         elif idx == current_stop_index:
             html += f"🚌 <b>{arrival_time} - {stop_name}</b>\n"
         elif idx < current_stop_index:
-            html += f"🟡 {arrival_time} - {stop_name}\n"
+            html += f"🟡 <i>{arrival_time} - {stop_name}</i>\n"
         else:
             html += f"🟢 {arrival_time} - {stop_name}\n"
 
@@ -111,13 +114,15 @@ async def tt_handler(update: Update, _context: ContextTypes.DEFAULT_TYPE) -> Non
         except json.JSONDecodeError:
             route = {}
 
+        reply_markup = generate_reply_markup(route, sequence)
+
         match response.status_code:
             case 200:
                 html = format_route(route, sequence)
-                reply_markup = generate_reply_markup(route, sequence)
                 await update.message.reply_html(html, reply_markup=reply_markup)
+            case 204:
+                await update.message.reply_text("No bus trips found for today", reply_markup=reply_markup)
             case _:
-                reply_markup = generate_reply_markup(route, sequence)
                 await update.message.reply_text(
                     "An unknown error occurred while fetching the bus route.",
                     reply_markup=reply_markup,

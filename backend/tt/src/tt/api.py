@@ -94,7 +94,7 @@ def get_routes(route_id: str, sequence: str) -> tuple[Response, int]:
     if len(route_data) == 0:
         return make_response(""), 204
 
-    selected_trip = route_data[int(sequence)]
+    selected_trip = route_data[int(sequence)] if len(route_data) < int(sequence) else route_data[-1]
 
     stop_index = selected_trip.get("lastSequenceDetection")
     stop_index = stop_index - 1 if stop_index != 0 else None
