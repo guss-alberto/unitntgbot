@@ -54,4 +54,4 @@ class UniversityLecture(NamedTuple):
                 f"📍 {self.room}"
             )
 
-        return f"{self._get_clock_emoji()} <i>cancelled</i>\n{self._get_book_emoji()} • <i>{self.event_name.title()}</i>"
+        return f"{self._get_clock_emoji()} <i>cancelled</i>\n{self._get_book_emoji()} <i>{self.event_name.title()}</i>"

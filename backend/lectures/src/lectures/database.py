@@ -252,11 +252,11 @@ def update_db(db: sqlite3.Connection, date: datetime, weeks: int = 1) -> None:
     for tg_id, updates in user_changes.items():
         formatted_updates = [LectureUpdate(*u).format() for u in updates]
 
-        message = "‼️ *LECTURE UPDATES* ‼️\n"
+        message = "‼️ <b>LECTURE UPDATES</b> ‼️\n"
         message += f"{len(updates)} lectures have changed\n\n"
         message += "\n".join(formatted_updates)
 
-        send_notification(tg_id, message)
+        send_notification(int(tg_id), message)
 
 
 def notify_users_time(db: sqlite3.Connection, time: str) -> int:

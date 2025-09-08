@@ -13,21 +13,28 @@ class LectureUpdate(NamedTuple):
 
     def format(self) -> str:
         msg = ""
-        formatted_time = datetime.fromisoformat(self.time).strftime("%Y\\-%m\\-%d %H:%M")
+        time = datetime.fromisoformat(self.time)
+        formatted_time = time.strftime("%Y-%m-%d %H:%M")
         book_emoji = get_book(self.course_id)
         match self.event:
             case "edit":
-                msg += f"📝 <b>{self.event_name}{book_emoji}</b> "
+                msg += f"📝 <b>{book_emoji} {self.event_name}</b> "
                 if self.new_time and self.time != self.new_time:
-                    formatted_new_time = datetime.fromisoformat(self.new_time).strftime("%Y\\-%m\\-%d %H:%M")
-                    msg += f"moved from <i>{formatted_time}</i> to <i>{formatted_new_time}</i>"
+                    # show new day only if new day is different
+                    new_time = datetime.fromisoformat(self.new_time)
+                    if new_time.date() == time.date():
+                        formatted_new_time = new_time.strftime("%H:%M")
+                    else:
+                        formatted_new_time = new_time.strftime("%Y-%m-%d %H:%M")
+
+                    msg += f"moved from <code>{formatted_time}</code> to <code>{formatted_new_time}</code>"
                 else:
-                    msg += f"at <i>{formatted_time}</i> was modified"
+                    msg += f"at <code>{formatted_time}</code> was modified"
                 return msg
             case "add":
-                msg += f"➕ <b>NEW {self.event_name}{book_emoji}</b> at <i>{formatted_time}</i>"
+                msg += f"➕ <b>NEW {book_emoji} {self.event_name}</b> at <code>{formatted_time}</code>"
             case "cancel":
-                msg += f"✖️ <b>{self.event_name}{book_emoji}</b> at <i>{formatted_time}</i> was removed"
+                msg += f"✖️ <b>{book_emoji} {self.event_name}</b> at <code>{formatted_time}</code> was removed"
             case "remove":
-                msg += f"✖️ <b>{self.event_name}{book_emoji}</b> at <i>{formatted_time}</i> was cancelled"
+                msg += f"✖️ <b>{book_emoji} {self.event_name}</b> at <code>{formatted_time}</code> was cancelled"
         return msg
