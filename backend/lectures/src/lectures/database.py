@@ -236,7 +236,8 @@ def update_db(db: sqlite3.Connection, date: datetime, weeks: int = 1) -> None:
         """\
         SELECT DISTINCT Users.id, Changes.*
         FROM Changes JOIN Users ON Users.course_id = Changes.course_id
-        WHERE DATE(Changes.time) < DATETIME("now", "3 weeks");
+        WHERE DATE(Changes.time) < DATETIME("now", "3 weeks")
+        ORDER BY Changes.time;
         """,
     )
     to_notify = cur.fetchall()
