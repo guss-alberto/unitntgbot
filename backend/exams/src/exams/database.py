@@ -1,3 +1,4 @@
+import math
 import sqlite3
 
 from exams.scraper import get_university_exams, get_university_faculties
@@ -53,7 +54,7 @@ def search_exams(db: sqlite3.Connection, query: str, page: int = 1) -> tuple[lis
         (
             name LIKE '%' || ? || '%'
             OR professors LIKE '%' || ? || '%'
-            OR id = ?
+            OR faculty LIKE '%' || ? || '%'
         )
         ORDER BY date;""",
         (query, query, query),
@@ -63,6 +64,11 @@ def search_exams(db: sqlite3.Connection, query: str, page: int = 1) -> tuple[lis
 
     offset = (page - 1) * ITEMS_PER_PAGE
 
+    if offset >= total_count:
+        n_pages = math.ceil(total_count / ITEMS_PER_PAGE) if total_count else 0
+        page = max(1, min(page, n_pages)) if n_pages else 1
+        offset = (page - 1) * ITEMS_PER_PAGE
+
     cur.execute(
         """\
         SELECT * FROM Exams WHERE
@@ -70,7 +76,7 @@ def search_exams(db: sqlite3.Connection, query: str, page: int = 1) -> tuple[lis
         (
             name LIKE '%' || ? || '%'
             OR professors LIKE '%' || ? || '%'
-            OR id = ?
+            OR faculty LIKE '%' || ? || '%'
         )
         ORDER BY date
         LIMIT ? OFFSET ?;""",

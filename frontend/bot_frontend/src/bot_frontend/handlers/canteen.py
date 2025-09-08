@@ -45,13 +45,17 @@ async def canteen_handler(update: Update, _context: ContextTypes.DEFAULT_TYPE) -
     async with httpx.AsyncClient() as client:
         response = await client.get(f"{settings.CANTEEN_SVC_URL}/menu/lunch/", timeout=30)
 
-    if response.status_code != 200:  # noqa: PLR2004
+    if response.status_code == 404:
+        data = response.json()
+        message, markup = format_output(datetime.fromisoformat(data["date"]).date(), "NOT AVAILABLE")
+
+    elif response.status_code != 200:  # noqa: PLR2004
         await update.message.reply_text("Internal Server Error")
         return
+    else:
+        data = response.json()
+        message, markup = format_output(datetime.fromisoformat(data["date"]).date(), data["menu"])
 
-    data = response.json()
-
-    message, markup = format_output(datetime.fromisoformat(data["date"]).date(), data["menu"])
     await update.message.reply_html(message, reply_markup=markup)
 
 

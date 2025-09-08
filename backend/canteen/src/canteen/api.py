@@ -90,7 +90,9 @@ def get_menu_api(lunch_or_dinner: str) -> tuple[Response, int]:
 
     db = _get_db()
     menu = get_menu(db, date, dinner=is_dinner)
-    return jsonify({"menu": menu, "date": date.isoformat()}), 200
+    if menu:
+        return jsonify({"menu": menu, "date": date.isoformat()}), 200
+    return jsonify({"message": "Menu not found for today", "date": date.isoformat()}), 404
 
 
 def main() -> None:

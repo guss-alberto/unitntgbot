@@ -40,7 +40,7 @@ def update_db(db: sqlite3.Connection, date: datetime) -> None:
     db.commit()
 
 
-def get_menu(db: sqlite3.Connection, date: dtdate, *, dinner: bool = False) -> str:  # TODO: return None when 404
+def get_menu(db: sqlite3.Connection, date: dtdate, *, dinner: bool = False) -> str | None:  # TODO: return None when 404
     cur = db.cursor()
     cur.execute("SELECT menu FROM Menu WHERE date == ? AND is_dinner == ? LIMIT 1", (date.strftime("%Y-%m-%d"), dinner))
     menu = cur.fetchone()
@@ -49,7 +49,7 @@ def get_menu(db: sqlite3.Connection, date: dtdate, *, dinner: bool = False) -> s
     if menu:
         return menu[0]
 
-    return "NOT AVAILABLE"
+    return None
 
 
 def notify_users_time(db: sqlite3.Connection, time: str) -> int:
@@ -68,12 +68,15 @@ def notify_users_time(db: sqlite3.Connection, time: str) -> int:
     if not users:
         return 0
 
-    menu = "Lunch menu for today:\n\n" + get_menu(db, dtdate.today())
-    if menu == "NOT AVAILABLE":
+    menu = get_menu(db, dtdate.today())
+
+    if not menu:
         return 0
 
+    message = "Lunch menu for today:\n\n" + menu
+
     for (user_id,) in users:
-        send_notification(int(user_id), menu)
+        send_notification(int(user_id), message)
 
     return len(users)
 
