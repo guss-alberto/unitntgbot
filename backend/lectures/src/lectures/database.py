@@ -1,3 +1,4 @@
+import logging
 import sqlite3
 from collections import defaultdict
 from datetime import date as dtdate
@@ -12,11 +13,18 @@ from lectures.UniversityLecture import UniversityLecture
 tracked_courses: set[str] = set()
 
 
-def get_tracked_courses(courses: set[str], date: datetime, weeks: int = 4) -> list[UniversityLecture]:
+logger = logging.getLogger(__name__)
+
+
+def get_tracked_courses(courses: set[str], date: datetime, weeks: int = 4) -> list[UniversityLecture] | None:
     lectures: list[UniversityLecture] = []
 
-    for i in range(weeks):
-        lectures += get_courses_from_easyacademy(courses, date + timedelta(weeks=i))
+    try:
+        for i in range(weeks):
+            lectures += get_courses_from_easyacademy(courses, date + timedelta(weeks=i))
+    except Exception as e:
+        logging.error(f"{e}\n\nWhile updating lectures")
+        return None
 
     return lectures
 
@@ -187,13 +195,15 @@ def import_for_user(db: sqlite3.Connection, user_id: str, token: str) -> set[str
     # if some lectures are not currently being tracked, add only untracked lectures without notifying users
     if not courses.issubset(tracked_courses):
         lectures = get_tracked_courses(courses - tracked_courses, datetime.now())
-        db.executemany(
-            """\
-            INSERT OR REPLACE INTO Lectures (id, course_id, event_name, lecturer, start, end, room, is_cancelled)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?);""",
-            lectures,
-        )
-        tracked_courses = tracked_courses.union(courses)
+
+        if lectures:
+            db.executemany(
+                """\
+                INSERT OR REPLACE INTO Lectures (id, course_id, event_name, lecturer, start, end, room, is_cancelled)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?);""",
+                lectures,
+            )
+            tracked_courses = tracked_courses.union(courses)
 
     db.commit()
     return courses
@@ -205,7 +215,11 @@ def update_db(db: sqlite3.Connection, date: datetime, weeks: int = 1) -> None:
 
     cur = db.cursor()
 
-    lectures: list[UniversityLecture] = get_tracked_courses(tracked_courses, date, weeks)
+    lectures: list[UniversityLecture] | None = get_tracked_courses(tracked_courses, date, weeks)
+
+    if lectures is None:
+        logger.error("Unable to update lectures")
+        return
 
     # logger.info("Found %s", len(lectures))
     db.execute("DELETE FROM Changes;")
@@ -236,25 +250,27 @@ def update_db(db: sqlite3.Connection, date: datetime, weeks: int = 1) -> None:
         """\
         SELECT DISTINCT Users.id, Changes.*
         FROM Changes JOIN Users ON Users.course_id = Changes.course_id
-        WHERE DATE(Changes.time) < DATETIME("now", "3 weeks")
+        WHERE Changes.time <= datetime("now", "+3 weeks")
         ORDER BY Changes.time;
         """,
     )
-    to_notify = cur.fetchall()
-    cur.close()
-    db.commit()
 
     # group by user
     user_changes = defaultdict(list)
-    for tg_id, *u in to_notify:
+    for tg_id, *u in cur:
+        logger.warning(u)
         user_changes[tg_id].append(u)
+
+    db.commit()
+    cur.close()
 
     # create a single grouped notification for all the updates
     for tg_id, updates in user_changes.items():
+        logger.warning(updates)
         formatted_updates = [LectureUpdate(*u).format() for u in updates]
 
         message = "‼️ <b>LECTURE UPDATES</b> ‼️\n"
-        message += f"{len(updates)} lectures have changed\n\n"
+        message += f"{len(updates)} lecture{'s have' if len(updates)!=1 else ' has'} changed\n\n"
         message += "\n".join(formatted_updates)
 
         send_notification(int(tg_id), message)
@@ -281,11 +297,11 @@ def notify_users_time(db: sqlite3.Connection, time: str) -> int:
             continue
 
         notified_users += 1
-        message: str = f"*Lectures for {curr_time.strftime('%A, %Y-%m-%d')}*\n\n"
+        message: str = f"<b>Lectures for {curr_time.strftime('%A, %Y-%m-%d')}</b>\n\n"
         formatted_lectures: list[str] = [lec.format() for lec in lectures]
         message += "\n\n".join(formatted_lectures)
 
-        send_notification(user_id, message)
+        send_notification(int(user_id), message)
 
     return notified_users
 

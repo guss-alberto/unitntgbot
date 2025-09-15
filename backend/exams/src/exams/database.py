@@ -1,3 +1,4 @@
+import logging
 import math
 import sqlite3
 
@@ -6,6 +7,7 @@ from exams.UniversityExam import UniversityExam
 
 ITEMS_PER_PAGE = 5
 
+logger = logging.getLogger(__name__)
 
 def create_table(db: sqlite3.Connection) -> None:
     db.execute(
@@ -30,8 +32,13 @@ def create_table(db: sqlite3.Connection) -> None:
 
 def update_db(db: sqlite3.Connection) -> None:
     # Parse the university exams
-    faculties = get_university_faculties()
-    exams = get_university_exams(faculties)
+
+    try:
+        faculties = get_university_faculties()
+        exams = get_university_exams(faculties)
+    except Exception as e:
+        logger.error(e)
+        return
 
     # Put the exams in a SQLite database
     db.executemany(
